@@ -1,0 +1,23 @@
+{
+  "name": "prose",
+  "version": "1.0.0",
+  "description": "Proactive content generation with human voice and AI slop prevention for Claude Code",
+  "author": {
+    "name": "Roland Huss",
+    "email": "rhuss@redhat.com"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/rhuss/cc-prose",
+  "homepage": "https://github.com/rhuss/cc-prose",
+  "keywords": [
+    "claude-code",
+    "plugin",
+    "prose",
+    "writing",
+    "content-generation",
+    "humanizer",
+    "voice-profiles",
+    "ai-slop-prevention",
+    "copyedit"
+  ]
+}

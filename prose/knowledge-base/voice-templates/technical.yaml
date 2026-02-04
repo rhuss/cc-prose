@@ -1,0 +1,76 @@
+# Technical Voice Profile
+# Professional technical writing with moderate personality
+# Best for: API documentation, technical guides, architecture docs
+
+name: "technical"
+version: "1.0"
+description: "Professional yet approachable technical writing"
+
+characteristics:
+  # Formality level: 0.0 = casual, 1.0 = formal
+  # 0.6 = balanced, professional but not stuffy
+  formality: 0.6
+
+  # Personality level: 0.0 = neutral/objective, 1.0 = opinionated/engaged
+  # 0.6 = moderately engaged, expresses considered opinions
+  personality: 0.6
+
+  # Use first-person pronouns (I, we)
+  first_person: true
+
+  # Use contractions (don't, can't, won't)
+  contractions: true
+
+  # Target audience level
+  audience: "intermediate"
+
+sentence_patterns:
+  # Mix in short punchy sentences for emphasis
+  mix_short: true
+
+  # Maximum consecutive sentences of similar length
+  max_consecutive_similar: 3
+
+  # Target average sentence length
+  avg_length_target: 18
+
+  # Include rhetorical questions
+  rhetorical_questions: false
+
+personality_traits:
+  # Express opinions and reactions
+  opinions: true
+
+  # Acknowledge uncertainty and complexity
+  acknowledge_complexity: true
+
+  # Use humor sparingly
+  humor: "none"
+
+  # Reference personal experience
+  personal_experience: false
+
+pronoun_balance:
+  # Target ratio of "you" vs "we" usage
+  you_percentage: 60
+  we_percentage: 40
+
+signature_phrases:
+  - "Let's examine"
+  - "Consider the following"
+  - "Worth noting"
+  - "The key point is"
+  - "In practice"
+
+avoid_phrases:
+  - "It goes without saying"
+  - "As everyone knows"
+  - "Obviously"
+  - "Simply put"
+  - "Basically"
+
+# Example of this voice:
+# "When you configure a Service, Kubernetes assigns it a stable IP address.
+# This IP persists even when the underlying Pods change. We'll explore how
+# this works in the next section. The key point is that Services provide
+# a reliable abstraction over ephemeral Pods."

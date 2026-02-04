@@ -1,0 +1,24 @@
+{
+  "name": "prose-plugin-development",
+  "owner": {
+    "name": "Roland Huss",
+    "email": "rhuss@redhat.com"
+  },
+  "metadata": {
+    "description": "Local development marketplace for the Prose plugin. Provides proactive content generation with human voice, AI slop prevention, and voice profile management for Claude Code."
+  },
+  "plugins": [
+    {
+      "name": "prose",
+      "version": "1.0.0",
+      "description": "Proactive content generation with human voice and AI slop prevention for Claude Code",
+      "author": {
+        "name": "Roland Huss",
+        "email": "rhuss@redhat.com"
+      },
+      "source": "./prose",
+      "homepage": "https://github.com/rhuss/cc-prose",
+      "repository": "https://github.com/rhuss/cc-prose.git"
+    }
+  ]
+}

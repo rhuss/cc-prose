@@ -1,0 +1,79 @@
+# Conversational Voice Profile
+# Friendly, engaging tutorial-style writing
+# Best for: Tutorials, blog posts, beginner guides, READMEs
+
+name: "conversational"
+version: "1.0"
+description: "Friendly, engaging tutorial-style writing"
+
+characteristics:
+  # Formality level: 0.0 = casual, 1.0 = formal
+  # 0.4 = casual, like explaining to a colleague
+  formality: 0.4
+
+  # Personality level: 0.0 = neutral/objective, 1.0 = opinionated/engaged
+  # 0.8 = highly engaged, expresses reactions and opinions
+  personality: 0.8
+
+  # Use first-person pronouns (I, we)
+  first_person: true
+
+  # Use contractions (don't, can't, won't)
+  contractions: true
+
+  # Target audience level
+  audience: "beginner"
+
+sentence_patterns:
+  # Mix in short punchy sentences for emphasis
+  mix_short: true
+
+  # Maximum consecutive sentences of similar length
+  max_consecutive_similar: 2
+
+  # Target average sentence length
+  avg_length_target: 15
+
+  # Include rhetorical questions
+  rhetorical_questions: true
+
+personality_traits:
+  # Express opinions and reactions
+  opinions: true
+
+  # Acknowledge uncertainty and complexity
+  acknowledge_complexity: true
+
+  # Use humor sparingly
+  humor: "subtle"
+
+  # Reference personal experience
+  personal_experience: true
+
+pronoun_balance:
+  # Target ratio of "you" vs "we" usage
+  you_percentage: 70
+  we_percentage: 30
+
+signature_phrases:
+  - "Here's the thing"
+  - "I've found that"
+  - "Let me show you"
+  - "What makes this interesting is"
+  - "You might be wondering"
+  - "The honest truth is"
+
+avoid_phrases:
+  - "It goes without saying"
+  - "As everyone knows"
+  - "Obviously"
+  - "Trivially"
+  - "It is well known that"
+
+# Example of this voice:
+# "Here's the thing about Kubernetes Pods: they're designed to die. I know
+# that sounds dramatic, but it's actually a feature, not a bug. You might
+# be wondering why you'd want your containers to be ephemeral. Let me show
+# you why this matters. When a Pod fails, Kubernetes automatically creates
+# a replacement. No 3am pages, no manual intervention. That's the beauty
+# of declarative infrastructure."

@@ -1,13 +1,19 @@
 ---
 name: humanizer
-version: 2.1.1
+version: 2.2.0
 description: |
-  Remove signs of AI-generated writing from text. Use when editing or reviewing
-  text to make it sound more natural and human-written. Based on Wikipedia's
-  comprehensive "Signs of AI writing" guide. Detects and fixes patterns including:
-  inflated symbolism, promotional language, superficial -ing analyses, vague
-  attributions, em dash overuse, rule of three, AI vocabulary words, negative
-  parallelisms, and excessive conjunctive phrases.
+  **MANDATORY USE - ALWAYS INVOKE THIS SKILL** when:
+  - Reviewing or editing EXISTING text for AI patterns
+  - User says "humanize", "make natural", "remove AI", "fix AI writing", "sounds robotic"
+  - User says "rewrite", "rewrite to sound human", "less AI-like", "more authentic"
+  - User says "rephrase", "revise", "rework", "polish", "improve the writing", "tighten"
+  - User mentions a voice by name when editing text (e.g., "using our X voice", "with X voice", "in X voice")
+  - User says "using voice", "with voice", or references any named voice profile while asking to change existing text
+  - You notice AI patterns in text you're about to edit (em dashes, "delve", "crucial", etc.)
+  - Text contains chatbot artifacts, significance inflation, or promotional language
+
+  Detects and fixes 24 categories of AI writing patterns based on Wikipedia's
+  "Signs of AI writing" guide. Use for EXISTING text; use content-generator for NEW text.
 allowed-tools:
   - Read
   - Write
@@ -25,11 +31,38 @@ You are a writing editor that identifies and removes signs of AI-generated text 
 
 When given text to humanize:
 
-1. **Identify AI patterns** - Scan for the patterns listed below
-2. **Rewrite problematic sections** - Replace AI-isms with natural alternatives
-3. **Preserve meaning** - Keep the core message intact
-4. **Maintain voice** - Match the intended tone (formal, casual, technical, etc.)
-5. **Add soul** - Don't just remove bad patterns; inject actual personality
+1. **Detect appropriate voice** - Analyze content to select the right voice profile
+2. **Announce the voice** - Always tell the user which voice you're applying
+3. **Identify AI patterns** - Scan for the patterns listed below
+4. **Rewrite problematic sections** - Replace AI-isms with natural alternatives
+5. **Preserve meaning** - Keep the core message intact
+6. **Apply voice characteristics** - Match the detected or requested voice profile
+7. **Add soul** - Don't just remove bad patterns; inject actual personality
+
+## Voice Detection and Announcement
+
+**IMPORTANT:** Always announce the voice being used before presenting rewritten content:
+
+> Rewriting with **[voice-name]** voice.
+
+**Detection algorithm (analyze the content's purpose):**
+
+| Content Type | Voice | Triggers in Text |
+|--------------|-------|------------------|
+| Opinion piece | **pov** | Strong claims, "I believe", thesis statements |
+| Proposal/justification | **reasoning** | "We propose", trade-off analysis, recommendations |
+| How-to content | **tutorial** | Step-by-step, "first... then...", instructions |
+| Story/incident | **narrative** | Timeline, "what happened", lessons learned |
+| Data/research | **analytical** | Metrics, "the data shows", comparisons |
+| API/reference | **reference** | Parameters, syntax, specifications |
+| Blog/README | **conversational** | Casual intro, friendly tone |
+| General tech | **technical** | Default for technical documentation |
+
+**Example announcements:**
+- `Rewriting with **pov** voice (strong opinion, advocacy).`
+- `Rewriting with **technical** voice (professional, balanced).`
+
+If the user requests a specific voice, use that instead of auto-detecting.
 
 ---
 
@@ -157,7 +190,7 @@ Avoiding AI patterns is only half the job. Sterile, voiceless writing is just as
 
 ### 7. Overused "AI Vocabulary" Words
 
-**High-frequency AI words:** Additionally, align with, crucial, delve, emphasizing, enduring, enhance, fostering, garner, highlight (verb), interplay, intricate/intricacies, key (adjective), landscape (abstract noun), pivotal, showcase, tapestry (abstract noun), testament, underscore (verb), valuable, vibrant
+**High-frequency AI words:** Additionally, align with, crucial, delve, emphasizing, enduring, enhance, fostering, garner, highlight (verb), interplay, intricate/intricacies, key (adjective), landscape (abstract noun), pivotal, practitioner, showcase, tapestry (abstract noun), testament, underscore (verb), valuable, vibrant
 
 **Problem:** These words appear far more frequently in post-2023 text. They often co-occur.
 

@@ -1,8 +1,6 @@
 ---
-name: check
-description: Validate content before submission for AI patterns and style issues
-user-invocable: true
-argument: file_path
+description: Validate content for AI patterns before publishing
+argument-hint: "[file-path]"
 ---
 
 # /prose:check - Pre-Submission Validation

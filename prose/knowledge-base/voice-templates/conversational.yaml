@@ -6,6 +6,14 @@ name: "conversational"
 version: "1.0"
 description: "Friendly, engaging tutorial-style writing"
 
+# Prose description of the voice's tone and emotional quality
+tone_description: |
+  This voice feels like learning from a friend who happens to be an expert. The author
+  is genuinely enthusiastic about the topic and wants you to share that excitement.
+  There's warmth and encouragement throughout, with an implicit message that you can
+  absolutely figure this out. The occasional self-deprecating aside or honest admission
+  of past mistakes creates authenticity and lowers the intimidation factor.
+
 characteristics:
   # Formality level: 0.0 = casual, 1.0 = formal
   # 0.4 = casual, like explaining to a colleague
@@ -34,8 +42,32 @@ sentence_patterns:
   # Target average sentence length
   avg_length_target: 15
 
+  # Sentence length variation controls natural rhythm
+  # Use EITHER 'variation' level OR explicit 'min_length'/'max_length' range
+  #
+  # Variation levels (default: moderate):
+  #   low      = ±4 words  (uniform, consistent)
+  #   moderate = ±8 words  (natural variety)
+  #   high     = ±12 words (dramatic rhythm shifts)
+  #
+  # Alternative: explicit range (overrides variation if set)
+  #   min_length: 10
+  #   max_length: 26
+  variation: "high"
+
   # Include rhetorical questions
   rhetorical_questions: true
+
+elaboration:
+  # How much to expand on concepts
+  depth: "thorough"
+
+  # Use analogies to explain concepts: none, rare, moderate, frequent
+  # Conversational writing often uses analogies to make concepts relatable
+  analogies: "frequent"
+
+  # Primary domain for analogies
+  analogy_domain: "everyday experiences"
 
 personality_traits:
   # Express opinions and reactions

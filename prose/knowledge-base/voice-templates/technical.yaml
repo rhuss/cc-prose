@@ -3,8 +3,16 @@
 # Best for: API documentation, technical guides, architecture docs
 
 name: "technical"
-version: "1.0"
+version: "1.1"
 description: "Professional yet approachable technical writing"
+
+# Prose description of the voice's tone and emotional quality
+tone_description: |
+  This voice prioritizes clarity and precision while remaining accessible. The author
+  writes with quiet confidence, explaining complex concepts without condescension. There's
+  an undercurrent of intellectual curiosity, treating technical challenges as interesting
+  puzzles worth understanding deeply. The tone respects the reader's intelligence while
+  acknowledging that everyone is learning something new.
 
 characteristics:
   # Formality level: 0.0 = casual, 1.0 = formal
@@ -26,16 +34,53 @@ characteristics:
 
 sentence_patterns:
   # Mix in short punchy sentences for emphasis
-  mix_short: true
+  # Disabled for more flowing, connected prose
+  mix_short: false
 
   # Maximum consecutive sentences of similar length
-  max_consecutive_similar: 3
+  max_consecutive_similar: 4
 
   # Target average sentence length
   avg_length_target: 18
 
+  # Sentence length variation controls natural rhythm
+  # Use EITHER 'variation' level OR explicit 'min_length'/'max_length' range
+  #
+  # Variation levels (default: moderate):
+  #   low      = ±4 words  (uniform, consistent)
+  #   moderate = ±8 words  (natural variety)
+  #   high     = ±12 words (dramatic rhythm shifts)
+  #
+  # Alternative: explicit range (overrides variation if set)
+  #   min_length: 10
+  #   max_length: 26
+  variation: "moderate"
+
   # Include rhetorical questions
   rhetorical_questions: false
+
+  # One sentence per line (semantic line breaks)
+  # Useful for AsciiDoc, Markdown with clean git diffs
+  # semantic_line_breaks: false
+
+elaboration:
+  # How much to expand on concepts: minimal, moderate, thorough
+  depth: "moderate"
+
+  # Include context and background before main points
+  provide_context: true
+
+  # Add examples when helpful (not mandatory)
+  include_examples: false
+
+  # Explain the "why" not just the "what"
+  explain_reasoning: true
+
+  # Use analogies to explain concepts: none, rare, moderate, frequent
+  analogies: "rare"
+
+  # Primary domain for analogies (optional)
+  # analogy_domain: "familiar domain for comparisons"
 
 personality_traits:
   # Express opinions and reactions
@@ -69,8 +114,65 @@ avoid_phrases:
   - "Simply put"
   - "Basically"
 
+# =============================================================================
+# OPTIONAL SECTIONS FOR DOMAIN-SPECIFIC PROFILES
+# Uncomment and customize when extracting voice from existing content
+# =============================================================================
+
+# Domain-specific vocabulary rules (optional)
+# Use when writing about a specific technical domain with terminology conventions
+#
+# domain_vocabulary:
+#   # Terms that should always be capitalized
+#   capitalize:
+#     - "Pod"
+#     - "Service"
+#     - "Deployment"
+#
+#   # Terms that should be italicized (pattern names, etc.)
+#   italicize:
+#     - "Sidecar"
+#     - "Controller"
+#
+#   # Use monospace for field/property names
+#   monospace_fields: true
+#   field_examples:
+#     - ".spec.replicas"
+#     - "restartPolicy"
+
+# Document structure patterns (optional)
+# Use for book chapters, pattern descriptions, or structured documentation
+#
+# document_structure:
+#   # Standard sections in each chapter/document
+#   chapter_sections:
+#     - "Problem"
+#     - "Solution"
+#     - "Discussion"
+#     - "More Information"
+#
+#   # Use cross-references between related content
+#   cross_references: true
+#
+#   # Use definition lists for structured explanations
+#   definition_lists: true
+#
+#   # Use numbered callouts in code examples
+#   code_callouts: true
+
+# Stylistic fingerprints (optional)
+# Unique patterns specific to this author or publication
+#
+# stylistic_fingerprints:
+#   - "Conceptual explanation before practical examples"
+#   - "OOP analogies for distributed systems concepts"
+#   - "Admonition blocks for tips and warnings"
+
 # Example of this voice:
-# "When you configure a Service, Kubernetes assigns it a stable IP address.
-# This IP persists even when the underlying Pods change. We'll explore how
-# this works in the next section. The key point is that Services provide
-# a reliable abstraction over ephemeral Pods."
+# "When you configure a Service, Kubernetes assigns it a stable IP address
+# that persists even when the underlying Pods change. This matters because
+# Pods are ephemeral by design, receiving new addresses whenever they're
+# recreated. The Service abstraction solves this problem by giving your
+# application a consistent endpoint. We recommend using Services for all
+# inter-Pod communication since this approach decouples your components
+# and lets Kubernetes handle load balancing automatically."

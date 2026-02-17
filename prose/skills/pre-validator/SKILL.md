@@ -1,10 +1,10 @@
 ---
 name: pre-validator
-version: 1.0.0
-description: |
-  Comprehensive validation before submission. Checks for AI patterns, style
-  compliance, flow quality, consistency, and voice consistency. Produces a
-  detailed report with pass/fail recommendation.
+version: 1.1.0
+description: >-
+  MUST invoke when user asks to check/validate content for AI patterns, or before
+  publishing/finalizing. Trigger phrases: "check", "validate", "review for AI",
+  "is this ready", "any AI patterns", "does this sound AI-generated".
 allowed-tools:
   - Read
   - Glob
@@ -27,6 +27,19 @@ Validate content against ALL quality criteria:
 6. **Duplication Detection** (from duplication-editor rules)
 7. **Voice Consistency** (matches selected profile)
 8. **Readability Metrics**
+
+## When to Activate
+
+**Trigger conditions (invoke if ANY match):**
+- User says "check", "validate", "review for AI", "is this ready", "quality check"
+- User is about to submit, publish, or finalize content
+- User asks "does this sound AI-generated?", "is this natural?", "any AI patterns?"
+- Before committing documentation or prose to version control
+- After generating content to verify quality
+
+**Do NOT activate for:**
+- Rewriting or fixing text (use humanizer instead)
+- Generating new content (use content-generator instead)
 
 ## Configuration Loading
 
@@ -237,7 +250,31 @@ Check against consistency-editor rules:
 
 ### Phase 6: Voice Consistency
 
-If a voice profile is active:
+#### Voice Detection (if no profile configured)
+
+If no voice profile is explicitly set, detect the most appropriate voice based on content analysis:
+
+| Content Type | Voice | Detection Signals |
+|--------------|-------|-------------------|
+| Opinion piece | **pov** | Strong claims, thesis statements, advocacy |
+| Proposal | **reasoning** | Trade-off analysis, recommendations, justifications |
+| How-to | **tutorial** | Step-by-step instructions, learning progression |
+| Story/incident | **narrative** | Timeline, lessons learned, personal experience |
+| Data/research | **analytical** | Metrics, comparisons, findings |
+| API/reference | **reference** | Parameters, syntax, specifications |
+| Blog/README | **conversational** | Casual intro, friendly tone |
+| General tech | **technical** | Default for technical documentation |
+
+**Report the detected voice:**
+```markdown
+## Voice Consistency
+
+**Detected Voice:** [voice-name] (auto-detected from content analysis)
+```
+
+#### Voice Profile Validation
+
+If a voice profile is active (explicit or auto-detected):
 
 **Characteristics:**
 - [ ] Formality level matches profile

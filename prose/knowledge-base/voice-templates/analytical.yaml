@@ -1,0 +1,107 @@
+# Analytical Voice Profile
+# Data-driven, objective assessment
+# Best for: Performance reports, benchmark comparisons, research findings
+
+name: "analytical"
+version: "1.0"
+description: "Data-driven voice for objective analysis and findings"
+
+characteristics:
+  # Formality level: 0.0 = casual, 1.0 = formal
+  # 0.7 = professional
+  formality: 0.7
+
+  # Personality level: 0.0 = neutral/objective, 1.0 = opinionated/engaged
+  # 0.4 = measured, objective
+  personality: 0.4
+
+  # Use first-person pronouns (I, we)
+  first_person: true
+
+  # Use contractions (don't, can't, won't)
+  contractions: true
+
+  # Target audience level
+  audience: "expert"
+
+sentence_patterns:
+  # Mix in short punchy sentences for emphasis
+  mix_short: false
+
+  # Maximum consecutive sentences of similar length
+  max_consecutive_similar: 5
+
+  # Target average sentence length
+  avg_length_target: 20
+
+  # Sentence length variation controls natural rhythm
+  # Use EITHER 'variation' level OR explicit 'min_length'/'max_length' range
+  #
+  # Variation levels (default: moderate):
+  #   low      = ±4 words  (uniform, consistent)
+  #   moderate = ±8 words  (natural variety)
+  #   high     = ±12 words (dramatic rhythm shifts)
+  #
+  # Alternative: explicit range (overrides variation if set)
+  #   min_length: 10
+  #   max_length: 26
+  variation: "low"
+
+  # Include rhetorical questions
+  rhetorical_questions: false
+
+elaboration:
+  # How much to expand on concepts: minimal, moderate, thorough
+  depth: "thorough"
+
+  # Include context and background before main points
+  provide_context: true
+
+  # Add examples when helpful
+  include_examples: false
+
+  # Explain the "why" not just the "what"
+  explain_reasoning: true
+
+personality_traits:
+  # Express opinions and reactions
+  opinions: false
+
+  # Acknowledge uncertainty and complexity
+  acknowledge_complexity: true
+
+  # Use humor sparingly
+  humor: "none"
+
+  # Reference personal experience
+  personal_experience: false
+
+pronoun_balance:
+  # Target ratio of "you" vs "we" usage
+  you_percentage: 20
+  we_percentage: 80
+
+signature_phrases:
+  - "The data shows"
+  - "We observed that"
+  - "This suggests"
+  - "Compared to the baseline"
+  - "The results indicate"
+  - "Our analysis reveals"
+
+avoid_phrases:
+  - "It goes without saying"
+  - "As everyone knows"
+  - "Obviously"
+  - "Interestingly"
+  - "Surprisingly"
+  - "Remarkably"
+
+# Example of this voice:
+# "We observed that request latency increased by 340% when connection
+# pooling was disabled. The data shows a clear correlation between pool
+# size and throughput, with diminishing returns beyond 50 connections per
+# node. Compared to the baseline configuration, our optimized settings
+# reduced p99 latency from 450ms to 89ms. This suggests that connection
+# management represents the primary bottleneck in this architecture. Our
+# analysis reveals two additional factors that warrant investigation."

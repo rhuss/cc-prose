@@ -1,8 +1,6 @@
 ---
-name: voice
 description: Manage voice profiles for consistent writing personality
-user-invocable: true
-argument: subcommand
+argument-hint: "[subcommand]"
 ---
 
 # /prose:voice - Voice Profile Management
@@ -13,6 +11,7 @@ Create and manage voice profiles for consistent writing personality.
 
 ```
 /prose:voice create <name>
+/prose:voice extract <source>
 /prose:voice apply <name> <file_or_text>
 /prose:voice list
 /prose:voice show <name>
@@ -29,6 +28,19 @@ Create a new voice profile interactively:
 ```
 
 This will prompt for voice characteristics (formality, personality, pronouns, etc.).
+
+### extract
+
+Extract a voice profile from existing content:
+
+```
+/prose:voice extract docs/my-writing.md
+/prose:voice extract "docs/**/*.md"
+/prose:voice extract docs/
+/prose:voice extract document.pdf
+```
+
+Analyzes writing patterns to derive all voice profile parameters (formality, personality, sentence patterns, pronoun balance, etc.) with confidence scores.
 
 ### apply
 
@@ -56,12 +68,14 @@ Display details of a specific voice profile:
 
 ## What This Command Does
 
-This command invokes the **voice-architect** skill to:
+This command invokes the **voice-architect** or **voice-extractor** skill to:
 
 1. Manage voice profile definitions (YAML format)
-2. Apply consistent personality characteristics across documents
-3. Store profiles in `~/.claude/prose/voices/` (global) or `.prose/voice.yaml` (project)
+2. Extract voice profiles from existing content samples
+3. Apply consistent personality characteristics across documents
+4. Store profiles in `~/.claude/style/voices/` (global) or `.style/voice.yaml` (project)
 
 ## Invoke Skill
 
-Use the **voice-architect** skill with the provided subcommand and arguments.
+- For `create`, `apply`, `list`, `show`: Use the **voice-architect** skill
+- For `extract`: Use the **voice-extractor** skill

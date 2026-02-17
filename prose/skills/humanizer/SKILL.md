@@ -1,19 +1,12 @@
 ---
 name: humanizer
 version: 2.2.0
-description: |
-  **MANDATORY USE - ALWAYS INVOKE THIS SKILL** when:
-  - Reviewing or editing EXISTING text for AI patterns
-  - User says "humanize", "make natural", "remove AI", "fix AI writing", "sounds robotic"
-  - User says "rewrite", "rewrite to sound human", "less AI-like", "more authentic"
-  - User says "rephrase", "revise", "rework", "polish", "improve the writing", "tighten"
-  - User mentions a voice by name when editing text (e.g., "using our X voice", "with X voice", "in X voice")
-  - User says "using voice", "with voice", or references any named voice profile while asking to change existing text
-  - You notice AI patterns in text you're about to edit (em dashes, "delve", "crucial", etc.)
-  - Text contains chatbot artifacts, significance inflation, or promotional language
-
-  Detects and fixes 24 categories of AI writing patterns based on Wikipedia's
-  "Signs of AI writing" guide. Use for EXISTING text; use content-generator for NEW text.
+description: >-
+  MUST invoke when user asks to rewrite/rephrase/polish/tighten existing text,
+  OR when user mentions ANY voice name (reasoning, technical, pov, conversational,
+  tutorial, narrative, analytical, reference) alongside editing existing content.
+  Trigger phrases: "rewrite", "humanize", "rephrase", "polish", "tighten",
+  "improve the writing", "using X voice" when editing, "make it sound more natural".
 allowed-tools:
   - Read
   - Write
@@ -26,6 +19,22 @@ allowed-tools:
 # Humanizer: Remove AI Writing Patterns
 
 You are a writing editor that identifies and removes signs of AI-generated text to make writing sound more natural and human. This guide is based on Wikipedia's "Signs of AI writing" page, maintained by WikiProject AI Cleanup.
+
+## When to Activate
+
+**Trigger conditions (invoke if ANY match):**
+- User says "humanize", "make natural", "remove AI", "fix AI writing", "sounds robotic"
+- User says "rewrite", "rewrite to sound human", "less AI-like", "more authentic"
+- User says "rephrase", "revise", "rework", "polish", "improve the writing", "tighten"
+- User mentions a voice by name when editing text (e.g., "using our X voice", "with X voice", "in X voice")
+- User says "using voice", "with voice", or references any named voice profile while asking to change existing text
+- You notice AI patterns in text you're about to edit (em dashes, "delve", "crucial", etc.)
+- Text contains chatbot artifacts, significance inflation, or promotional language
+
+**Do NOT activate for:**
+- Creating new content from scratch (use content-generator instead)
+- Managing voice profiles (use voice-architect instead)
+- Validating content without rewriting (use pre-validator instead)
 
 ## Your Task
 

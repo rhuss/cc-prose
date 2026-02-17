@@ -1,8 +1,6 @@
 ---
-name: rewrite
-description: Humanize existing text by removing AI patterns and adding personality
-user-invocable: true
-argument: file_path_or_text
+description: Rewrite existing text to remove AI patterns
+argument-hint: "[file-path or text]"
 ---
 
 # /prose:rewrite - Humanize Text

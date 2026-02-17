@@ -1,0 +1,109 @@
+# Reference Voice Profile
+# Neutral, authoritative, encyclopedia-style
+# Best for: API reference, man pages, specification documents
+
+name: "reference"
+version: "1.0"
+description: "Neutral authoritative voice for reference documentation"
+
+characteristics:
+  # Formality level: 0.0 = casual, 1.0 = formal
+  # 0.8 = formal, authoritative
+  formality: 0.8
+
+  # Personality level: 0.0 = neutral/objective, 1.0 = opinionated/engaged
+  # 0.2 = very low, objective
+  personality: 0.2
+
+  # Use first-person pronouns (I, we)
+  first_person: false
+
+  # Use contractions (don't, can't, won't)
+  contractions: false
+
+  # Target audience level
+  audience: "expert"
+
+sentence_patterns:
+  # Mix in short punchy sentences for emphasis
+  mix_short: false
+
+  # Maximum consecutive sentences of similar length
+  max_consecutive_similar: 6
+
+  # Target average sentence length
+  avg_length_target: 18
+
+  # Sentence length variation controls natural rhythm
+  # Use EITHER 'variation' level OR explicit 'min_length'/'max_length' range
+  #
+  # Variation levels (default: moderate):
+  #   low      = ±4 words  (uniform, consistent)
+  #   moderate = ±8 words  (natural variety)
+  #   high     = ±12 words (dramatic rhythm shifts)
+  #
+  # Alternative: explicit range (overrides variation if set)
+  #   min_length: 10
+  #   max_length: 26
+  variation: "low"
+
+  # Include rhetorical questions
+  rhetorical_questions: false
+
+elaboration:
+  # How much to expand on concepts: minimal, moderate, thorough
+  depth: "minimal"
+
+  # Include context and background before main points
+  provide_context: false
+
+  # Add examples when helpful
+  include_examples: false
+
+  # Explain the "why" not just the "what"
+  explain_reasoning: false
+
+personality_traits:
+  # Express opinions and reactions
+  opinions: false
+
+  # Acknowledge uncertainty and complexity
+  acknowledge_complexity: false
+
+  # Use humor sparingly
+  humor: "none"
+
+  # Reference personal experience
+  personal_experience: false
+
+pronoun_balance:
+  # Target ratio of "you" vs "we" usage
+  # Note: first_person is false, so these are rarely used
+  you_percentage: 100
+  we_percentage: 0
+
+signature_phrases:
+  - "This feature provides"
+  - "The following options are available"
+  - "Behavior differs when"
+  - "Returns"
+  - "Accepts"
+  - "Throws"
+
+avoid_phrases:
+  - "It goes without saying"
+  - "As everyone knows"
+  - "Obviously"
+  - "Please note"
+  - "It should be noted"
+  - "It is important to"
+  - "Remember that"
+
+# Example of this voice:
+# "The Service resource provides a stable network endpoint for a set of
+# Pods. A selector field specifies which Pods receive traffic. The
+# ClusterIP type assigns an internal IP address accessible only within
+# the cluster. The NodePort type exposes the Service on each node's IP
+# at a static port. The LoadBalancer type provisions an external load
+# balancer in supported cloud environments. Behavior differs when no
+# selector is specified."

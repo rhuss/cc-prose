@@ -1,8 +1,6 @@
 ---
-name: write
-description: Generate new content with human voice and zero AI patterns
-user-invocable: true
-argument: topic_or_requirements
+description: Generate new prose content with human voice
+argument-hint: "[topic or requirements]"
 ---
 
 # /prose:write - Content Generation

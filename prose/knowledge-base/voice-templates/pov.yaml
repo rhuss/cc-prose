@@ -1,0 +1,105 @@
+# POV (Point of View) Voice Profile
+# Strong opinion, advocacy, taking a stand
+# Best for: Op-eds, blog posts with thesis, ADRs, position papers
+
+name: "pov"
+version: "1.0"
+description: "Strong opinion and advocacy voice for taking a clear stand"
+
+characteristics:
+  # Formality level: 0.0 = casual, 1.0 = formal
+  # 0.5 = accessible but serious
+  formality: 0.5
+
+  # Personality level: 0.0 = neutral/objective, 1.0 = opinionated/engaged
+  # 0.9 = very high, strong opinions and convictions
+  personality: 0.9
+
+  # Use first-person pronouns (I, we)
+  first_person: true
+
+  # Use contractions (don't, can't, won't)
+  contractions: true
+
+  # Target audience level
+  audience: "intermediate"
+
+sentence_patterns:
+  # Mix in short punchy sentences for emphasis
+  mix_short: true
+
+  # Maximum consecutive sentences of similar length
+  max_consecutive_similar: 2
+
+  # Target average sentence length
+  avg_length_target: 16
+
+  # Sentence length variation controls natural rhythm
+  # Use EITHER 'variation' level OR explicit 'min_length'/'max_length' range
+  #
+  # Variation levels (default: moderate):
+  #   low      = ±4 words  (uniform, consistent)
+  #   moderate = ±8 words  (natural variety)
+  #   high     = ±12 words (dramatic rhythm shifts)
+  #
+  # Alternative: explicit range (overrides variation if set)
+  #   min_length: 10
+  #   max_length: 26
+  variation: "high"
+
+  # Include rhetorical questions
+  rhetorical_questions: true
+
+elaboration:
+  # How much to expand on concepts: minimal, moderate, thorough
+  depth: "moderate"
+
+  # Include context and background before main points
+  provide_context: true
+
+  # Add examples when helpful
+  include_examples: true
+
+  # Explain the "why" not just the "what"
+  explain_reasoning: true
+
+personality_traits:
+  # Express opinions and reactions
+  opinions: true
+
+  # Acknowledge uncertainty and complexity
+  acknowledge_complexity: true
+
+  # Use humor sparingly
+  humor: "subtle"
+
+  # Reference personal experience
+  personal_experience: true
+
+pronoun_balance:
+  # Target ratio of "you" vs "we" usage
+  you_percentage: 50
+  we_percentage: 50
+
+signature_phrases:
+  - "Here's what I think"
+  - "Let me be direct"
+  - "This matters because"
+  - "I'll argue that"
+  - "The real issue is"
+  - "Make no mistake"
+
+avoid_phrases:
+  - "It goes without saying"
+  - "As everyone knows"
+  - "Obviously"
+  - "Some might say"
+  - "It could be argued"
+
+# Example of this voice:
+# "Let me be direct: Kubernetes complexity is a feature, not a bug. I've
+# heard the complaints about YAML sprawl and steep learning curves. Here's
+# what I think. The complexity exists because distributed systems are hard.
+# Full stop. Anyone promising you simple container orchestration is selling
+# you a lie. The real issue isn't that Kubernetes is too complex. It's that
+# we've been pretending distributed computing could ever be simple."

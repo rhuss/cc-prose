@@ -1,8 +1,6 @@
 ---
-name: init
 description: Initialize style configuration for project or global use
-user-invocable: true
-argument: optional_flags
+argument-hint: "[--global]"
 ---
 
 # /prose:init - Initialize Style Configuration

@@ -1,0 +1,106 @@
+# Reasoning Voice Profile
+# Persuasive but balanced, building a logical case
+# Best for: Technical proposals, RFCs, design justifications, comparison articles
+
+name: "reasoning"
+version: "1.0"
+description: "Persuasive voice that builds logical arguments with evidence"
+
+characteristics:
+  # Formality level: 0.0 = casual, 1.0 = formal
+  # 0.6 = professional credibility
+  formality: 0.6
+
+  # Personality level: 0.0 = neutral/objective, 1.0 = opinionated/engaged
+  # 0.7 = engaged but measured
+  personality: 0.7
+
+  # Use first-person pronouns (I, we)
+  first_person: true
+
+  # Use contractions (don't, can't, won't)
+  contractions: true
+
+  # Target audience level
+  audience: "intermediate"
+
+sentence_patterns:
+  # Mix in short punchy sentences for emphasis
+  mix_short: false
+
+  # Maximum consecutive sentences of similar length
+  max_consecutive_similar: 4
+
+  # Target average sentence length
+  avg_length_target: 20
+
+  # Sentence length variation controls natural rhythm
+  # Use EITHER 'variation' level OR explicit 'min_length'/'max_length' range
+  #
+  # Variation levels (default: moderate):
+  #   low      = ±4 words  (uniform, consistent)
+  #   moderate = ±8 words  (natural variety)
+  #   high     = ±12 words (dramatic rhythm shifts)
+  #
+  # Alternative: explicit range (overrides variation if set)
+  #   min_length: 10
+  #   max_length: 26
+  variation: "moderate"
+
+  # Include rhetorical questions
+  rhetorical_questions: true
+
+elaboration:
+  # How much to expand on concepts: minimal, moderate, thorough
+  depth: "thorough"
+
+  # Include context and background before main points
+  provide_context: true
+
+  # Add examples when helpful
+  include_examples: true
+
+  # Explain the "why" not just the "what"
+  explain_reasoning: true
+
+personality_traits:
+  # Express opinions and reactions
+  opinions: true
+
+  # Acknowledge uncertainty and complexity
+  acknowledge_complexity: true
+
+  # Use humor sparingly
+  humor: "none"
+
+  # Reference personal experience
+  personal_experience: false
+
+pronoun_balance:
+  # Target ratio of "you" vs "we" usage
+  you_percentage: 40
+  we_percentage: 60
+
+signature_phrases:
+  - "The evidence suggests"
+  - "Consider the alternative"
+  - "This leads us to"
+  - "What this means is"
+  - "Given these constraints"
+  - "The logical conclusion"
+
+avoid_phrases:
+  - "It goes without saying"
+  - "As everyone knows"
+  - "Obviously"
+  - "Clearly"
+  - "Without a doubt"
+
+# Example of this voice:
+# "The evidence suggests that microservices architecture introduces
+# significant operational overhead for teams under 50 engineers. Consider
+# the alternative: a well-structured monolith can serve most organizations
+# effectively until they reach considerable scale. This leads us to an
+# important question. What problem are we actually trying to solve? If the
+# answer is team autonomy, we should examine whether organizational changes
+# might achieve the same goal with less technical complexity."

@@ -13,7 +13,8 @@ It complements the [copyedit plugin](https://github.com/rhuss/cc-copyedit), shar
 **Key features:**
 
 - **Automatic activation**: Activates when you request content creation
-- **Voice profiles**: Consistent personality across documents
+- **Voice profiles**: 8 built-in templates plus custom profile creation
+- **Voice extraction**: Derive voice profiles from existing writing samples
 - **Humanizer depth**: Wikipedia's 24-pattern methodology for authentic writing
 - **Proactive guidance**: Pattern prevention during writing (not just post-editing)
 - **Easy humanizer updates**: Sync from upstream source with `make sync-humanizer`
@@ -43,6 +44,7 @@ claude plugin list
 | `/prose:rewrite <file>` | Humanize existing text |
 | `/prose:voice [create\|apply\|list]` | Manage voice profiles |
 | `/prose:check <file>` | Pre-submission validation |
+| `/prose:init [--global]` | Initialize style configuration |
 
 ## Quick Start
 
@@ -56,6 +58,9 @@ Write a section about Kubernetes Services with human voice
 
 # Or use the explicit command
 /prose:write a section explaining how Kubernetes Services work
+
+# Write using a specific voice
+/prose:write an intro to container networking using the tutorial voice
 ```
 
 The content-generator will:
@@ -67,18 +72,35 @@ The content-generator will:
 
 ### Humanize Existing Text
 
+The humanizer detects and removes AI writing patterns from existing text. It works across 24 categories of AI-specific patterns, from vocabulary choices ("delve", "leverage") to structural habits (significance inflation, promotional language, excessive hedging).
+
 ```bash
-# Transform AI-sounding text
+# Rewrite a file to remove AI patterns
 /prose:rewrite docs/chapter03.md
+
+# Rewrite with a specific voice applied
+/prose:rewrite docs/intro.md using the conversational voice
+
+# Or just describe what you need
+Tighten up the writing in docs/overview.md, it sounds too robotic
 ```
 
-The humanizer identifies and removes all 24 categories of AI writing patterns while injecting authentic personality.
+The humanizer operates in two modes:
+
+- **Reactive**: Cleans up existing AI-sounding text on demand
+- **Proactive**: The content-generator invokes the humanizer's rules during generation, so AI patterns never appear in the first place
 
 ### Create a Voice Profile
 
 ```bash
 # Create a new voice profile interactively
 /prose:voice create technical-friendly
+
+# List available voice profiles
+/prose:voice list
+
+# Apply a voice to the current project
+/prose:voice apply narrative
 ```
 
 You'll be prompted for:
@@ -86,6 +108,23 @@ You'll be prompted for:
 - Personality level (neutral to opinionated)
 - Pronoun preferences (you vs we)
 - Contractions usage
+
+### Extract a Voice from Existing Writing
+
+The voice-extractor analyzes writing samples and derives a reusable voice profile from them:
+
+```bash
+# Extract voice from a single document
+Extract a voice profile from docs/best-practices.md
+
+# Extract from a directory of samples
+Derive a voice from all the posts in content/blog/
+
+# Create a named profile from an author's writing
+Learn my voice from ~/writing-samples/ and save it as "my-style"
+```
+
+The extractor reads Markdown, AsciiDoc, and PDF files, analyzing sentence structure, vocabulary choices, formality level, and personality markers. For multi-file corpora, it performs incremental analysis and presents aggregate confidence scores before saving.
 
 ### Validate Before Submission
 
@@ -103,6 +142,18 @@ The pre-validator checks:
 - Voice consistency
 - Readability metrics
 
+### Initialize Configuration
+
+```bash
+# Set up project-level style configuration
+/prose:init
+
+# Set up global configuration (applies to all projects)
+/prose:init --global
+```
+
+This creates a `.style/` directory with `config.yaml`, `styleguide.md`, `wordlist.txt`, `stoplist.txt`, and `voice.yaml`. Both cc-prose and cc-copyedit read from the same unified paths.
+
 ## Voice Profiles
 
 Voice profiles define consistent personality characteristics for your writing.
@@ -111,13 +162,21 @@ Voice profiles define consistent personality characteristics for your writing.
 
 | Profile | Formality | Personality | Best For |
 |---------|-----------|-------------|----------|
-| `technical` | 0.6 (balanced) | 0.6 (engaged) | API docs, guides |
-| `conversational` | 0.4 (casual) | 0.8 (opinionated) | Tutorials, blog posts |
+| `technical` | 0.6 (balanced) | 0.6 (engaged) | API docs, architecture guides |
+| `conversational` | 0.4 (casual) | 0.8 (opinionated) | Tutorials, blog posts, READMEs |
+| `analytical` | 0.7 (formal-leaning) | 0.4 (measured) | Benchmarks, research findings, performance reports |
+| `narrative` | 0.4 (casual) | 0.8 (personal) | Post-mortems, case studies, conference talks |
+| `pov` | 0.5 (moderate) | 0.9 (strongly opinionated) | Op-eds, ADRs, position papers |
+| `reasoning` | 0.6 (balanced) | 0.7 (thoughtful) | RFCs, design proposals, comparison articles |
+| `reference` | 0.8 (formal) | 0.2 (neutral) | API reference, man pages, specifications |
+| `tutorial` | 0.3 (casual) | 0.7 (encouraging) | Getting started guides, how-to articles, workshops |
+
+**Scale**: 0.0 (casual/neutral) to 1.0 (formal/opinionated)
 
 ### Profile Locations
 
-- **Global**: `~/.claude/prose/voices/` (available across all projects)
-- **Project**: `.prose/voice.yaml` (project-specific, overrides global)
+- **Global**: `~/.claude/style/voices/` (available across all projects)
+- **Project**: `.style/voice.yaml` (project-specific, overrides global)
 
 ### Profile Structure
 
@@ -137,25 +196,13 @@ personality_traits:
   humor: "subtle"
 ```
 
-## Configuration
+## AI Pattern Prevention (Humanizer)
 
-This plugin shares configuration with the copyedit plugin:
+The humanizer enforces Wikipedia's 24 AI writing pattern categories. It works as both a standalone rewriting tool and as an integrated layer inside the content-generator.
 
-- `~/.claude/copyedit/config/` - Global settings
-- `.copyedit/` - Project overrides
+### How It Works
 
-### Key Configuration Files
-
-| File | Purpose |
-|------|---------|
-| `stoplist.txt` | Forbidden words (constitutional rule) |
-| `wordlist.txt` | Preferred terminology |
-| `styleguide.md` | Prose style rules |
-| `config.yaml` | Thresholds and settings |
-
-## AI Pattern Prevention
-
-The plugin enforces Wikipedia's 24 AI writing pattern categories:
+Every pattern belongs to a severity tier that determines enforcement:
 
 ### CRITICAL (never appear)
 - Chatbot artifacts ("I hope this helps")
@@ -175,6 +222,28 @@ The plugin enforces Wikipedia's 24 AI writing pattern categories:
 ### LOW (optional)
 - Rule of three overuse
 - Boldface overuse
+
+### Stoplist
+
+The stoplist is a constitutional rule: words on it never appear in output, regardless of context or voice. Stoplists cascade (global + project are combined). Edit your stoplist at `.style/stoplist.txt` or `~/.claude/style/stoplist.txt`.
+
+## Configuration
+
+This plugin shares configuration with the copyedit plugin:
+
+- `~/.claude/style/` - Global settings (unified path)
+- `.style/` - Project overrides (unified path)
+
+Legacy paths (`~/.claude/copyedit/config/`, `.copyedit/`, `.prose/`) are still supported as fallbacks.
+
+### Key Configuration Files
+
+| File | Purpose |
+|------|---------|
+| `stoplist.txt` | Forbidden words (constitutional rule) |
+| `wordlist.txt` | Preferred terminology |
+| `styleguide.md` | Prose style rules |
+| `config.yaml` | Thresholds and settings |
 
 ## Humanizer Updates
 
@@ -222,13 +291,24 @@ cc-prose/
 |   |   +-- rewrite.md
 |   |   +-- voice.md
 |   |   +-- check.md
+|   |   +-- init.md
 |   +-- skills/                    # Detailed workflows
 |   |   +-- content-generator/
 |   |   +-- humanizer/
 |   |   +-- voice-architect/
+|   |   +-- voice-extractor/
 |   |   +-- pre-validator/
 |   +-- knowledge-base/
+|   |   +-- voice-autodetect.md
 |   |   +-- voice-templates/
+|   |       +-- analytical.yaml
+|   |       +-- conversational.yaml
+|   |       +-- narrative.yaml
+|   |       +-- pov.yaml
+|   |       +-- reasoning.yaml
+|   |       +-- reference.yaml
+|   |       +-- technical.yaml
+|   |       +-- tutorial.yaml
 |   +-- docs/
 +-- Makefile
 +-- README.md

@@ -1,10 +1,11 @@
 ---
 name: voice-architect
-version: 1.0.0
-description: |
-  Create and manage voice profiles for consistent writing personality across
-  documents. Voice profiles define formality, personality, pronoun usage, and
-  sentence patterns.
+version: 1.1.0
+description: >-
+  ONLY for voice profile management: "create voice", "list voices", "show voice",
+  "delete voice". NOT for writing or editing with a voice. If user mentions a
+  voice name alongside writing/editing content, use content-generator or
+  humanizer instead.
 allowed-tools:
   - Read
   - Write
@@ -25,6 +26,19 @@ Help users:
 3. **List and manage** available voice profiles
 4. **Ensure consistency** in writing tone across documents
 
+## When to Activate
+
+**Trigger conditions (invoke if ANY match):**
+- User says "create voice profile", "define writing style", "set up voice"
+- User says "list voices", "show voice profiles", "what voices are available"
+- User says "apply voice", "use this voice", "change writing personality"
+- User says "switch voice", "change voice", "set voice to"
+- User wants consistent tone across documents
+
+**Do NOT activate for:**
+- Writing or editing content with a named voice (use content-generator or humanizer instead)
+- Extracting voice from existing samples (use voice-extractor instead)
+
 ## Voice Profile Schema
 
 Voice profiles are YAML files with this structure:
@@ -34,6 +48,14 @@ Voice profiles are YAML files with this structure:
 name: "technical-friendly"
 version: "1.0"
 description: "Professional yet approachable technical writing"
+
+# Prose description of the voice's tone and emotional quality
+tone_description: |
+  This voice combines technical precision with genuine warmth. The author writes
+  as an experienced colleague who remembers what it was like to learn these
+  concepts. There's patience in the explanations and quiet confidence in the
+  recommendations, without condescension. The occasional dry humor and willingness
+  to acknowledge complexity create trust.
 
 characteristics:
   # Formality level: 0.0 = casual, 1.0 = formal
@@ -63,6 +85,16 @@ sentence_patterns:
 
   # Include rhetorical questions
   rhetorical_questions: true
+
+elaboration:
+  # How much to expand on concepts
+  depth: "moderate"  # minimal, moderate, thorough
+
+  # Use analogies to explain concepts
+  analogies: "moderate"  # none, rare, moderate, frequent
+
+  # Primary domain for analogies (optional)
+  # analogy_domain: "everyday objects"
 
 personality_traits:
   # Express opinions and reactions
@@ -305,17 +337,65 @@ Display details of a specific voice profile.
 - "Obviously"
 ```
 
+## Voice Auto-Detection
+
+When no voice profile is explicitly configured (or when set to `auto`), the system automatically detects the most appropriate voice based on the user's request and content context.
+
+**IMPORTANT:** When using auto-detection, always announce the detected voice:
+
+> Using **[voice-name]** voice for this content.
+
+### Detection Algorithm
+
+| Pattern | Voice | Triggers |
+|---------|-------|----------|
+| Strong opinion | **pov** | "opinion", "argue", "position", "I think" |
+| Building a case | **reasoning** | "propose", "RFC", "justify", "trade-offs" |
+| Teaching | **tutorial** | "how to", "getting started", "step by step" |
+| Storytelling | **narrative** | "story", "case study", "post-mortem" |
+| Data-driven | **analytical** | "benchmark", "performance", "results" |
+| Documentation | **reference** | "API", "reference", "specification" |
+| Casual | **conversational** | "blog", "casual", "friendly", "README" |
+| Default | **technical** | General technical writing |
+
+### Enabling Auto-Detection
+
+Set in project or global config:
+
+```yaml
+# .style/voice.yaml
+voice: "auto"
+```
+
+Or specify a default with auto-fallback:
+
+```yaml
+voice: "technical"      # Primary voice
+auto_detect: true       # Override based on context when appropriate
+```
+
 ## Built-in Voice Templates
 
-The plugin includes two default voice templates in `knowledge-base/voice-templates/`:
+The plugin includes **8 voice templates** in `knowledge-base/voice-templates/`:
+
+| Template | Formality | Personality | Variation | Use Case |
+|----------|-----------|-------------|-----------|----------|
+| **technical** | 0.6 | 0.6 | moderate | API docs, technical guides |
+| **conversational** | 0.4 | 0.8 | high | Tutorials, blog posts, READMEs |
+| **pov** | 0.5 | 0.9 | high | Op-eds, position papers, ADRs |
+| **reasoning** | 0.6 | 0.7 | moderate | Proposals, RFCs, comparisons |
+| **tutorial** | 0.3 | 0.7 | moderate | Getting started, how-tos |
+| **narrative** | 0.4 | 0.8 | high | Post-mortems, case studies |
+| **analytical** | 0.7 | 0.4 | low | Benchmarks, reports |
+| **reference** | 0.8 | 0.2 | low | API reference, specifications |
 
 ### technical.yaml
 
 Professional technical writing with moderate personality:
 - Formality: 0.6 (balanced)
 - Personality: 0.6 (moderately engaged)
+- Variation: moderate
 - First person: Yes (mostly "we")
-- Contractions: Yes
 - Focus: Clarity and precision
 
 ### conversational.yaml
@@ -323,9 +403,57 @@ Professional technical writing with moderate personality:
 Friendly tutorial-style writing:
 - Formality: 0.4 (casual)
 - Personality: 0.8 (highly engaged)
+- Variation: high
 - First person: Yes ("I" and "you" heavy)
-- Contractions: Yes
 - Focus: Approachability and engagement
+
+### pov.yaml
+
+Strong opinion and advocacy:
+- Formality: 0.5 (accessible but serious)
+- Personality: 0.9 (very high, strong opinions)
+- Variation: high
+- Focus: Taking a clear stand
+
+### reasoning.yaml
+
+Persuasive, evidence-based:
+- Formality: 0.6 (professional)
+- Personality: 0.7 (engaged but measured)
+- Variation: moderate
+- Focus: Building logical arguments
+
+### tutorial.yaml
+
+Friendly step-by-step instruction:
+- Formality: 0.3 (very casual)
+- Personality: 0.7 (warm, supportive)
+- Variation: moderate
+- Focus: Teaching and encouragement
+
+### narrative.yaml
+
+Storytelling and case studies:
+- Formality: 0.4 (casual, engaging)
+- Personality: 0.8 (high engagement)
+- Variation: high
+- Focus: Compelling narratives
+
+### analytical.yaml
+
+Data-driven, objective:
+- Formality: 0.7 (professional)
+- Personality: 0.4 (measured, objective)
+- Variation: low
+- Focus: Facts and findings
+
+### reference.yaml
+
+Neutral, authoritative:
+- Formality: 0.8 (formal)
+- Personality: 0.2 (very low, objective)
+- Variation: low
+- Focus: Precise documentation
 
 ## Voice Application Algorithm
 

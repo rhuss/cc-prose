@@ -2,10 +2,8 @@
 name: voice-extractor
 version: 2.0.0
 description: >-
-  MUST invoke when user wants to derive a voice profile from existing writing
-  samples. Trigger phrases: "extract voice", "analyze style", "learn my voice
-  from", "capture voice from", "create voice from this document", "derive style
-  from". NOT for applying or using a voice (use content-generator or humanizer).
+  Derive voice profiles from existing writing samples by analyzing patterns,
+  sentence structure, and tone.
 allowed-tools:
   - Read
   - Write

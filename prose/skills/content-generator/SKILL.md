@@ -2,12 +2,8 @@
 name: content-generator
 version: 1.1.0
 description: >-
-  MUST invoke when user asks to write/draft/create prose content, OR when user
-  mentions ANY voice name (reasoning, technical, pov, conversational, tutorial,
-  narrative, analytical, reference) alongside content creation. Trigger phrases:
-  "write", "draft", "create", "generate", "using X voice", "with X voice",
-  "in X voice", "please use X voice", "when writing... use voice". Always
-  invoke for future/conditional writing instructions that mention a voice.
+  Create new prose content with style enforcement and voice profiles.
+  Prevents AI patterns during generation rather than fixing after.
 capabilities:
   - New content creation with enforced style standards
   - Voice profile application for consistent personality

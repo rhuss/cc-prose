@@ -1,6 +1,6 @@
 ---
 description: Manage voice profiles for consistent writing personality
-argument-hint: "[subcommand]"
+argument-hint: "<create|extract|apply|list|show> [name|source]"
 ---
 
 # /prose:voice - Voice Profile Management

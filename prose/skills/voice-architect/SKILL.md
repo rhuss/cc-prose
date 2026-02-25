@@ -2,10 +2,8 @@
 name: voice-architect
 version: 1.1.0
 description: >-
-  ONLY for voice profile management: "create voice", "list voices", "show voice",
-  "delete voice". NOT for writing or editing with a voice. If user mentions a
-  voice name alongside writing/editing content, use content-generator or
-  humanizer instead.
+  Create, list, show, and manage voice profiles for consistent writing
+  personality.
 allowed-tools:
   - Read
   - Write

@@ -2,9 +2,8 @@
 name: pre-validator
 version: 1.1.0
 description: >-
-  MUST invoke when user asks to check/validate content for AI patterns, or before
-  publishing/finalizing. Trigger phrases: "check", "validate", "review for AI",
-  "is this ready", "any AI patterns", "does this sound AI-generated".
+  Validate content for AI patterns, style compliance, and voice consistency
+  before publishing.
 allowed-tools:
   - Read
   - Glob

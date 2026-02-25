@@ -2,11 +2,8 @@
 name: humanizer
 version: 2.2.0
 description: >-
-  MUST invoke when user asks to rewrite/rephrase/polish/tighten existing text,
-  OR when user mentions ANY voice name (reasoning, technical, pov, conversational,
-  tutorial, narrative, analytical, reference) alongside editing existing content.
-  Trigger phrases: "rewrite", "humanize", "rephrase", "polish", "tighten",
-  "improve the writing", "using X voice" when editing, "make it sound more natural".
+  Rewrite existing text to remove AI patterns and add human voice.
+  Covers 24 categories of AI writing indicators.
 allowed-tools:
   - Read
   - Write

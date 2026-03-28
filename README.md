@@ -24,12 +24,21 @@ It complements the [copyedit plugin](https://github.com/rhuss/cc-copyedit), shar
 
 ## Installation
 
+**Via Marketplace (recommended):**
+
 ```bash
-# Clone the repository
-git clone https://github.com/rhuss/cc-prose.git
-cd cc-prose
+# Add the marketplace (once)
+/plugin marketplace add rhuss/cc-rhuss-marketplace
 
 # Install the plugin
+/plugin install prose@cc-rhuss-marketplace
+```
+
+**From source:**
+
+```bash
+git clone https://github.com/rhuss/cc-prose.git
+cd cc-prose
 make install
 
 # Verify installation

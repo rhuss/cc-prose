@@ -1,7 +1,7 @@
 # Brainstorm: Inline voice-matching in the humanizer
 
 **Date:** 2026-06-12
-**Status:** active
+**Status:** spec-created
 
 ## Problem Framing
 

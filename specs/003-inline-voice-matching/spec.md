@@ -94,14 +94,23 @@ After an inline voice match, the skill mentions that persistent voice profiles a
 ### Functional Requirements
 
 - **FR-001**: The content-generator skill MUST support inline voice-matching, analyzing a user-provided writing sample and matching its voice characteristics during content generation.
-- **FR-002**: The content-generator MUST accept writing samples provided inline (pasted in the request) or by file reference (a path to an existing document).
+- **FR-002**: Both skills (humanizer and content-generator) MUST accept writing samples provided inline (pasted in the request) or by file reference (a path to an existing document).
 - **FR-003**: Both skills (humanizer and content-generator) MUST resolve voice sources in this priority order: inline sample > configured voice profile > default behavior.
-- **FR-004**: Inline voice matching MUST have no minimum word count requirement for the writing sample.
-- **FR-005**: Inline voice matching MUST be ephemeral: no YAML output, no persistence, no side effects on existing voice profiles.
-- **FR-006**: The inline voice analysis MUST note: sentence length patterns, word choice level, paragraph opening patterns, punctuation habits, recurring phrases or verbal tics, and transition handling.
-- **FR-007**: Both skills MUST include a brief cross-reference to the voice-extractor for users who want persistent profiles, mentioning `/prose:voice extract`.
-- **FR-008**: When a referenced file for voice matching does not exist, the skill MUST warn the user and fall back to the next available voice source.
-- **FR-009**: Project-level style rules MUST take precedence over inline voice matching for specific prohibited patterns (e.g., em dash rules from CLAUDE.md).
+- **FR-004**: The humanizer skill MUST document the voice source priority order (FR-003) within its existing Voice Calibration section and add a cross-reference to the voice-extractor for persistent profiles.
+- **FR-005**: Inline voice matching MUST have no minimum word count requirement for the writing sample.
+- **FR-006**: Inline voice matching MUST be ephemeral: no YAML output, no persistence, no side effects on existing voice profiles.
+- **FR-007**: The inline voice analysis MUST note: sentence length patterns, word choice level, paragraph opening patterns, punctuation habits, recurring phrases or verbal tics, and transition handling.
+- **FR-008**: Both skills MUST include a brief cross-reference to the voice-extractor capability for users who want persistent profiles.
+- **FR-009**: When a referenced file for voice matching does not exist or is unreadable, the skill MUST warn the user and fall back to the next available voice source.
+- **FR-010**: When a referenced file is binary or not a text file, the skill MUST warn the user and fall back to the next available voice source.
+- **FR-011**: Project-level style rules MUST take precedence over inline voice matching for specific prohibited patterns (e.g., em dash rules from CLAUDE.md).
+
+### Out of Scope
+
+- The voice-extractor skill is not modified by this feature. It remains the path for creating persistent voice profiles from writing samples.
+- The voice-architect skill is not modified. It remains the CRUD interface for managing voice profiles.
+- The pre-validator skill is not affected since it does not perform rewriting or content generation.
+- Automatic voice profile creation from inline samples is not included. Inline matching is always ephemeral.
 
 ## Success Criteria
 
@@ -114,7 +123,5 @@ After an inline voice match, the skill mentions that persistent voice profiles a
 
 ## Assumptions
 
-- The humanizer's "Voice Calibration (Optional)" section already exists from the upstream v2.8.0 sync and does not need to be added. The work for the humanizer is limited to adding the cross-reference to voice-extractor and documenting the priority order.
+- The humanizer's "Voice Calibration (Optional)" section already exists from the upstream v2.8.0 sync and does not need to be added. The work for the humanizer is limited to adding the cross-reference to voice-extractor and documenting the priority order (see FR-004).
 - The content-generator's existing voice profile loading (Phase 2 in its SKILL.md) remains unchanged. Inline voice matching is an additional capability that layers on top of the existing workflow.
-- The voice-extractor and voice-architect skills are not modified by this feature. They remain the path for persistent, high-fidelity voice profiles.
-- The pre-validator skill is not affected by this feature since it does not perform rewriting or content generation.

@@ -71,6 +71,50 @@ When the user requests new content creation:
 4. **Self-validate** against humanizer patterns and style rules
 5. **Deliver publication-ready text** that needs no copyediting
 
+## Voice Calibration (Optional)
+
+If the user provides a writing sample (their own previous writing, inline or as a file reference), analyze it before generating content:
+
+1. **Read the sample first.** Note:
+   - Sentence length patterns (short and punchy? Long and flowing? Mixed?)
+   - Word choice level (casual? academic? somewhere between?)
+   - How they start paragraphs (jump right in? Set context first?)
+   - Punctuation habits (lots of dashes? Parenthetical asides? Semicolons?)
+   - Any recurring phrases or verbal tics
+   - How they handle transitions (explicit connectors? Just start the next point?)
+
+2. **Match their voice in the generated content.** Don't just avoid AI patterns; replace them with patterns from the sample. If they write short sentences, don't produce long ones. If they use casual language, don't upgrade to formal vocabulary.
+
+3. **When no sample is provided,** continue with the normal voice profile or auto-detection workflow (see Step 2 below).
+
+### How to provide a sample
+- Inline: "Write a section about X. Here's a sample of my writing for voice matching: [sample]"
+- File: "Write a post about X. Use my writing style from [file path] as a reference."
+
+### File validation
+
+When the user references a file path for voice matching:
+- If the file does not exist or is unreadable, warn the user and fall back to the next available voice source (configured voice profile, auto-detection, or default behavior).
+- If the file is binary (not a text file), warn the user and fall back the same way.
+- Do not silently ignore a bad file reference. The user needs to know their sample was not used.
+
+### Voice source priority
+
+When multiple voice sources are available, resolve them in this order (first match wins):
+
+1. **Inline sample** (user provides text or file reference in the current request)
+2. **Configured voice profile** (`.style/voice.yaml` or `.prose/voice.yaml`)
+3. **Auto-detection** (pattern-based voice selection from the request, see Step 2)
+4. **Default behavior** (technical voice)
+
+The inline sample wins because it is the most explicit signal: the user provided it right now, for this specific request. A configured voice profile is a persistent preference that applies when no inline sample is given.
+
+When an inline sample is used, skip YAML voice profile loading and auto-detection for this request. Do not blend the inline sample with a configured profile.
+
+**Note:** Project-level style rules (from CLAUDE.md or style configuration) always take precedence over inline voice matching for specific prohibited patterns. For example, if the sample uses em dashes but project rules forbid them, em dashes are still forbidden in the output.
+
+**Persistent profiles for repeated use:** If you find yourself matching the same writing sample across multiple requests, consider using the voice-extractor to create a reusable voice profile. It performs deeper multi-file analysis with confidence scoring.
+
 ## Configuration Loading
 
 ### Phase 1: Load Style Configuration
@@ -165,9 +209,17 @@ Analyze the user's content creation request:
 
 ### Step 2: Apply Voice Profile
 
+#### Inline Sample (Highest Priority)
+
+**Check first:** Did the user provide a writing sample (inline text or file reference) in this request? If yes, apply the Voice Calibration section above. Skip the rest of this step.
+
+> Matching voice from **inline writing sample**.
+
+If no inline sample was provided, continue with the configured profile or auto-detection below.
+
 #### Voice Auto-Detection
 
-**IMPORTANT:** If no voice profile is explicitly configured (or voice is set to `auto`), detect the appropriate voice based on the user's request.
+**IMPORTANT:** If no inline sample was provided and no voice profile is explicitly configured (or voice is set to `auto`), detect the appropriate voice based on the user's request.
 
 **Always announce the detected voice before generating content:**
 

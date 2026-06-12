@@ -49,11 +49,32 @@ If the user provides a writing sample (their own previous writing), analyze it b
 
 2. **Match their voice in the rewrite.** Don't just remove AI patterns - replace them with patterns from the sample. If they write short sentences, don't produce long ones. If they use "stuff" and "things," don't upgrade to "elements" and "components."
 
-3. **When no sample is provided,** fall back to the default behavior (natural, varied, opinionated voice from the PERSONALITY AND SOUL section below).
+3. **When no sample is provided,** fall back to the next available voice source (see Voice source priority below).
 
 ### How to provide a sample
 - Inline: "Humanize this text. Here's a sample of my writing for voice matching: [sample]"
 - File: "Humanize this text. Use my writing style from [file path] as a reference."
+
+### File validation
+
+When the user references a file path for voice matching:
+- If the file does not exist or is unreadable, warn the user and fall back to the next available voice source (configured voice profile, or default behavior).
+- If the file is binary (not a text file), warn the user and fall back the same way.
+- Do not silently ignore a bad file reference. The user needs to know their sample was not used.
+
+### Voice source priority
+
+When multiple voice sources are available, resolve them in this order (first match wins):
+
+1. **Inline sample** (user provides text or file reference in the current request)
+2. **Configured voice profile** (`.style/voice.yaml` or `.prose/voice.yaml`)
+3. **Default behavior** (natural, varied voice from PERSONALITY AND SOUL)
+
+The inline sample wins because it is the most explicit signal: the user provided it right now, for this specific request. A configured voice profile is a persistent preference that applies when no inline sample is given.
+
+When an inline sample is used, ignore the configured voice profile for this request. Do not blend the inline sample with the configured voice profile.
+
+**Persistent profiles for repeated use:** If you find yourself matching the same writing sample across multiple requests, consider using the voice-extractor to create a reusable voice profile. It performs deeper multi-file analysis with confidence scoring.
 
 
 ## PERSONALITY AND SOUL

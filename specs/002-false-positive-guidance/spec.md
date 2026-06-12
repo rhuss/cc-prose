@@ -92,17 +92,25 @@ Both skills currently reference "24 humanizer categories" in their documentation
 - What happens when content has zero AI tells but also zero human signals? The score should be based on the absence of tells alone. Human signals are a positive indicator, not a requirement.
 - What happens when the pre-validator encounters a false-positive item from the list (e.g., curly quotes) that is also on the project stoplist? The stoplist is a CRITICAL rule that overrides false-positive guidance. Stoplist words are always flagged regardless of isolation.
 
+## Clarifications
+
+### Session 2026-06-12
+
+- Q: What severity level do clustered tells escalate to? → A: Restore each tell to its original default severity (the level defined in the humanizer categories, before isolation downgrade). Isolation downgrades to LOW; clustering removes the downgrade.
+- Q: How are human writing signals reported in the pre-validator output? → A: Add a "Human Writing Signals" subsection in the report, between the severity issue lists and the readability metrics section, listing each detected signal type with examples found.
+- Q: What scope defines "isolation" for the content-generator's self-validation? → A: The entire generated output. Since the content-generator validates one complete piece holistically, "isolation" means no other tells anywhere in the output (not paragraph-level like the pre-validator).
+
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
 - **FR-001**: The pre-validator MUST classify isolated AI tells (a single tell with no other tells in the same paragraph) as LOW severity instead of their default severity level.
-- **FR-002**: The pre-validator MUST detect clusters of 3 or more different AI tell types within the same paragraph and escalate the severity of each tell in the cluster.
+- **FR-002**: The pre-validator MUST detect clusters of 3 or more different AI tell types within the same paragraph and restore each tell to its original default severity (removing the isolation downgrade).
 - **FR-003**: The pre-validator MUST recognize a defined list of false-positive patterns (items that are not reliable AI indicators on their own) and not flag them when they appear in isolation.
-- **FR-004**: The pre-validator MUST recognize human writing signals (specific details, mixed feelings, self-corrections, era-bound references, varied sentence length) and report them as positive indicators.
+- **FR-004**: The pre-validator MUST recognize human writing signals (specific details, mixed feelings, self-corrections, era-bound references, varied sentence length) and report them in a dedicated "Human Writing Signals" subsection in the report, positioned between severity issue lists and readability metrics.
 - **FR-005**: The pre-validator MUST maintain stoplist supremacy: stoplist words are always CRITICAL regardless of isolation or false-positive guidance.
 - **FR-006**: The pre-validator MUST update all references from 24 humanizer categories to 33.
-- **FR-007**: The content-generator MUST not reject its own output during self-validation for patterns that appear in isolation (single tells without co-occurring tells).
+- **FR-007**: The content-generator MUST not reject its own output during self-validation for patterns that appear in isolation (single tells with no other tells anywhere in the generated output).
 - **FR-008**: The content-generator MUST preserve human writing signals (asides, self-corrections, mixed feelings, sentence variety) that it deliberately added during generation.
 - **FR-009**: The content-generator MUST update all references from 24 humanizer categories to 33.
 - **FR-010**: Both skills MUST treat project-level style rules (from CLAUDE.md or style configuration) as separate from AI detection scoring. A style violation is not an AI detection signal.

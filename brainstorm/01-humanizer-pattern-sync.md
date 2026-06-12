@@ -93,6 +93,27 @@ Approach A: Full wholesale adoption with local additions merged back. The upstre
 
 ## Open Questions
 
-- Should we set up `make sync-humanizer` to pull from the upstream repo instead of `~/.claude/skills/humanizer/`? That would automate future syncs.
 - Do we want to contribute our rule-of-three density detection back to upstream?
 - The upstream's full example now has a 3-pass process (draft, self-audit, final). That's covered by brainstorm #04. Should we adopt it here or wait for that brainstorm?
+
+---
+
+## Revisit: 2026-06-12
+
+### Updated Problem Framing
+
+The original brainstorm covered both WHAT patterns to sync (content) and HOW to sync them (mechanism). The sync mechanism has been split into its own brainstorm (#05 humanizer-upstream-sync) to keep concerns separate. This brainstorm now focuses purely on the content update: adopting upstream v2.8.0 patterns.
+
+### Changes
+
+- **Sync mechanism extracted**: The open question about `make sync-humanizer` pulling from upstream is now addressed in brainstorm #05, which designs a proper delta-aware sync system modeled on cc-spex's superpowers integration.
+- **Dependency created**: This content sync (#01) should be executed using the sync mechanism from #05. The first sync will serve as the initial baseline for the new tracking system.
+
+### Updated Decision
+
+Approach A (full wholesale adoption) remains correct. The execution path changes: instead of a manual copy-and-merge, the first sync will be performed via the `/update-humanizer` command designed in brainstorm #05, which will handle the merge intelligently and establish the tracking baseline.
+
+### Open Threads
+
+- Content sync (#01) depends on sync mechanism (#05) being implemented first
+- First sync doubles as the initial baseline for the new tracking system

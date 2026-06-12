@@ -88,7 +88,7 @@ Both skills currently reference "24 humanizer categories" in their documentation
 ### Edge Cases
 
 - What happens when content has exactly 3 tells but they are all the same type (e.g., three em dashes)? Cluster detection requires 3+ *different* tell types, so this should not trigger escalation.
-- What happens when a project-level style rule (like CLAUDE.md's "no em dashes") conflicts with false-positive guidance? The style rule is a style preference enforced separately; the false-positive guidance only affects AI *detection* scoring. Both coexist: the em dash is still a style violation but not an AI detection signal when isolated.
+- What happens when a project-level style rule (like CLAUDE.md's "no em dashes") conflicts with false-positive guidance? The style rule is a style preference enforced separately; the false-positive guidance only affects AI *detection* scoring. Both coexist: the em dash is still a style violation, and it remains an AI detection tell scored at LOW severity when isolated.
 - What happens when content has zero AI tells but also zero human signals? The score should be based on the absence of tells alone. Human signals are a positive indicator, not a requirement.
 - What happens when the pre-validator encounters a false-positive item from the list (e.g., curly quotes) that is also on the project stoplist? The stoplist is a CRITICAL rule that overrides false-positive guidance. Stoplist words are always flagged regardless of isolation.
 

@@ -1,0 +1,22 @@
+{
+  "upstream_repo": "https://github.com/blader/humanizer",
+  "last_sync_commit": "d8085c7da5ddb9a179572837d4806b68cde3e9ff",
+  "last_sync_date": "2026-02-21",
+  "modified_skills": [
+    {
+      "upstream_file": "SKILL.md",
+      "local_file": "prose/skills/humanizer/SKILL.md",
+      "canonical_file": "~/.claude/skills/humanizer/SKILL.md",
+      "local_additions": [
+        {
+          "section": "10. Rule of Three Overuse",
+          "description": "Density detection counting triples across whole text"
+        },
+        {
+          "section": "22. Filler Phrases",
+          "description": "Added 'Here's the twist/kicker/...' entries"
+        }
+      ]
+    }
+  ]
+}

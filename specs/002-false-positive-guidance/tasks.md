@@ -25,8 +25,8 @@
 
 **Purpose**: Update the category count from 24 to 33 in both files. This is a prerequisite for subsequent changes because the detection guidance sections reference the correct count.
 
-- [ ] T001 [P] [US5] Update all references from "24" to "33" humanizer categories in prose/skills/pre-validator/SKILL.md
-- [ ] T002 [P] [US5] Update all references from "24" to "33" humanizer categories in prose/skills/content-generator/SKILL.md
+- [x] T001 [P] [US5] Update all references from "24" to "33" humanizer categories in prose/skills/pre-validator/SKILL.md
+- [x] T002 [P] [US5] Update all references from "24" to "33" humanizer categories in prose/skills/content-generator/SKILL.md
 
 **Checkpoint**: Both files reference the correct category count (33).
 
@@ -40,8 +40,8 @@
 
 ### Implementation for User Story 1
 
-- [ ] T003 [US1] Add "Detection Guidance" section to prose/skills/pre-validator/SKILL.md after Phase 1 (AI Pattern Scan) containing the 12-item false-positive list, cluster-detection principle, and isolation-aware severity rules
-- [ ] T004 [US1] Modify Phase 1 severity classification instructions in prose/skills/pre-validator/SKILL.md to downgrade isolated tells (no other tells in the same paragraph) to LOW severity, with explicit stoplist exception (stoplist words remain CRITICAL regardless)
+- [x] T003 [US1] Add "Detection Guidance" section to prose/skills/pre-validator/SKILL.md after Phase 1 (AI Pattern Scan) containing the 12-item false-positive list, cluster-detection principle, and isolation-aware severity rules
+- [x] T004 [US1] Modify Phase 1 severity classification instructions in prose/skills/pre-validator/SKILL.md to downgrade isolated tells (no other tells in the same paragraph) to LOW severity, with explicit stoplist exception (stoplist words remain CRITICAL regardless)
 
 **Checkpoint**: Pre-validator treats isolated tells as LOW severity. Stoplist words remain CRITICAL.
 
@@ -55,7 +55,7 @@
 
 ### Implementation for User Story 2
 
-- [ ] T005 [US2] Add cluster detection rules to the "Detection Guidance" section in prose/skills/pre-validator/SKILL.md specifying: 3+ different tell types in the same paragraph triggers cluster mode, restoring each tell to its original default severity
+- [x] T005 [US2] Add cluster detection rules to the "Detection Guidance" section in prose/skills/pre-validator/SKILL.md specifying: 3+ different tell types in the same paragraph triggers cluster mode, restoring each tell to its original default severity
 
 **Checkpoint**: Pre-validator detects clusters and restores default severity. Two tells in the same paragraph do not trigger escalation. Three identical tell types do not trigger escalation.
 
@@ -69,8 +69,8 @@
 
 ### Implementation for User Story 3
 
-- [ ] T006 [US3] Add the 6-item human writing signals list to the "Detection Guidance" section in prose/skills/pre-validator/SKILL.md with detection instructions for each signal type
-- [ ] T007 [US3] Add "Human Writing Signals Detected" subsection to the report format template in prose/skills/pre-validator/SKILL.md positioned between LOW Priority Issues and Readability Metrics, with signal type, example found, and location columns
+- [x] T006 [US3] Add the 6-item human writing signals list to the "Detection Guidance" section in prose/skills/pre-validator/SKILL.md with detection instructions for each signal type
+- [x] T007 [US3] Add "Human Writing Signals Detected" subsection to the report format template in prose/skills/pre-validator/SKILL.md positioned between LOW Priority Issues and Readability Metrics, with signal type, example found, and location columns
 
 **Checkpoint**: Pre-validator report includes human writing signals section. Signals are informational and do not modify the numeric score.
 
@@ -84,8 +84,8 @@
 
 ### Implementation for User Story 4
 
-- [ ] T008 [US4] Add false-positive awareness to the Humanizer Pattern Validation subsection in Step 6 of prose/skills/content-generator/SKILL.md: do not reject output for a single isolated tell when no other tells exist in the entire output
-- [ ] T009 [US4] Add "Preserve Human Writing Signals" guidance after Step 5 (Inject Personality) in prose/skills/content-generator/SKILL.md listing the 6 human signal types and instructing self-validation to recognize and keep these patterns
+- [x] T008 [US4] Add false-positive awareness to the Humanizer Pattern Validation subsection in Step 6 of prose/skills/content-generator/SKILL.md: do not reject output for a single isolated tell when no other tells exist in the entire output
+- [x] T009 [US4] Add "Preserve Human Writing Signals" guidance after Step 5 (Inject Personality) in prose/skills/content-generator/SKILL.md listing the 6 human signal types and instructing self-validation to recognize and keep these patterns
 
 **Checkpoint**: Content-generator preserves personality markers through self-validation. Isolated tells do not trigger rejection.
 
@@ -95,7 +95,7 @@
 
 **Purpose**: Final consistency and separation-of-concerns cleanup.
 
-- [ ] T010 Add FR-010 guidance (style rules vs AI detection separation) to the Detection Guidance sections in both prose/skills/pre-validator/SKILL.md and prose/skills/content-generator/SKILL.md
+- [x] T010 Add FR-010 guidance (style rules vs AI detection separation) to the Detection Guidance sections in both prose/skills/pre-validator/SKILL.md and prose/skills/content-generator/SKILL.md
 
 ---
 

@@ -7,7 +7,7 @@ description: >-
 capabilities:
   - New content creation with enforced style standards
   - Voice profile application for consistent personality
-  - Humanizer pattern prevention (24 categories)
+  - Humanizer pattern prevention (33 categories)
   - Global + project configuration hierarchy
   - Automatic style guide compliance
   - Wordlist and stoplist enforcement
@@ -353,6 +353,19 @@ sentence_patterns:
 **Be specific about feelings:**
 - Not "this is concerning" but "there's something unsettling about agents churning away at 3am"
 
+### Step 5b: Preserve Human Writing Signals
+
+**After injecting personality, mark these patterns as protected.** Self-validation (Step 6) must NOT strip or rephrase any of the following human writing signals that you deliberately added:
+
+1. **Genuine asides and self-corrections**: Parenthetical interruptions, corrections, or doubts you inserted for voice (e.g., "I keep wanting to say 'almost' here", "(though I'm not sure this is the right framing)").
+2. **Mixed feelings and unresolved tension**: Sentences that express conflicting reactions without resolving them neatly (e.g., "This is impressive but also kind of unsettling").
+3. **Sentence length variety**: Short emphatic sentences used for effect among longer explanatory ones (e.g., "Let that sink in."). Do not flag a short sentence as a style violation.
+4. **First-person editorial choices**: Deliberate "I" and "we" usage that matches the voice profile, including opinions and reactions you added in Step 5.
+5. **Specific, concrete details**: Real-world specifics you chose for authenticity (actual tool names, version numbers, concrete scenarios rather than generic descriptions).
+6. **Era-bound and context-specific references**: References to specific technologies, cultural moments, or time periods that ground the content in reality.
+
+**Rule**: If self-validation flags something you deliberately added in Step 5 for personality, keep it. The personality is the point. Only reject patterns that slipped in unintentionally.
+
 ### Step 6: Self-Validation
 
 **Before presenting content to user, validate against ALL rules:**
@@ -367,7 +380,7 @@ CRITICAL (must never appear):
 - Knowledge cutoffs
 
 HIGH (strongly avoid):
-- AI vocabulary (24 words)
+- AI vocabulary words
 - Significance inflation
 - Promotional language
 - Superficial -ing phrases
@@ -378,7 +391,28 @@ MEDIUM (should avoid):
 - Excessive hedging
 - Copula avoidance
 
-If found: IMMEDIATELY rephrase to eliminate
+If found: Apply isolation-aware judgment before rejecting:
+
+1. Count the total number of different AI tell types in the ENTIRE output.
+2. If only ONE tell type exists in the entire output (isolated tell),
+   do NOT reject or rephrase. A single tell in isolation is not a
+   reliable AI signal. Preserve the content as written.
+3. If 2+ different tell types exist, rephrase to eliminate them.
+4. CRITICAL tells (chatbot artifacts, knowledge cutoffs) and stoplist
+   words are ALWAYS rejected regardless of isolation.
+
+This prevents the generator from stripping personality it deliberately
+added. A single em dash or one formal word does not make content
+sound AI-generated.
+
+IMPORTANT: Style rules vs AI detection separation
+Project-level style rules (from CLAUDE.md or style configuration) are
+enforced separately from AI detection. A style violation (e.g., "no em
+dashes" as a style preference) is NOT the same as an AI detection signal.
+Self-validation enforces both, but they are independent concerns:
+- Style rules: always enforced per project configuration
+- AI detection: uses isolation-aware judgment described above
+A pattern can be a style violation without being an AI tell, and vice versa.
 ```
 
 #### Stoplist Validation
@@ -516,7 +550,7 @@ This should NEVER happen due to self-validation. But if user reports a forbidden
 ## Key Principles
 
 1. **Prevention over correction**: Generate compliant content from the start
-2. **Humanizer patterns authority**: All 24 categories are forbidden by default
+2. **Humanizer patterns authority**: All 33 categories are forbidden by default
 3. **Stoplist supremacy**: Constitutional rule, overrides everything else
 4. **Style guide authority**: Project-specific rules are mandatory
 5. **Voice consistency**: Maintain personality throughout

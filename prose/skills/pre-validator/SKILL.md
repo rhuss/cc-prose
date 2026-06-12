@@ -80,10 +80,10 @@ fi
 Scan the entire file against all 33 humanizer pattern categories.
 
 **After scanning, apply the Detection Guidance (below) before assigning final severity.** For each finding:
-1. Check if the tell appears in the false-positive list and is isolated (no other tells in the same paragraph). If so, do not flag it.
-2. Check if the tell is isolated (single tell in the paragraph). If so, downgrade to LOW severity.
-3. Check if 3+ different tell types co-occur in the same paragraph. If so, restore each to its original default severity.
-4. Stoplist words are always CRITICAL regardless of isolation or clustering.
+1. Stoplist words are always CRITICAL regardless of isolation or clustering.
+2. Check if 3+ different tell types co-occur in the same paragraph. If so, restore each to its original default severity (cluster mode). Skip steps 3-4 for clustered tells.
+3. Check if the tell appears in the false-positive list and is isolated (no other tells in the same paragraph). If so, do not flag it as an AI pattern finding. (Style rules still apply separately.)
+4. Check if the tell is isolated (single tell in the paragraph) but NOT on the false-positive list. If so, downgrade to LOW severity.
 
 The severity tiers below define the **default** severity for each pattern. The Detection Guidance may adjust the final severity based on isolation and clustering.
 
@@ -450,12 +450,7 @@ Calculate and report:
 
 | Signal Type | Example Found | Location |
 |-------------|---------------|----------|
-| Specific detail | "123 Main Street, Peoria" | Line 45 |
-| Mixed feelings | "impressive but also kind of unsettling" | Line 62 |
-| Self-correction | "I keep wanting to say..." | Line 78 |
-| Era-bound reference | "back when we used SVN" | Line 91 |
-| Sentence variety | Short emphatic "Let that sink in." among longer sentences | Line 103 |
-| Genuine aside | "(though I'm not sure this is the right framing)" | Line 115 |
+| [signal type] | [example snippet from content] | Line [N] |
 
 *If no human writing signals are detected, omit this section.*
 
@@ -513,7 +508,7 @@ Would you like me to:
 
 | Category | Points | Scoring |
 |----------|--------|---------|
-| AI Patterns | 25 | -5 per CRITICAL, -2 per HIGH, -1 per MEDIUM |
+| AI Patterns | 25 | -5 per CRITICAL, -2 per HIGH, -1 per MEDIUM, -0 per LOW |
 | Style Compliance | 25 | -3 per violation (capped at 0) |
 | Flow Quality | 20 | -4 per issue (capped at 0) |
 | Consistency | 15 | -3 per problem (capped at 0) |

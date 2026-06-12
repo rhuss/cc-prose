@@ -296,19 +296,19 @@ sentence_patterns:
 **AI Vocabulary Words:**
 - Never: delve, leverage, utilize, robust, comprehensive, crucial, pivotal
 - Never: foster, garner, underscore, testament, tapestry, vibrant, landscape
-- Never: meticulous, paramount, harness, facilitate
+- Never: meticulous, paramount, harness, facilitate, enhance, enduring
 
 **Significance Inflation:**
 - Never: "stands as", "serves as", "is a testament", "vital role"
-- Never: "pivotal role", "key turning point", "evolving landscape"
+- Never: "pivotal role", "key turning point", "evolving landscape", "indelible mark"
 
 **Promotional Language:**
 - Never: boasts, vibrant, groundbreaking, renowned, breathtaking, stunning
-- Never: nestled, in the heart of, must-visit
+- Never: nestled, in the heart of, must-visit, rich cultural heritage
 
 **Superficial -ing Analyses:**
 - Never: highlighting, underscoring, emphasizing, fostering, showcasing
-- Never: ensuring, reflecting, symbolizing, contributing to
+- Never: ensuring, reflecting, symbolizing, contributing to, cultivating
 
 **Style Issues:**
 - Never: curly quotes (" "), em dashes (---), en dashes (--)
@@ -364,7 +364,7 @@ sentence_patterns:
 5. **Specific, concrete details**: Real-world specifics you chose for authenticity (actual tool names, version numbers, concrete scenarios rather than generic descriptions).
 6. **Era-bound and context-specific references**: References to specific technologies, cultural moments, or time periods that ground the content in reality.
 
-**Rule**: If self-validation flags something you deliberately added in Step 5 for personality, keep it. The personality is the point. Only reject patterns that slipped in unintentionally.
+**Protected categories**: Self-validation must NEVER reject content that falls into any of the 6 categories above, regardless of whether it was intentionally added. These categories are always protected: short emphatic sentences, first-person asides, mixed-feeling expressions, self-corrections, specific concrete details, and era-bound references.
 
 ### Step 6: Self-Validation
 
@@ -400,6 +400,11 @@ If found: Apply isolation-aware judgment before rejecting:
 3. If 2+ different tell types exist, rephrase to eliminate them.
 4. CRITICAL tells (chatbot artifacts, knowledge cutoffs) and stoplist
    words are ALWAYS rejected regardless of isolation.
+5. False-positive awareness: formal or academic vocabulary that matches
+   the voice profile's formality setting is never treated as an AI tell.
+   Common transition words ("however", "nevertheless") in isolation are
+   not tells. These patterns are common in human writing and should not
+   trigger rejection even when other tells exist.
 
 This prevents the generator from stripping personality it deliberately
 added. A single em dash or one formal word does not make content

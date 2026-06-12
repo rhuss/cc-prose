@@ -1,6 +1,6 @@
 ---
 name: humanizer
-version: 2.8.0
+version: 2.9.0
 description: |
   Remove signs of AI-generated writing from text. Use when editing or reviewing
   text to make it sound more natural and human-written. Based on Wikipedia's
@@ -32,7 +32,7 @@ When given text to humanize:
 3. **Preserve meaning** - Keep the core message intact.
 4. **Match the voice** - Fit the intended tone (formal, casual, technical). Add personality only when the content and the author's voice call for it (see PERSONALITY AND SOUL).
 
-The draft → audit → final loop and the deliverable are defined under Process and Output, below.
+The draft, self-audit, conditional rewrite loop and the deliverable format are defined under Process and Output, below.
 
 
 ## Voice Calibration (Optional)
@@ -593,59 +593,91 @@ When you see these, lean toward leaving the prose alone — they are evidence of
 
 ## Process and Output
 
-1. Read the input carefully and identify every instance of the patterns above.
-2. Write a **draft rewrite**. Check that it reads naturally aloud, varies sentence length, prefers specific details and simple constructions (is/are/has), and keeps the appropriate register.
-3. Ask: **"What makes the below so obviously AI generated?"** Answer briefly with any remaining tells.
-4. Revise into a **final rewrite** that addresses them and contains no em or en dashes (see §14).
+1. **Read** the input carefully and identify every instance of the patterns above.
 
-Deliver the draft, the brief "still-AI" bullets, the final rewrite, and (optionally) a short summary of changes.
+2. **Draft rewrite** (internal, not shown to user). Write a rewrite that reads naturally aloud, varies sentence length, prefers specific details and simple constructions (is/are/has), and keeps the appropriate register.
+
+3. **Adversarial self-audit.** Ask one open-ended question about the draft rewrite:
+
+   > "What makes this still obviously AI-generated?"
+
+   Answer briefly with any remaining tells. Focus on **higher-order signals** that individual pattern rules do not catch:
+   - Rhythm and cadence (too uniform, too tidy)
+   - Structure (overly balanced paragraphs, predictable flow)
+   - Tone (evenly neutral, lacks genuine voice variation)
+   - Specificity (generic where concrete detail would be natural)
+   - Emotional range (flatlined, no mixed feelings)
+
+   Do NOT re-check individual pattern rules here (those are already enforced in step 2).
+
+   **False-positive guidance.** Do not flag any of the following as AI tells. Voice profile traits must not be flagged as AI tells.
+   - Intentional repetition for emphasis
+   - Rhetorical list structures the author chose
+   - Voice-consistent traits matching the voice profile
+   - Genuine asides, self-corrections, or parenthetical interruptions
+   - Mixed feelings or unresolved tension (these are human signals)
+   - Short emphatic sentences used for effect
+   - Specific, unusual, or hard-to-fabricate details
+   - Dated, era-bound references (slang, memes, or in-jokes tied to a specific year)
+   - First-person editorial choices the writer can defend
+   - Mixed casual and formal registers
+   - Common transition words in isolation
+   - Formal vocabulary that matches the content's register
+
+4. **Conditional final rewrite.**
+   - If the self-audit found tells: write a final rewrite that addresses them.
+   - If the self-audit found no tells: skip this step. Report "No additional AI tells found."
+
+5. **Re-validate and correct.** Check the final rewrite against all pattern rules, including the em-dash/en-dash ban (see §14). If the final rewrite introduced new violations, perform exactly **one correction pass**, then deliver as-is. Do not iterate further.
+
+6. **Deliver.** Present to the user:
+   - The **final rewrite only** (never show the intermediate draft)
+   - **Self-audit findings** after the content in a clearly labeled section (or "No additional AI tells found." if step 4 was skipped)
+   - A short **summary of changes**
 
 
 ## Full Example
 
-**Before (AI-sounding):**
+**Input (AI-sounding):**
 > Great question! Here is an essay on this topic. I hope this helps!
 >
-> AI-assisted coding serves as an enduring testament to the transformative potential of large language models, marking a pivotal moment in the evolution of software development. In today's rapidly evolving technological landscape, these groundbreaking tools—nestled at the intersection of research and practice—are reshaping how engineers ideate, iterate, and deliver, underscoring their vital role in modern workflows.
+> AI-assisted coding serves as an enduring testament to the transformative potential of large language models, marking a pivotal moment in the evolution of software development. In today’s rapidly evolving technological landscape, these groundbreaking tools—nestled at the intersection of research and practice—are reshaping how engineers ideate, iterate, and deliver, underscoring their vital role in modern workflows.
 >
-> At its core, the value proposition is clear: streamlining processes, enhancing collaboration, and fostering alignment. It's not just about autocomplete; it's about unlocking creativity at scale, ensuring that organizations can remain agile while delivering seamless, intuitive, and powerful experiences to users. The tool serves as a catalyst. The assistant functions as a partner. The system stands as a foundation for innovation.
+> At its core, the value proposition is clear: streamlining processes, enhancing collaboration, and fostering alignment. It’s not just about autocomplete; it’s about unlocking creativity at scale, ensuring that organizations can remain agile while delivering seamless, intuitive, and powerful experiences to users. The tool serves as a catalyst. The assistant functions as a partner. The system stands as a foundation for innovation.
 >
 > Industry observers have noted that adoption has accelerated from hobbyist experiments to enterprise-wide rollouts, from solo developers to cross-functional teams. The technology has been featured in The New York Times, Wired, and The Verge. Additionally, the ability to generate documentation, tests, and refactors showcases how AI can contribute to better outcomes, highlighting the intricate interplay between automation and human judgment.
 >
-> - 💡 **Speed:** Code generation is significantly faster, reducing friction and empowering developers.
-> - 🚀 **Quality:** Output quality has been enhanced through improved training, contributing to higher standards.
-> - ✅ **Adoption:** Usage continues to grow, reflecting broader industry trends.
+> - :bulb: **Speed:** Code generation is significantly faster, reducing friction and empowering developers.
+> - :rocket: **Quality:** Output quality has been enhanced through improved training, contributing to higher standards.
+> - :white_check_mark: **Adoption:** Usage continues to grow, reflecting broader industry trends.
 >
 > While specific details are limited based on available information, it could potentially be argued that these tools might have some positive effect. Despite challenges typical of emerging technologies—including hallucinations, bias, and accountability—the ecosystem continues to thrive. In order to fully realize this potential, teams must align with best practices.
 >
 > In conclusion, the future looks bright. Exciting times lie ahead as we continue this journey toward excellence. Let me know if you’d like me to expand on any section!
 
-**Draft rewrite:**
-> AI coding assistants speed up some tasks. In a 2024 study by Google, developers using Codex completed simple functions 55% faster than a control group, but showed no improvement on debugging or architectural decisions.
->
-> The tools are good at boilerplate: config files, test scaffolding, repetitive refactors. They are bad at knowing when they are wrong. I have mass-accepted suggestions that compiled, passed lint, and still did the wrong thing because I stopped paying attention.
->
-> Mira, an engineer at a fintech startup I interviewed, said she uses Copilot "like autocomplete for boring code" but reviews every line before committing. Jake, a senior dev at a larger company, disabled it after it kept suggesting patterns from a deprecated internal library.
->
-> The productivity claims are hard to verify. GitHub says Copilot users "accept 30% of suggestions," but acceptance is not correctness, and correctness is not value. The 2024 Uplevel study found no statistically significant difference in pull-request throughput between teams with and without AI assistants.
->
-> None of this means the tools are useless. It means they are tools. They do not replace judgment, and they do not eliminate the need for tests. If you do not have tests, you cannot tell whether the suggestion is right.
+*(Step 1 reads the input; Step 2 produces a draft rewrite. Neither is shown to the user. Steps 5-6, re-validation and delivery formatting, are mechanical and omitted from this example.)*
 
-**What makes the below so obviously AI generated?**
-- The rhythm is still a bit too tidy (clean contrasts, evenly paced paragraphs).
-- The named people and study citations can read like plausible-but-made-up placeholders unless they're real and sourced.
-- The closer leans a touch slogan-y ("If you do not have tests...") rather than sounding like a person talking.
+**Step 3: Self-audit** ("What makes this still obviously AI-generated?")
+- The rhythm is still too tidy: clean contrasts, evenly paced paragraphs, each one the same length.
+- The named people and study citations read like plausible-but-made-up placeholders.
+- The closer leans slogan-y ("If you do not have tests...") rather than sounding like a person talking.
 
-**Now make it not obviously AI generated.**
+**Step 4: Final rewrite** (addresses self-audit findings)
+
 > AI coding assistants can make you faster at the boring parts. Not everything. Definitely not architecture.
 >
-> They're great at boilerplate: config files, test scaffolding, repetitive refactors. They're also great at sounding right while being wrong. I've accepted suggestions that compiled, passed lint, and still missed the point because I stopped paying attention.
+> They’re great at boilerplate: config files, test scaffolding, repetitive refactors. They’re also great at sounding right while being wrong. I’ve accepted suggestions that compiled, passed lint, and still missed the point because I stopped paying attention.
 >
-> People I talk to tend to land in two camps. Some use it like autocomplete for chores and review every line. Others disable it after it keeps suggesting patterns they don't want. Both feel reasonable.
+> People I talk to tend to land in two camps. Some use it like autocomplete for chores and review every line. Others disable it after it keeps suggesting patterns they don’t want. Both feel reasonable.
 >
-> The productivity metrics are slippery. GitHub can say Copilot users "accept 30% of suggestions," but acceptance isn't correctness, and correctness isn't value. If you don't have tests, you're basically guessing.
+> The productivity metrics are slippery. GitHub can say Copilot users "accept 30% of suggestions," but acceptance isn’t correctness, and correctness isn’t value. If you don’t have tests, you’re basically guessing.
 
-**Changes made:** Stripped the chatbot framing, significance inflation, promotional and -ing padding, rule-of-three and synonym cycling, false ranges, copula avoidance, em dashes/emojis/boldface/curly quotes, the formulaic "challenges" section, cutoff and hedging disclaimers, filler and persuasive framing, and the generic upbeat conclusion - then rebuilt the voice with varied rhythm and concrete detail.
+**Self-audit findings:**
+- Rhythm: broke up the uniform paragraph cadence with varied sentence lengths and a two-word fragment opener
+- Specificity: removed fabricated-sounding citations and replaced with paraphrased observations
+- Tone: rewrote the slogan-y closer as conversational ("you’re basically guessing")
+
+**Changes made:** Stripped the chatbot framing, significance inflation, promotional and -ing padding, rule-of-three and synonym cycling, false ranges, copula avoidance, em dashes/emojis/boldface/curly quotes, the formulaic "challenges" section, cutoff and hedging disclaimers, filler and persuasive framing, and the generic upbeat conclusion. Self-audit then addressed remaining rhythm uniformity, fabricated citations, and slogan-like closing.
 
 
 ## Reference

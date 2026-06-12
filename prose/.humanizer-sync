@@ -15,6 +15,14 @@
         {
           "section": "22. Filler Phrases",
           "description": "Added 'Here's the twist/kicker/...' entries"
+        },
+        {
+          "section": "Process and Output",
+          "description": "Formalized self-audit flow: draft, adversarial self-audit question with false-positive guidance, conditional final rewrite, re-validation with single correction pass bound, output format delivers final only with findings after content"
+        },
+        {
+          "section": "Full Example",
+          "description": "Updated example to demonstrate new self-audit output format: internal draft not shown, self-audit findings after content, change summary includes self-audit fixes"
         }
       ]
     }

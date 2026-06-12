@@ -60,21 +60,31 @@ A user submits text that contains deliberate stylistic choices (e.g., intentiona
 - What happens when the self-audit identifies issues that conflict with the voice profile? The voice profile takes precedence. The self-audit MUST NOT flag voice-consistent traits as AI tells.
 - What happens when the self-audit introduces new pattern violations in the final rewrite? The final rewrite MUST comply with all humanizer pattern rules. If the rewrite addressing self-audit findings introduces a new violation, that violation MUST be caught and corrected (the pattern rules remain authoritative, per FR-010).
 
+## Clarifications
+
+### Session 2026-06-12
+
+- Q: How many correction passes should FR-010 allow before stopping? → A: Single correction pass (rewrite once more, then deliver as-is)
+- Q: Does the content-generator perform a distinct rewrite pass after self-audit? → A: Yes, mirrors humanizer flow: generate → self-validate → self-audit → rewrite → deliver
+- Q: Should the self-audit use a single open-ended question or a structured checklist? → A: Single open-ended adversarial question, not a checklist
+- Q: Where should self-audit findings appear in the final output? → A: After the content, in a clearly labeled section
+- Q: How should the self-audit access false-positive guidance? → A: Inline in the self-audit prompt (embed key false-positive examples directly)
+
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
 - **FR-001**: The humanizer MUST perform a self-audit step after its initial pattern-based rewrite, asking "What makes this still obviously AI-generated?" and listing remaining tells as brief bullets.
 - **FR-002**: The humanizer MUST perform a final rewrite that addresses the findings from the self-audit step.
-- **FR-003**: The humanizer MUST present only the final rewrite to the user (not the intermediate draft), along with the self-audit findings and a change summary.
-- **FR-004**: The content-generator MUST perform a self-audit step after its existing rule-based self-validate, asking "What makes this obviously AI-generated?" and addressing any findings before delivery.
+- **FR-003**: The humanizer MUST present only the final rewrite to the user (not the intermediate draft). Self-audit findings and the change summary MUST appear after the content in a clearly labeled section, keeping the primary deliverable front and center.
+- **FR-004**: The content-generator MUST perform a self-audit step after its existing rule-based self-validate, asking "What makes this obviously AI-generated?" If the self-audit identifies findings, the content-generator MUST perform a distinct rewrite pass addressing those findings before delivery. The full flow is: generate → self-validate → self-audit → rewrite (if findings) → deliver.
 - **FR-005**: The content-generator MUST retain its existing rule-based self-validate step; the self-audit is an additional step, not a replacement.
-- **FR-006**: The self-audit question MUST focus on higher-order signals (rhythm, cadence, structure, tone, specificity, emotional range) rather than individual pattern-rule compliance.
-- **FR-007**: The self-audit MUST respect false-positive guidance and human signal preservation, not flagging deliberate stylistic choices as AI tells.
+- **FR-006**: The self-audit MUST use a single open-ended adversarial question ("What makes this still obviously AI-generated?") rather than a structured checklist. The question focuses on higher-order signals (rhythm, cadence, structure, tone, specificity, emotional range) rather than individual pattern-rule compliance. The open-ended form is intentional: it lets the model surface unexpected tells that a fixed checklist would miss.
+- **FR-007**: The self-audit MUST respect false-positive guidance and human signal preservation, not flagging deliberate stylistic choices as AI tells. The false-positive guidance MUST be embedded inline in the self-audit prompt instructions (e.g., "Do not flag: intentional repetition for emphasis, rhetorical list structures, voice-consistent traits") rather than referenced from an external file at runtime.
 - **FR-008**: The final rewrite (humanizer) MUST verify that no em-dashes or en-dashes are present in the output.
 - **FR-009**: When the self-audit finds no remaining AI tells, the system MUST skip the final rewrite step and report that no additional tells were found.
-- **FR-010**: The humanizer MUST re-validate the final rewrite against all pattern rules before presenting it to the user. If the final rewrite introduces new pattern violations, those violations MUST be corrected.
-- **FR-011**: The content-generator MUST include self-audit findings in its output when findings exist, so the user can see what the self-audit caught. When no findings exist, the output indicates that no additional AI tells were found.
+- **FR-010**: The humanizer MUST re-validate the final rewrite against all pattern rules before presenting it to the user. If the final rewrite introduces new pattern violations, the humanizer MUST perform exactly one correction pass. After this single correction pass, the result is delivered as-is (no further iteration).
+- **FR-011**: The content-generator MUST include self-audit findings after the content in a clearly labeled section when findings exist, so the user can see what the self-audit caught. When no findings exist, the output indicates that no additional AI tells were found.
 
 ### Key Entities
 

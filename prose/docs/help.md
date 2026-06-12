@@ -318,8 +318,13 @@ ls .prose/
 ### Humanizer Not Working
 
 ```bash
-# Sync humanizer from source
-make sync-humanizer
+# Check for upstream humanizer changes
+make check-upstream
+
+# Merge upstream changes (AI-assisted, preserves local additions)
+/update-humanizer
+
+# Reinstall plugin after updates
 make reinstall
 ```
 

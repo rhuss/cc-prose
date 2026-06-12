@@ -88,10 +88,10 @@ A maintainer wants to understand what was changed during past syncs, what was in
 
 ### Functional Requirements
 
-- **FR-001**: System MUST maintain a `.humanizer-sync` JSON tracking file in the `prose/` directory that records upstream repo URL, last synced commit SHA, last sync date, and metadata about local modifications to preserve.
+- **FR-001**: System MUST maintain a `prose/.humanizer-sync` JSON tracking file that records upstream repo URL, last synced commit SHA, last sync date, and metadata about local modifications to preserve.
 - **FR-002**: System MUST provide a `scripts/check-upstream-changes.sh` script that compares the local tracking state against the current upstream HEAD and reports changes without modifying local files.
 - **FR-003**: System MUST provide a `make check-upstream` Makefile target that invokes the check script.
-- **FR-004**: System MUST provide a `prose/.claude/commands/update-humanizer.md` Claude Code command that performs AI-assisted merge of upstream changes while preserving local additions.
+- **FR-004**: System MUST provide a `prose/commands/update-humanizer.md` Claude Code command that performs AI-assisted merge of upstream changes while preserving local additions.
 - **FR-005**: The merge command MUST update the `.humanizer-sync` tracking file with the new upstream commit SHA and sync date after a successful merge.
 - **FR-006**: The merge command MUST generate a sync report at `docs/sync-reports/sync-YYYY-MM-DD.md` after each sync.
 - **FR-007**: The merge command MUST also update the canonical copy at `~/.claude/skills/humanizer/SKILL.md` to keep it aligned with the plugin copy.
@@ -114,6 +114,21 @@ A maintainer wants to understand what was changed during past syncs, what was in
 - **SC-002**: All upstream pattern additions are correctly integrated without losing any local cc-prose additions after a merge.
 - **SC-003**: Every sync produces an audit trail documenting what changed, enabling review of any past sync decision.
 - **SC-004**: The old blind-copy workflow (`make sync-humanizer`) is fully replaced, eliminating the risk of accidental local addition loss.
+
+## Out of Scope
+
+- Bidirectional sync (pushing local additions back upstream to blader/humanizer)
+- Automatic sync on plugin install or update
+- Syncing files beyond `SKILL.md` from the upstream repo
+- Resolving merge conflicts automatically without human review when conflicts are detected
+- Version pinning or tracking multiple upstream branches
+
+## Dependencies
+
+- `git` - Required for shallow clone fallback and commit history inspection
+- `gh` CLI - Preferred for fast upstream checks via GitHub API (optional, falls back to git)
+- `jq` - Required for reading and writing the `.humanizer-sync` JSON tracking file
+- Claude Code - Required for the `/update-humanizer` AI-assisted merge command
 
 ## Assumptions
 

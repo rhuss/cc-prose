@@ -17,7 +17,7 @@ It complements the [copyedit plugin](https://github.com/rhuss/cc-copyedit), shar
 - **Voice extraction**: Derive voice profiles from existing writing samples
 - **Humanizer depth**: Wikipedia's 24-pattern methodology for authentic writing
 - **Proactive guidance**: Pattern prevention during writing (not just post-editing)
-- **Easy humanizer updates**: Sync from upstream source with `make sync-humanizer`
+- **Easy humanizer updates**: Delta-aware sync from upstream with change detection and intelligent merge
 
 > **Note:** If you previously used copyedit's `content-writer` skill, this plugin's `content-generator` supersedes it.
 > The copyedit plugin should focus on editing, not content creation.
@@ -256,17 +256,34 @@ Legacy paths (`~/.claude/copyedit/config/`, `.copyedit/`, `.prose/`) are still s
 
 ## Humanizer Updates
 
-The humanizer skill is sourced from `~/.claude/skills/humanizer/SKILL.md`.
-To update:
+The humanizer skill tracks the upstream [blader/humanizer](https://github.com/blader/humanizer) repository. A delta-aware sync mechanism detects upstream changes and performs intelligent merging that preserves local cc-prose additions.
+
+### Check for upstream changes
 
 ```bash
-# Edit the source at ~/.claude/skills/humanizer/SKILL.md
-# Then sync to plugin
-make sync-humanizer
-
-# Test with reinstall
-make reinstall
+# See if upstream has new commits since last sync (non-destructive)
+make check-upstream
 ```
+
+### Merge upstream changes
+
+```bash
+# AI-assisted merge preserving local additions
+/update-humanizer
+
+# Preview what would change without modifying files
+/update-humanizer --dry-run
+```
+
+The merge command:
+1. Detects changes since the last sync
+2. Merges upstream additions while preserving local cc-prose sections
+3. Updates both the plugin copy and the canonical copy at `~/.claude/skills/humanizer/SKILL.md`
+4. Generates an audit report at `docs/sync-reports/sync-YYYY-MM-DD.md`
+
+### Sync history
+
+Past sync decisions are documented in `docs/sync-reports/`. Each report records what was integrated from upstream, what local additions were preserved, and any conflicts.
 
 ## Development
 
@@ -291,6 +308,7 @@ cc-prose/
 +-- .claude-plugin/
 |   +-- marketplace.json           # Root marketplace
 +-- prose/                         # Plugin directory
+|   +-- .humanizer-sync            # Upstream sync tracking state
 |   +-- .claude-plugin/
 |   |   +-- plugin.json            # Plugin manifest
 |   +-- .claude/
@@ -301,6 +319,7 @@ cc-prose/
 |   |   +-- voice.md
 |   |   +-- check.md
 |   |   +-- init.md
+|   |   +-- update-humanizer.md    # AI-assisted upstream merge
 |   +-- skills/                    # Detailed workflows
 |   |   +-- content-generator/
 |   |   +-- humanizer/
@@ -319,6 +338,10 @@ cc-prose/
 |   |       +-- technical.yaml
 |   |       +-- tutorial.yaml
 |   +-- docs/
++-- scripts/
+|   +-- check-upstream-changes.sh  # Non-destructive upstream check
++-- docs/
+|   +-- sync-reports/              # Sync audit trail
 +-- Makefile
 +-- README.md
 +-- CLAUDE.md

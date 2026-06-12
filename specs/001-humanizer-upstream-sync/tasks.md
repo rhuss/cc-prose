@@ -13,8 +13,8 @@
 
 **Purpose**: Create directory structure and initial tracking file
 
-- [ ] T001 Create `docs/sync-reports/` directory with `.gitkeep`
-- [ ] T002 Create initial `prose/.humanizer-sync` JSON tracking file with baseline data per data-model.md schema, setting `last_sync_commit` to current upstream HEAD (`9600f2b7241cb4eed6ad803abee5ea01d67fe8e4`), `last_sync_date` to today, and `modified_skills` metadata listing local additions (rule-of-three density in category 10, filler phrases in category 22)
+- [x] T001 Create `docs/sync-reports/` directory with `.gitkeep`
+- [x] T002 Create initial `prose/.humanizer-sync` JSON tracking file with baseline data per data-model.md schema, setting `last_sync_commit` to current upstream HEAD (`9600f2b7241cb4eed6ad803abee5ea01d67fe8e4`), `last_sync_date` to today, and `modified_skills` metadata listing local additions (rule-of-three density in category 10, filler phrases in category 22)
 
 ---
 
@@ -24,8 +24,8 @@
 
 **Independent Test**: Run `make check-upstream` and verify it reports upstream status correctly.
 
-- [ ] T003 [US1] Create `scripts/check-upstream-changes.sh` that reads `prose/.humanizer-sync`, extracts `last_sync_commit`, checks for `gh` CLI availability, and queries upstream commit state via `gh api repos/blader/humanizer/commits/main` (or falls back to `git clone --depth 1` to a temp dir). Output: commit count since last sync, commit messages, and diff summary for SKILL.md. Handle edge cases: missing tracking file (error with instructions), unreachable upstream (error without modifying local files), invalid last_sync_commit (suggest baseline reset). Clean up temp directories on exit via trap.
-- [ ] T004 [US1] Update `Makefile`: replace `sync-humanizer` target with `check-upstream` target that invokes `scripts/check-upstream-changes.sh`. Update `.PHONY` declaration and `help` target text.
+- [x] T003 [US1] Create `scripts/check-upstream-changes.sh` that reads `prose/.humanizer-sync`, extracts `last_sync_commit`, checks for `gh` CLI availability, and queries upstream commit state via `gh api repos/blader/humanizer/commits/main` (or falls back to `git clone --depth 1` to a temp dir). Output: commit count since last sync, commit messages, and diff summary for SKILL.md. Handle edge cases: missing tracking file (error with instructions), unreachable upstream (error without modifying local files), invalid last_sync_commit (suggest baseline reset). Clean up temp directories on exit via trap.
+- [x] T004 [US1] Update `Makefile`: replace `sync-humanizer` target with `check-upstream` target that invokes `scripts/check-upstream-changes.sh`. Update `.PHONY` declaration and `help` target text.
 
 ---
 
@@ -35,7 +35,7 @@
 
 **Independent Test**: Run `/update-humanizer` and verify SKILL.md has upstream additions while local sections remain intact.
 
-- [ ] T005 [US2] Create `prose/commands/update-humanizer.md` Claude Code command. The command must: (1) Read `prose/.humanizer-sync` for current state. (2) Clone upstream to temp dir and extract changes since `last_sync_commit` as a patch. (3) Read the `modified_skills[].local_additions` metadata to identify sections to preserve. (4) Instruct the AI merge agent to apply upstream changes to `prose/skills/humanizer/SKILL.md` while preserving listed local sections. (5) Handle initial sync case (no tracking file) by creating baseline. (6) After successful merge, update `prose/.humanizer-sync` with new commit SHA and date. (7) Copy merged file to `~/.claude/skills/humanizer/SKILL.md` (canonical copy). (8) Generate sync report at `docs/sync-reports/sync-YYYY-MM-DD.md` following the template from research.md R4. (9) Handle same-day duplicate reports with suffix. (10) Commit changes with descriptive message.
+- [x] T005 [US2] Create `prose/commands/update-humanizer.md` Claude Code command. The command must: (1) Read `prose/.humanizer-sync` for current state. (2) Clone upstream to temp dir and extract changes since `last_sync_commit` as a patch. (3) Read the `modified_skills[].local_additions` metadata to identify sections to preserve. (4) Instruct the AI merge agent to apply upstream changes to `prose/skills/humanizer/SKILL.md` while preserving listed local sections. (5) Handle initial sync case (no tracking file) by creating baseline. (6) After successful merge, update `prose/.humanizer-sync` with new commit SHA and date. (7) Copy merged file to `~/.claude/skills/humanizer/SKILL.md` (canonical copy). (8) Generate sync report at `docs/sync-reports/sync-YYYY-MM-DD.md` following the template from research.md R4. (9) Handle same-day duplicate reports with suffix. (10) Commit changes with descriptive message.
 
 ---
 
@@ -63,8 +63,8 @@
 
 **Purpose**: Documentation and cleanup
 
-- [ ] T006 Update `README.md` to document the new sync workflow: remove references to `make sync-humanizer`, add instructions for `make check-upstream` and `/update-humanizer` command
-- [ ] T007 [P] Update `CLAUDE.md` "Humanizer Source" section to reference the new sync mechanism instead of the old `make sync-humanizer` workflow
+- [x] T006 Update `README.md` to document the new sync workflow: remove references to `make sync-humanizer`, add instructions for `make check-upstream` and `/update-humanizer` command
+- [x] T007 [P] Update `CLAUDE.md` "Humanizer Source" section to reference the new sync mechanism instead of the old `make sync-humanizer` workflow
 
 ---
 

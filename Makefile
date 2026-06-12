@@ -1,8 +1,7 @@
-.PHONY: validate install uninstall sync-humanizer help
+.PHONY: validate install uninstall check-upstream reinstall help
 
 MARKETPLACE := prose-plugin-development
 PLUGIN := prose@$(MARKETPLACE)
-HUMANIZER_SOURCE := ~/.claude/skills/humanizer/SKILL.md
 
 validate:
 	claude plugin validate ./
@@ -24,18 +23,17 @@ uninstall:
 	@echo "Removing marketplace..."
 	@claude plugin marketplace rm $(MARKETPLACE) 2>/dev/null || echo "Marketplace not installed"
 
-sync-humanizer:
-	@if [ -f "$(HUMANIZER_SOURCE)" ]; then \
-		cp "$(HUMANIZER_SOURCE)" prose/skills/humanizer/SKILL.md; \
-		echo "Humanizer synced from $(HUMANIZER_SOURCE)"; \
-	else \
-		echo "Error: Humanizer source not found at $(HUMANIZER_SOURCE)"; \
-		exit 1; \
-	fi
+reinstall: uninstall install
+
+check-upstream:
+	@bash scripts/check-upstream-changes.sh
 
 help:
 	@echo "Available targets:"
-	@echo "  validate       - Validate plugin manifests"
-	@echo "  install        - Install or update plugin (idempotent)"
-	@echo "  uninstall      - Remove plugin and marketplace"
-	@echo "  sync-humanizer - Sync humanizer skill from ~/.claude/skills/humanizer"
+	@echo "  validate        - Validate plugin manifests"
+	@echo "  install         - Install or update plugin (idempotent)"
+	@echo "  uninstall       - Remove plugin and marketplace"
+	@echo "  reinstall       - Full reinstall (uninstall + install)"
+	@echo "  check-upstream  - Check for upstream humanizer changes (non-destructive)"
+	@echo ""
+	@echo "To merge upstream changes, use the /update-humanizer Claude Code command."

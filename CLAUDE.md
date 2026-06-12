@@ -108,23 +108,29 @@ Prose-specific additions:
 ## Development
 
 ```bash
-make validate       # Validate plugin structure
-make install        # Install plugin
-make uninstall      # Remove plugin
-make reinstall      # Full reinstall
-make sync-humanizer # Update humanizer from source
+make validate        # Validate plugin structure
+make install         # Install plugin
+make uninstall       # Remove plugin
+make reinstall       # Full reinstall
+make check-upstream  # Check for upstream humanizer changes
 ```
 
 ## Humanizer Source
 
-The humanizer skill is maintained at `~/.claude/skills/humanizer/SKILL.md`.
-This is the canonical source based on Wikipedia's "Signs of AI writing" guide.
-The upstream community version is at https://github.com/blader/humanizer.
+The humanizer skill tracks the upstream [blader/humanizer](https://github.com/blader/humanizer) repository,
+based on Wikipedia's "Signs of AI writing" guide. The canonical local copy lives at `~/.claude/skills/humanizer/SKILL.md`.
 
-To update the plugin's humanizer:
+Sync state is tracked in `prose/.humanizer-sync`, which records the last synced upstream commit
+and lists local cc-prose additions that must be preserved during merges.
+
+To check for upstream changes:
 ```bash
-make sync-humanizer
-make reinstall
+make check-upstream
+```
+
+To merge upstream changes (AI-assisted, preserves local additions):
+```
+/update-humanizer
 ```
 
 ## Voice Templates

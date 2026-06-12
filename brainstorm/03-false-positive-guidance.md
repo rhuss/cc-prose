@@ -101,3 +101,49 @@ Approach A: Add guidance to all three skills. Each skill needs the information i
 - Should the pre-validator's scoring algorithm literally subtract points for human signals (positive adjustment), or just not penalize isolated tells?
 - How do we handle the tension between CLAUDE.md's hard "no em dashes" rule and the false-positive guidance that says "em dashes alone are not a tell"? The CLAUDE.md rule is a project-level style preference, not an AI detection rule. They serve different purposes and both can coexist.
 - Should we contribute the cluster-detection principle back to upstream?
+
+---
+
+## Revisit: 2026-06-12
+
+### Updated Problem Framing
+
+The upstream humanizer sync (brainstorm #05, now shipped) pulled in v2.8.0 which includes the full "DETECTION GUIDANCE" section with both "What NOT to flag" and "Signs of human writing" lists, plus the cluster-detection principle. This means requirement #1 (humanizer additions) is already complete, for free, from the upstream sync.
+
+The remaining work is scoped to the pre-validator and content-generator skills only.
+
+### What's Done (from upstream sync)
+
+- **Humanizer**: Full "DETECTION GUIDANCE" section now present in `prose/skills/humanizer/SKILL.md`, including:
+  - 12-item false-positive list (what NOT to flag)
+  - 7-item human-writing signals list (preserve these)
+  - Cluster-detection principle ("look for clusters of tells, not isolated ones")
+  - Positioned after pattern categories, before the Process section (exactly as requirement #1 specified)
+
+### What's Still Needed
+
+1. **Pre-validator** (`prose/skills/pre-validator/SKILL.md`):
+   - Reduce severity of isolated tells (single em dash alone = LOW, not HIGH)
+   - Add cluster-detection: escalate severity when 3+ different AI tells co-occur in the same paragraph
+   - Add human signal awareness: content with specific details, mixed feelings, or self-corrections should not be penalized
+   - Update scoring algorithm for false-positive awareness
+   - Update category count references from 24 to 33
+
+2. **Content-generator** (`prose/skills/content-generator/SKILL.md`):
+   - Self-validation should not reject output for isolated tells
+   - Add "preserve these human signals" guidance to self-validation step
+   - Don't flatten personality markers the content-generator itself added
+   - Update category count references from 24 to 33
+
+### Updated Decision
+
+Approach A remains correct, but scope is reduced. The humanizer portion is complete via upstream sync. Implementation now focuses on pre-validator scoring changes and content-generator self-validation updates.
+
+### Resolved Open Questions
+
+- "Should we contribute the cluster-detection principle back to upstream?" is now moot: it already came FROM upstream.
+
+### Remaining Open Questions
+
+- Pre-validator scoring: subtract points for human signals, or just not penalize isolated tells?
+- CLAUDE.md "no em dashes" vs false-positive guidance tension: these serve different purposes (style preference vs AI detection) and can coexist. The pre-validator should respect project-level style rules (CLAUDE.md) separately from AI detection scoring.

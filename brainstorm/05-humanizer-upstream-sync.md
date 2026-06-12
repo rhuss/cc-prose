@@ -1,7 +1,7 @@
 # Brainstorm: Humanizer upstream sync mechanism
 
 **Date:** 2026-06-12
-**Status:** active
+**Status:** spec-created
 
 ## Problem Framing
 

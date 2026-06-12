@@ -1,7 +1,7 @@
 # Brainstorm: Humanizer pattern sync with upstream v2.8.0
 
 **Date:** 2026-06-12
-**Status:** active
+**Status:** spec-created
 **Upstream:** https://github.com/blader/humanizer
 
 ## Problem Framing

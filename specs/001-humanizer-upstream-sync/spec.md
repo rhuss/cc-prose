@@ -76,6 +76,14 @@ A maintainer wants to understand what was changed during past syncs, what was in
 - What happens when local additions have been accidentally removed? The merge command compares against the `modified_skills` metadata and warns if expected local sections are missing before proceeding.
 - What happens when two syncs are performed on the same day? The sync report filename includes a suffix (e.g., `sync-2026-06-12-2.md`) to avoid overwriting.
 
+## Clarifications
+
+### Session 2026-06-12
+
+- Q: How are local additions identified for merge preservation? → A: The `modified_skills` metadata in `.humanizer-sync` lists section headings containing local additions. The merge agent reads this metadata to know what to preserve. No inline markers in SKILL.md are needed.
+- Q: What network strategy should the check script use? → A: Prefer `gh api` for speed (no clone needed). Fall back to `git clone --depth 1` (shallow clone) when `gh` is unavailable. Clean up temp directories in both paths.
+- Q: What structure should sync reports follow? → A: Follow the cc-spex pattern: upstream commit range, per-file change summary, changes integrated, local additions preserved, conflicts (if any), and action items.
+
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
@@ -88,14 +96,14 @@ A maintainer wants to understand what was changed during past syncs, what was in
 - **FR-006**: The merge command MUST generate a sync report at `docs/sync-reports/sync-YYYY-MM-DD.md` after each sync.
 - **FR-007**: The merge command MUST also update the canonical copy at `~/.claude/skills/humanizer/SKILL.md` to keep it aligned with the plugin copy.
 - **FR-008**: System MUST replace the existing `make sync-humanizer` target (blind copy) with the new `make check-upstream` target.
-- **FR-009**: The `.humanizer-sync` tracking file MUST document which local additions need to be preserved during merges (rule-of-three density detection, custom filler phrase entries).
-- **FR-010**: The check script MUST clone the upstream repo to a temporary directory and clean it up after use.
+- **FR-009**: The `.humanizer-sync` tracking file MUST document which local additions need to be preserved during merges by listing section headings containing local content (rule-of-three density detection, custom filler phrase entries) in the `modified_skills` metadata.
+- **FR-010**: The check script MUST prefer `gh api` for upstream comparison when available, falling back to a shallow `git clone --depth 1` to a temporary directory, and clean up temp directories after use.
 - **FR-011**: The merge command MUST handle the initial sync case (no tracking file exists) by creating the baseline tracking file.
 
 ### Key Entities
 
 - **Tracking File** (`.humanizer-sync`): JSON document storing sync state. Contains upstream_repo URL, last_sync_commit SHA, last_sync_date, and modified_skills metadata.
-- **Sync Report** (`docs/sync-reports/sync-YYYY-MM-DD.md`): Markdown document recording what changed upstream, what was integrated, and what local additions were preserved.
+- **Sync Report** (`docs/sync-reports/sync-YYYY-MM-DD.md`): Markdown document following the cc-spex pattern with sections for: upstream commit range, per-file change summary, changes integrated, local additions preserved, conflicts (if any), and action items.
 - **Upstream Repo** (blader/humanizer): The canonical community-maintained humanizer. Only `SKILL.md` is tracked for sync purposes.
 
 ## Success Criteria *(mandatory)*
@@ -113,4 +121,4 @@ A maintainer wants to understand what was changed during past syncs, what was in
 - The `gh` CLI is available for API access to check upstream state. The check script falls back to `git clone` if `gh` is unavailable.
 - Claude Code is available for running the `/update-humanizer` merge command. The check script works without Claude Code.
 - The canonical local copy at `~/.claude/skills/humanizer/SKILL.md` continues to exist and should be kept in sync with the plugin copy.
-- Local additions are marked or identifiable within the SKILL.md structure (by section headings or inline comments) so the merge agent can distinguish them from upstream content.
+- Local additions are identifiable via the `modified_skills` metadata in `.humanizer-sync`, which lists section headings containing local content. No inline markers in SKILL.md are needed.

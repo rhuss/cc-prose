@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>cc-prose-humanizer — 2026-05-04-opus</title>
+<script>
+(function () {
+  try {
+    var stored = localStorage.getItem('eval-report-theme');
+    var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var theme = stored || (prefersDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+})();
+</script>
+<style>
+:root {
+  --bg: #cbd1da;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --surface-3: #e2e8f0;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --text-soft: #475569;
+  --accent: #2563eb;
+  --accent-strong: #1e3a8a;
+  --accent-soft: #dbeafe;
+  --success: #16a34a;
+  --success-soft: #dcfce7;
+  --success-border: #86efac;
+  --danger: #dc2626;
+  --danger-soft: #fee2e2;
+  --danger-border: #fca5a5;
+  --warning: #d97706;
+  --warning-soft: #fef3c7;
+  --warning-border: #fcd34d;
+  --neutral-soft: #f1f5f9;
+  --neutral-border: #cbd5e1;
+  --code-bg: #eef2f7;
+  --shadow: 0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04);
+  --shadow-strong: 0 4px 12px rgba(15,23,42,.08), 0 1px 3px rgba(15,23,42,.05);
+  --diff-add-bg: #e6ffec;
+  --diff-add-strong: #acf2bd;
+  --diff-del-bg: #ffeef0;
+  --diff-del-strong: #fdb8c0;
+  --diff-hdr-bg: #f0f0f0;
+  --case-pass-accent: #16a34a;
+  --case-fail-accent: #dc2626;
+  --case-pw-a-accent: #16a34a;
+  --case-pw-b-accent: #dc2626;
+  --case-pw-tie-accent: #d97706;
+  --case-pw-error-accent: #94a3b8;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --bg: #0b1220;
+  --surface: #0f1729;
+  --surface-2: #162033;
+  --surface-3: #1e293b;
+  --border: #1e2c44;
+  --border-strong: #334155;
+  --text: #e2e8f0;
+  --text-muted: #94a3b8;
+  --text-soft: #cbd5e1;
+  --accent: #60a5fa;
+  --accent-strong: #93c5fd;
+  --accent-soft: #1e3a8a;
+  --success: #4ade80;
+  --success-soft: #14532d;
+  --success-border: #166534;
+  --danger: #f87171;
+  --danger-soft: #7f1d1d;
+  --danger-border: #991b1b;
+  --warning: #fbbf24;
+  --warning-soft: #78350f;
+  --warning-border: #92400e;
+  --neutral-soft: #1e293b;
+  --neutral-border: #334155;
+  --code-bg: #1e293b;
+  --shadow: 0 1px 3px rgba(0,0,0,.4), 0 1px 2px rgba(0,0,0,.3);
+  --shadow-strong: 0 4px 14px rgba(0,0,0,.5), 0 1px 3px rgba(0,0,0,.35);
+  --diff-add-bg: rgba(74,222,128,.08);
+  --diff-add-strong: rgba(74,222,128,.28);
+  --diff-del-bg: rgba(248,113,113,.08);
+  --diff-del-strong: rgba(248,113,113,.28);
+  --diff-hdr-bg: #1e293b;
+  --case-pass-accent: #4ade80;
+  --case-fail-accent: #f87171;
+  --case-pw-a-accent: #4ade80;
+  --case-pw-b-accent: #f87171;
+  --case-pw-tie-accent: #fbbf24;
+  --case-pw-error-accent: #64748b;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 15px; line-height: 1.55; max-width: 1200px; margin: 0 auto; padding: 1.5em 1.5em 4em; color: var(--text); background: var(--bg); transition: background-color .15s ease, color .15s ease; }
+h1 { padding-bottom: 0; margin: 0 0 0.55em; font-size: 1.9em; letter-spacing: -0.015em; font-weight: 700; color: var(--accent-strong); }
+.report-header { margin: 0 0 1.6em; padding-bottom: 1.1em; border-bottom: 2px solid var(--border-strong); }
+.header-meta { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
+.meta-chip { display: inline-flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 999px; padding: 5px 13px 5px 12px; font-size: 0.95em; color: var(--text); box-shadow: var(--shadow); line-height: 1.4; }
+.meta-chip .meta-label { font-size: 0.78em; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); font-weight: 700; }
+.meta-chip code { background: var(--code-bg); padding: 1px 7px; border-radius: 4px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.92em; color: var(--text); }
+h2 { margin-top: 1.5em; letter-spacing: -0.005em; }
+table { border-collapse: separate; border-spacing: 0; width: 100%; margin: 1em 0; font-variant-numeric: tabular-nums; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+th, td { border-bottom: 1px solid var(--border); padding: 9px 12px; text-align: left; }
+tr:last-child td { border-bottom: none; }
+th { background: var(--surface-2); font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; }
+tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--surface-2) 50%, transparent); }
+tbody tr:hover td { background: var(--accent-soft); }
+.pass, .fail, .warn, .skip { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 0.85em; font-weight: 600; line-height: 1.4; border: 1px solid transparent; }
+.pass { color: var(--success); background: var(--success-soft); border-color: var(--success-border); }
+.fail { color: var(--danger); background: var(--danger-soft); border-color: var(--danger-border); }
+.warn { color: var(--warning); background: var(--warning-soft); border-color: var(--warning-border); }
+.skip { color: var(--text-muted); background: var(--neutral-soft); border-color: var(--neutral-border); font-weight: 500; }
+.metric-row td:last-child { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+.judge-type { font-size: 0.85em; color: var(--text-muted); }
+.subsection-heading { margin-top: 1.4em; font-size: 0.95em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+.model-heading { margin: 1.2em 0 0.4em; font-size: 0.92em; font-weight: 600; color: var(--text-soft); }
+.model-heading code { background: var(--code-bg); padding: 2px 8px; border-radius: 4px; font-size: 0.95em; font-family: ui-monospace, "SF Mono", Menlo, monospace; color: var(--text); }
+.config-table { table-layout: fixed; }
+.config-table th:first-child, .config-table td:first-child { width: 22%; }
+.config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.9em 1.6em; margin: 0.4em 0 0.8em; padding: 0; }
+.kv { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.kv dt { font-size: 0.72em; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; margin: 0; }
+.kv dd { margin: 0; font-weight: 500; font-variant-numeric: tabular-nums; word-break: break-word; line-height: 1.35; color: var(--text); }
+.kv dd.bl { color: var(--text-muted); font-size: 0.85em; font-weight: 400; }
+.kv dd.bl::before { content: "vs "; opacity: 0.7; }
+.kv dd.bl .delta { font-weight: 600; font-size: 0.95em; padding-left: 4px; }
+details.eval-params { margin: 1.2em 0 0; padding: 0; }
+details.eval-params > summary { cursor: pointer; padding: 6px 0; list-style: none; display: flex; align-items: center; gap: 8px; user-select: none; min-width: 0; }
+details.eval-params > summary::-webkit-details-marker { display: none; }
+details.eval-params > summary::before { content: "▸"; font-size: 0.9em; transition: transform .15s ease; display: inline-block; color: var(--text-muted); flex-shrink: 0; }
+details.eval-params[open] > summary::before { transform: rotate(90deg); }
+details.eval-params > summary:hover .eval-params-label { color: var(--accent); }
+.eval-params-label { font-size: 0.95em; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; flex-shrink: 0; }
+.eval-params-preview { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.85em; color: var(--text-soft); padding-left: 8px; border-left: 1px solid var(--border-strong); margin-left: 2px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+details.eval-params[open] .eval-params-preview { display: none; }
+details.eval-params > .config-grid { margin-top: 0.5em; }
+details.eval-params > .run-command { margin: 0.6em 0 0; }
+.run-command { margin: 0.4em 0 1em; }
+.run-command-label { display: block; font-size: 0.72em; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; }
+.run-command pre { margin: 0; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; overflow-x: auto; font-size: 0.85em; line-height: 1.4; }
+.run-command code { background: transparent; padding: 0; font-family: ui-monospace, "SF Mono", Menlo, monospace; color: var(--text); white-space: pre; }
+.usage-table th code { background: var(--code-bg); padding: 2px 7px; border-radius: 4px; font-size: 0.95em; font-family: ui-monospace, "SF Mono", Menlo, monospace; color: var(--text); text-transform: none; letter-spacing: 0; font-weight: 500; }
+.usage-table td { font-variant-numeric: tabular-nums; }
+.usage-table .cur-val { display: block; font-weight: 500; }
+.usage-table .bl-val { display: block; font-size: 0.82em; color: var(--text-muted); margin-top: 1px; }
+.usage-table .bl-val::before { content: "vs "; opacity: 0.7; }
+.usage-table .delta { font-weight: 600; font-size: 0.9em; padding-left: 4px; }
+.delta-good { color: var(--success); }
+.delta-bad { color: var(--danger); }
+.delta-flat { color: var(--text-muted); font-weight: 500; }
+.baseline-row td { background: var(--surface-2); font-style: italic; color: var(--text-muted); }
+.rationale { font-size: 0.88em; color: var(--text-soft); }
+.rationale p { margin: 0 0 0.5em; line-height: 1.5; }
+.rationale p:last-child { margin-bottom: 0; }
+.rationale ul, .rationale ol { margin: 0.3em 0 0.5em 1.2em; padding: 0; }
+.rationale li { margin: 0.2em 0; }
+.rationale code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; font-size: 0.9em; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+.rationale strong { color: var(--text); }
+details.case { margin: 1em 0; border: 1px solid var(--border); border-left-width: 4px; border-radius: 8px; padding: 1em 1.2em; background: var(--surface); box-shadow: var(--shadow); }
+details.case.case-pass { border-left-color: var(--case-pass-accent); }
+details.case.case-fail { border-left-color: var(--case-fail-accent); }
+details.case.case-pw-a { border-left-color: var(--case-pw-a-accent); }
+details.case.case-pw-b { border-left-color: var(--case-pw-b-accent); }
+details.case.case-pw-tie { border-left-color: var(--case-pw-tie-accent); }
+details.case.case-pw-error { border-left-color: var(--case-pw-error-accent); }
+details.case > summary { cursor: pointer; font-weight: 600; padding: 0.2em 0; font-size: 1.02em; list-style: none; display: flex; align-items: center; gap: 0.6em; }
+details.case > summary::-webkit-details-marker { display: none; }
+details.case > summary::before { content: "▸"; color: var(--text-muted); transition: transform .15s ease; display: inline-block; }
+details.case[open] > summary::before { transform: rotate(90deg); }
+details.case > summary:hover { color: var(--accent); }
+.info-box { background: var(--accent-soft); border: 1px solid var(--border); border-radius: 6px; padding: 0.8em 1em; margin: 0.6em 0; font-size: 0.9em; }
+.feedback-box { background: var(--warning-soft); border: 1px solid var(--warning-border); border-radius: 6px; padding: 0.8em 1em; margin: 0.6em 0; font-size: 0.9em; color: var(--text); }
+.file-badge { display: inline-block; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.82em; background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 5px; padding: 3px 10px; margin: 1em 0 0.5em 0; color: var(--text-soft); }
+.pw-badge { display: inline-block; font-size: 0.78em; font-weight: 700; padding: 2px 9px; border-radius: 999px; margin-left: 8px; border: 1px solid transparent; letter-spacing: 0.04em; }
+.pw-win { background: var(--success-soft); color: var(--success); border-color: var(--success-border); }
+.pw-loss { background: var(--danger-soft); color: var(--danger); border-color: var(--danger-border); }
+.pw-tie { background: var(--warning-soft); color: var(--warning); border-color: var(--warning-border); }
+.pw-error { background: var(--neutral-soft); color: var(--text-muted); border-color: var(--neutral-border); }
+.diff-table { width: 100%; border-collapse: collapse; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.82em; table-layout: fixed; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.diff-table td { padding: 1px 6px; vertical-align: top; white-space: pre-wrap; word-wrap: break-word; border: 1px solid var(--border); }
+.diff-table .ln { width: 35px; min-width: 35px; color: var(--text-muted); text-align: right; background: var(--surface-2); user-select: none; white-space: nowrap; }
+.diff-table .left, .diff-table .right { width: calc(50% - 35px); background: var(--surface); }
+.diff-table .sep { width: 1px; padding: 0; background: var(--border-strong); }
+.diff-table tr.mod .left { background: var(--diff-del-bg); }
+.diff-table tr.mod .right { background: var(--diff-add-bg); }
+.diff-table tr.add .right { background: var(--diff-add-bg); }
+.diff-table tr.add .left { background: var(--surface-2); }
+.diff-table tr.del .left { background: var(--diff-del-bg); }
+.diff-table tr.del .right { background: var(--surface-2); }
+.diff-table tr.hdr td { background: var(--diff-hdr-bg); color: var(--text-muted); font-weight: 600; }
+.diff-table .wdel { background: var(--diff-del-strong); border-radius: 2px; padding: 0 2px; }
+.diff-table .wadd { background: var(--diff-add-strong); border-radius: 2px; padding: 0 2px; }
+pre.output { background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 0.9em 1em; font-size: 0.88em; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; color: var(--text); font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+.html-preview { width: 100%; height: 80vh; max-height: 2000px; border: 1px solid var(--border-strong); border-radius: 6px; margin: 0.5em 0; background: #fff; color-scheme: light; }
+.section, .analysis { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 8px; padding: 1.3em 1.6em 1.4em; margin: 1.5em 0; box-shadow: var(--shadow); }
+.section > h2:first-child, h2.section-heading { margin: 0 0 0.7em; padding: 0; border: none; font-size: 1.3em; color: var(--accent-strong); letter-spacing: -0.005em; }
+h2.section-heading { margin: 1.8em 0 0.8em; }
+.section-intro { color: var(--text-muted); margin: 0 0 1em; font-size: 0.92em; }
+.section > table:last-child, .section > details:last-child { margin-bottom: 0; }
+.analysis { border-left-width: 5px; margin-bottom: 2em; box-shadow: var(--shadow-strong); }
+.analysis-banner { display: flex; align-items: center; gap: 0.7em; margin-bottom: 0.3em; }
+.analysis-banner h2 { margin: 0; padding: 0; border: none; font-size: 1.4em; color: var(--accent-strong); letter-spacing: -0.005em; }
+.analysis-body h2 { margin-top: 1.6em; padding-bottom: 0.35em; font-size: 1.1em; color: var(--accent-strong); border-bottom: 1px solid var(--border); }
+.analysis-body h2:first-of-type { margin-top: 0; font-size: 1.2em; border-bottom-width: 2px; padding-bottom: 0.4em; border-bottom-color: var(--accent); }
+.analysis-body h3 { margin-top: 1em; color: var(--text-soft); font-size: 1em; }
+.analysis-body li { margin: 0.3em 0; line-height: 1.55; }
+.analysis-body p { line-height: 1.6; }
+.analysis-body code { background: var(--code-bg); padding: 1px 6px; border-radius: 4px; font-size: 0.88em; font-family: ui-monospace, "SF Mono", Menlo, monospace; color: var(--text); }
+.analysis-body table { font-size: 0.92em; }
+.analysis-body hr { border: none; border-top: 1px dashed var(--border-strong); margin: 1.4em 0; }
+.section-intro code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-size: 0.92em; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+#theme-toggle { position: fixed; top: 16px; right: 16px; z-index: 1000; background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); border-radius: 999px; width: 38px; height: 38px; padding: 0; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow); transition: background-color .15s ease, transform .15s ease, border-color .15s ease; }
+#theme-toggle:hover { background: var(--surface-2); border-color: var(--accent); transform: scale(1.05); }
+#theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media print {
+  :root { color-scheme: light; --bg: #fff; --surface: #fff; --text: #000; --text-muted: #444; }
+  #theme-toggle { display: none; }
+  .section, .analysis, details.case { box-shadow: none; break-inside: avoid; }
+}
+
+/* Image artifacts */
+.img-artifact { margin: 0.5em 0; }
+.img-artifact img { max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 6px; background: #fff; }
+.img-label { display: inline-block; font-size: 0.78em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; padding: 2px 9px; border-radius: 999px; margin-bottom: 6px; }
+.img-label-gen { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent); }
+.img-label-ref { background: var(--success-soft); color: var(--success); border: 1px solid var(--success-border); }
+.img-label-bl { background: var(--warning-soft); color: var(--warning); border: 1px solid var(--warning-border); }
+
+/* Comparison widget */
+.img-compare { margin: 0.8em 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.img-compare-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); background: var(--surface-2); }
+.img-compare-tab { padding: 7px 16px; font-size: 0.85em; font-weight: 600; color: var(--text-muted); background: transparent; border: none; cursor: pointer; border-bottom: 2px solid transparent; transition: color .15s, border-color .15s; }
+.img-compare-tab:hover { color: var(--text); }
+.img-compare-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.img-compare-panel { display: none; padding: 1em; }
+.img-compare-panel.active { display: block; }
+
+/* Side-by-side */
+.img-compare-sbs { display: flex; gap: 1em; }
+.img-compare-sbs > div { flex: 1; min-width: 0; }
+.img-compare-sbs img { width: 100%; height: auto; border: 1px solid var(--border); border-radius: 4px; background: #fff; }
+
+/* Swipe */
+.img-compare-swipe-imgs { display: grid; border: 1px solid var(--border); border-radius: 4px; background: #fff; overflow: hidden; }
+.img-compare-swipe-imgs > img { grid-area: 1/1; display: block; width: 100%; height: auto; }
+.img-compare-swipe-imgs .swipe-ref { grid-area: 1/1; z-index: 1; background: #fff; clip-path: inset(0 50% 0 0); }
+.img-compare-swipe-imgs .swipe-ref img { display: block; width: 100%; height: auto; }
+.img-compare-swipe-imgs .swipe-line { grid-area: 1/1; z-index: 2; justify-self: start; width: 3px; background: var(--accent); pointer-events: none; margin-left: 50%; }
+.img-compare-swipe input[type="range"] { display: block; width: 100%; margin: 8px 0 0; accent-color: var(--accent); }
+.img-compare-swipe-labels { display: flex; justify-content: space-between; padding: 4px 1em; font-size: 0.82em; color: var(--text-muted); }
+
+/* Onion */
+.img-compare-onion-wrap { display: grid; border: 1px solid var(--border); border-radius: 4px; background: #fff; overflow: hidden; }
+.img-compare-onion-wrap > img { grid-area: 1/1; display: block; width: 100%; height: auto; }
+.img-compare-onion-wrap .onion-top { grid-area: 1/1; background: #fff; }
+.img-compare-onion-wrap .onion-top img { display: block; width: 100%; height: auto; }
+.img-compare-onion input[type="range"] { display: block; width: 100%; margin: 8px 0 0; accent-color: var(--accent); }
+.img-compare-onion .onion-label { text-align: center; font-size: 0.82em; color: var(--text-muted); margin-top: 2px; }
+
+/* Diagram source collapsible */
+.diagram-source { margin-top: 0.4em; }
+.diagram-source summary { font-size: 0.85em; color: var(--text-muted); cursor: pointer; padding: 4px 0; }
+.diagram-source summary:hover { color: var(--text); }
+.diagram-source pre { max-height: 400px; overflow-y: auto; }
+</style>
+</head>
+<body>
+<button id="theme-toggle" type="button" aria-label="Toggle theme">☾</button>
+<header class="report-header">
+  <h1>Skill Eval Report</h1>
+  <div class="header-meta"><span class="meta-chip"><span class="meta-label">Skill</span><code>humanizer</code></span><span class="meta-chip"><span class="meta-label">Run</span><code>2026-05-04-opus</code></span><span class="meta-chip"><span class="meta-label">Date</span>2026-05-04 08:13</span></div>
+</header>
+<section class="section">
+<h2>Run Configuration</h2>
+<dl class="config-grid">
+<div class="kv"><dt>Model</dt><dd>claude-opus-4-6</dd></div>
+<div class="kv"><dt>Subagent Model</dt><dd>—</dd></div>
+<div class="kv"><dt>Agent</dt><dd>claude-code</dd></div>
+<div class="kv"><dt>Agent Version</dt><dd>2.1.126 (Claude Code)</dd></div>
+<div class="kv"><dt>Duration</dt><dd>2 min</dd></div>
+<div class="kv"><dt>Cost</dt><dd>$1.43</dd></div>
+<div class="kv"><dt>Turns</dt><dd>17</dd></div>
+<div class="kv"><dt>Exit Code</dt><dd>0</dd></div>
+</dl>
+<h3 class="subsection-heading">Model Usage</h3>
+<table class="usage-table">
+<tr><th></th><th><code>claude-opus-4-6</code></th></tr>
+<tr><th>Input tokens</th><td><span class="cur-val">70</span></td></tr>
+<tr><th>Output tokens</th><td><span class="cur-val">6,044</span></td></tr>
+<tr><th>Cache read</th><td><span class="cur-val">518,760</span></td></tr>
+<tr><th>Cache write</th><td><span class="cur-val">162,847</span></td></tr>
+<tr><th>Cache hit</th><td><span class="cur-val">76.1%</span></td></tr>
+<tr><th>Cost</th><td><span class="cur-val">$1.43</span></td></tr>
+<tr><th>Cost / turn</th><td><span class="cur-val">$0.0840</span></td></tr>
+<tr><th>Output tokens / turn</th><td><span class="cur-val">356</span></td></tr>
+<tr><th>Cost / Mtok</th><td><span class="cur-val">$2.08</span></td></tr>
+</table>
+<details class="eval-params">
+<summary><span class="eval-params-label">Parameters</span><span class="eval-params-preview">/humanizer {text_or_file}</span></summary>
+<dl class="config-grid">
+<div class="kv"><dt>Execution Mode</dt><dd>case</dd></div>
+<div class="kv"><dt>Max Budget</dt><dd>$100</dd></div>
+<div class="kv"><dt>Timeout</dt><dd>5 min</dd></div>
+</dl>
+<div class="run-command"><span class="run-command-label">Skill Args</span><pre><code>/humanizer {text_or_file}</code></pre></div>
+</details>
+</section>
+<section class="analysis">
+<div class="analysis-banner"><h2>Analysis</h2></div>
+<p class="section-intro">Generated by <strong>Claude Code</strong> (<code>claude-opus-4-6</code>) on <code>2026-05-04 08:10:00+00:00</code> from 5 judge scores across 5 cases, plus execution metadata (2 min, $1.43, 17 turns, exit 0). Recommendation leads; failure patterns, root causes, and regressions follow as supporting evidence.</p>
+<div class="analysis-body">
+<h2>Recommendation</h2>
+<p><strong>Verdict: eval config needs restructuring, not the skill.</strong> All 5 cases executed successfully and manual inspection shows excellent humanization quality. The failing scores are caused by a mismatch between how the skill produces output (in-place file edits via the Edit tool) and how the judges consume output (expecting stdout text or collected file artifacts).</p>
+<p><strong>Top actions:</strong></p>
+<ol>
+<li>Change <code>outputs[0].path</code> to point to the workspace case directory where <code>source.md</code> lives after editing, or add a post-execution collection step that captures the edited files</li>
+<li>Rewrite check judges to parse <code>outputs["files"]</code> (the edited source.md) instead of <code>outputs["stdout"]</code> (the raw JSONL event stream)</li>
+<li>Remove the <code>voice_announced</code> judge or change it to check <code>outputs["files"]</code> for a voice comment, since the skill uses Edit (not stdout) for output</li>
+</ol>
+<h2>Summary</h2>
+<table>
+<tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Cases</td><td>5/5 passed execution</td></tr>
+<tr><td>Duration</td><td>144s total, ~29s/case average</td></tr>
+<tr><td>Cost</td><td>$1.43 total, $0.29/case average</td></tr>
+<tr><td>Turns</td><td>17 total (3.4/case average)</td></tr>
+<tr><td>Cache hit rate</td><td>76.1%</td></tr>
+</table>
+<p><strong>Judge scores (all invalid due to config mismatch):</strong></p>
+<ul>
+<li><code>ai_patterns_removed</code>: 0% pass (false positives from scanning raw JSONL containing source text)</li>
+<li><code>voice_announced</code>: 0% pass (searching stdout JSONL for markdown bold, not finding it)</li>
+<li><code>filler_and_hedging</code>: 40% pass (2/5 cases had no filler in source text either)</li>
+<li><code>meaning_preservation</code>: mean 1.0 (LLM judge saw empty <code>{{ outputs }}</code>)</li>
+<li><code>naturalness</code>: mean 1.0 (LLM judge saw empty <code>{{ outputs }}</code>)</li>
+</ul>
+<h2>Failure Patterns</h2>
+<p>All failures share one root cause: <strong>the judges cannot see the skill's actual output.</strong></p>
+<p>The humanizer skill reads a source file, edits it in place via the Edit tool, and prints a change summary to the conversation. It does not write to an output directory or print the full rewritten text to stdout. The eval harness collects from <code>outputs[0].path</code> (the <code>output/</code> directory, which the skill never writes to) and captures <code>stdout</code> as raw JSONL events.</p>
+<p>Check judges (<code>ai_patterns_removed</code>, <code>voice_announced</code>, <code>filler_and_hedging</code>) scan <code>outputs["stdout"]</code>, which contains the entire JSONL event stream including tool results with the <strong>original un-humanized source text</strong>. This is why they find AI patterns: they're matching the input, not the output.</p>
+<p>LLM judges (<code>meaning_preservation</code>, <code>naturalness</code>) use <code>{{ outputs }}</code>, which expands to collected file artifacts. Since the <code>output/</code> directory is empty, they receive no content and score 1/5.</p>
+<h2>Root Causes</h2>
+<ol>
+<li><strong>Output collection gap</strong>: The humanizer edits files in the workspace case directory (e.g., <code>cases/case-001/source.md</code>), but <code>outputs[0].path</code> is set to <code>output/</code> which the skill never creates or writes to.</li>
+</ol>
+<ol>
+<li><strong>Stdout format mismatch</strong>: Claude Code's <code>--print</code> mode produces JSONL events, not plain text. The check judges use regex on raw JSONL, which matches substrings in tool inputs/outputs (including the original source text), producing false positives.</li>
+</ol>
+<ol>
+<li><strong>Voice announcement medium</strong>: The skill announces the voice in conversation text (Edit tool calls and assistant messages), not as a formatted stdout line. The <code>voice_announced</code> judge looks for <code>Rewriting with <strong>voice</strong> voice</code> in stdout, but this appears only in assistant message JSON events, not as standalone text.</li>
+</ol>
+<h2>Cost Attribution</h2>
+<ul>
+<li>Total cost: $1.43 across 5 cases</li>
+<li>Cost per case: $0.29 average (range: $0.14 for case-005 to $0.34 for case-002)</li>
+<li>Cost per turn: $0.084</li>
+<li>The skill is efficient: 3 turns per case for file-based inputs, 1 turn for inline text</li>
+<li>Cache hit rate of 76.1% indicates good prompt caching across cases</li>
+</ul>
+<h2>Manual Quality Assessment</h2>
+<p>Despite the judge failures, manual inspection of the edited source files confirms excellent skill performance:</p>
+<ul>
+<li><strong>Case 001 (technical)</strong>: Removed copula avoidance, AI vocabulary, vague attributions. Clean, specific prose.</li>
+<li><strong>Case 002 (dense slop)</strong>: All 19 AI pattern categories successfully removed. Complete transformation from AI slop to clean technical writing.</li>
+<li><strong>Case 003 (pov voice)</strong>: Strong opinionated rewrite with first-person perspective, concrete examples, personality. Voice applied correctly.</li>
+<li><strong>Case 004 (tutorial with code)</strong>: Code blocks preserved intact. Prose cleaned. Tutorial voice appropriate.</li>
+<li><strong>Case 005 (inline text)</strong>: Chatbot artifacts removed. Short input handled well despite minimal material.</li>
+</ul>
+</div>
+</section>
+<section class="section">
+<h2>Scoring Summary</h2>
+<table>
+<tr><th>Judge</th><th>Type</th><th>Metric</th><th>Value</th><th>Threshold</th><th>Status</th></tr>
+<tr class="metric-row"><td>ai_patterns_removed</td><td class="judge-type">check</td><td>pass_rate</td><td>0%</td><td>&ge; 100%</td><td><span class="fail">FAIL</span></td></tr>
+<tr class="metric-row"><td>filler_and_hedging</td><td class="judge-type">check</td><td>pass_rate</td><td>40%</td><td>&ge; 100%</td><td><span class="fail">FAIL</span></td></tr>
+<tr class="metric-row"><td>meaning_preservation</td><td class="judge-type">llm (claude-opus-4-6)</td><td>mean</td><td>1.00</td><td>&ge; 3.5</td><td><span class="fail">FAIL</span></td></tr>
+<tr class="metric-row"><td>naturalness</td><td class="judge-type">llm (claude-opus-4-6)</td><td>mean</td><td>1.00</td><td>&ge; 3.5</td><td><span class="fail">FAIL</span></td></tr>
+<tr class="metric-row"><td>voice_announced</td><td class="judge-type">check</td><td>pass_rate</td><td>0%</td><td>&ge; 100%</td><td><span class="fail">FAIL</span></td></tr>
+</table>
+</section>
+<section class="section">
+<h2>Regressions</h2>
+<table>
+<tr><th>Judge</th><th>Metric</th><th>Threshold</th><th>Actual</th></tr>
+<tr><td>ai_patterns_removed</td><td>pass_rate</td><td>>= 100%</td><td><span class="fail">0%</span></td></tr>
+<tr><td>voice_announced</td><td>pass_rate</td><td>>= 100%</td><td><span class="fail">0%</span></td></tr>
+<tr><td>filler_and_hedging</td><td>pass_rate</td><td>>= 100%</td><td><span class="fail">40%</span></td></tr>
+<tr><td>meaning_preservation</td><td>mean</td><td>>= 3.5</td><td><span class="fail">1.00</span></td></tr>
+<tr><td>naturalness</td><td>mean</td><td>>= 3.5</td><td><span class="fail">1.00</span></td></tr>
+</table>
+</section>
+<h2 class="section-heading">Per-Case Details</h2>
+<details open class="case case-fail"><summary><span class="fail">case-001-simple-technical-prose</span> <span class="skip">(1/5 pass)</span></summary>
+<table><tr><th>Judge</th><th>Value</th><th>Rationale</th></tr>
+<tr><td>ai_patterns_removed</td><td><span class="fail">FAIL</span></td><td class="rationale"><p>AI patterns remain: {'leverage': 8, 'serves_as': 8, 'crucial': 10, 'landscape_abstract': 8, 'underscore_verb': 12}</p></td></tr>
+<tr><td>filler_and_hedging</td><td><span class="pass">PASS</span></td><td class="rationale"><p>No filler or hedging patterns found</p></td></tr>
+<tr><td>meaning_preservation</td><td><span class="fail">1</span></td><td class="rationale"><p>The rewritten text is completely empty. All meaning from the original text has been lost since there is no output at all.</p></td></tr>
+<tr><td>naturalness</td><td><span class="fail">1</span></td><td class="rationale"><p>There is no rewritten text provided to evaluate. An empty submission cannot demonstrate any human-like qualities, natural rhythm, personality, or concrete details.</p></td></tr>
+<tr><td>voice_announced</td><td><span class="fail">FAIL</span></td><td class="rationale"><p>No voice announcement found</p></td></tr>
+</table>
+<details open><summary>Input</summary><pre class="output">text_or_file: source.md</pre></details>
+<details open><summary>Output files</summary>
+<div class="file-badge">input.yaml</div>
+<pre class="output">text_or_file: source.md</pre>
+</details>
+</details>
+<details open class="case case-fail"><summary><span class="fail">case-002-dense-slop-all-categories</span> <span class="skip">(0/5 pass)</span></summary>
+<table><tr><th>Judge</th><th>Value</th><th>Rationale</th></tr>
+<tr><td>ai_patterns_removed</td><td><span class="fail">FAIL</span></td><td class="rationale"><p>AI patterns remain: {'delve': 8, 'serves_as': 14, 'stands_as': 8, 'testament': 8, 'pivotal': 14, 'landscape_abstract': 14, 'underscore_verb': 14, 'showcase': 12, 'foster': 16, 'em_dash': 20, 'chatbot_hope': 8, 'chatbot_letmeknow': 8, 'chatbot_hereis': 6, 'chatbot_great_question': 8, 'emoji_decorative': 15}</p></td></tr>
+<tr><td>filler_and_hedging</td><td><span class="fail">FAIL</span></td><td class="rationale"><p>Found 3 filler/hedging patterns: ['filler: \\b[Ii]n order to\\b', 'hedging: \\bcould potentially\\b', 'hedging: \\bcould potentially possibly\\b']</p></td></tr>
+<tr><td>meaning_preservation</td><td><span class="fail">1</span></td><td class="rationale"><p>The rewritten text is completely empty. All meaning from the original text has been lost, as no content was produced at all.</p></td></tr>
+<tr><td>naturalness</td><td><span class="fail">1</span></td><td class="rationale"><p>There is no rewritten text provided to evaluate. An empty submission cannot demonstrate any human-like qualities, natural rhythm, personality, or concrete details.</p></td></tr>
+<tr><td>voice_announced</td><td><span class="fail">FAIL</span></td><td class="rationale"><p>No voice announcement found</p></td></tr>
+</table>
+<details open><summary>Input</summary><pre class="output">text_or_file: source.md</pre></details>
+<details open><summary>Output files</summary>
+<div class="file-badge">input.yaml</div>
+<pre class="output">text_or_file: source.md</pre>
+</details>
+</details>
+<details open class="case case-fail"><summary><span class="fail">case-003-opinion-piece-pov-voice</span> <span class="skip">(0/5 pass)</span></summary>
+<table><tr><th>Judge</th><th>Value</th><th>Rationale</th></tr>
+<tr><td>ai_patterns_removed</td><td><span class="fail">FAIL</span></td><td class="rationale"><p>AI patterns remain: {'leverage': 9, 'serves_as': 9, 'pivotal': 2, 'crucial': 9, 'landscape_abstract': 7, 'tapestry': 9, 'showcase': 9}</p></td></tr>
+<tr><td>filler_and_hedging</td><td><span class="fail">FAIL</span></td><td class="rationale"><p>Found 4 filler/hedging patterns: ['filler: \\b[Ii]n order to\\b', 'filler: \\b[Ii]t is important to note that\\b', 'hedging: \\bcould potentially\\b']</p></td></tr>
+<tr><td>meaning_preservation</td><td><span class="fail">1</span></td><td class="rationale"><p>The rewritten text is completely empty. All meaning from the original text has been lost, as no content was produced at all.</p></td></tr>
+<tr><td>naturalness</td><td><span class="fail">1</span></td><td class="rationale"><p>There is no rewritten text provided to evaluate. An empty submission cannot demonstrate any human-like qualities, natural rhythm, personality, or concrete details.</p></td></tr>
+<tr><td>voice_announced</td><td><span class="fail">FAIL</span></td><td class="rationale"><p>No voice announcement found</p></td></tr>
+</table>
+<details open><summary>Input</summary><pre class="output">text_or_file: source.md
+voice: pov</pre></details>
+<details open><summary>Output files</summary>
+<div class="file-badge">input.yaml</div>
+<pre class="output">text_or_file: source.md
+voice: pov</pre>
+</details>
+</details>
+<details open class="case case-fail"><summary><span class="fail">case-004-tutorial-with-code</span> <span class="skip">(0/5 pass)</span></summary>
+<table><tr><th>Judge</th><th>Value</th><th>Rationale</th></tr>
+<tr><td>ai_patterns_removed</td><td><span class="fail">FAIL</span></td><td class="rationale"><p>AI patterns remain: {'delve': 10, 'leverage': 8, 'serves_as': 8, 'crucial': 10, 'showcase': 8, 'foster': 8, 'chatbot_hope': 8, 'chatbot_letmeknow': 8}</p></td></tr>
+<tr><td>filler_and_hedging</td><td><span class="fail">FAIL</span></td><td class="rationale"><p>Found 3 filler/hedging patterns: ['filler: \\b[Ii]n order to\\b', 'filler: \\b[Dd]ue to the fact that\\b', 'filler: \\b[Ii]t is important to note that\\b']</p></td></tr>
+<tr><td>meaning_preservation</td><td><span class="fail">1</span></td><td class="rationale"><p>The rewritten text is completely empty. All meaning from the original text has been lost, as no content was produced at all.</p></td></tr>
+<tr><td>naturalness</td><td><span class="fail">1</span></td><td class="rationale"><p>There is no rewritten text provided to evaluate. An empty submission cannot demonstrate any human-like qualities, natural rhythm, personality, or concrete details.</p></td></tr>
+<tr><td>voice_announced</td><td><span class="fail">FAIL</span></td><td class="rationale"><p>No voice announcement found</p></td></tr>
+</table>
+<details open><summary>Input</summary><pre class="output">text_or_file: source.md</pre></details>
+<details open><summary>Output files</summary>
+<div class="file-badge">annotations.yaml</div>
+<pre class="output">expected_voice: tutorial
+ai_patterns_present:
+  - filler_phrases
+  - ai_vocabulary
+  - copula_avoidance
+  - significance_inflation
+  - promotional_language
+  - chatbot_artifacts
+  - superficial_ing_endings
+difficulty: medium</pre>
+<div class="file-badge">input.yaml</div>
+<pre class="output">text_or_file: source.md</pre>
+</details>
+</details>
+<details open class="case case-fail"><summary><span class="fail">case-005-edge-short-chatbot-artifact</span> <span class="skip">(1/5 pass)</span></summary>
+<table><tr><th>Judge</th><th>Value</th><th>Rationale</th></tr>
+<tr><td>ai_patterns_removed</td><td><span class="fail">FAIL</span></td><td class="rationale"><p>AI patterns remain: {'leverage': 5, 'chatbot_hope': 5, 'chatbot_letmeknow': 5, 'chatbot_hereis': 5, 'chatbot_certainly': 5}</p></td></tr>
+<tr><td>filler_and_hedging</td><td><span class="pass">PASS</span></td><td class="rationale"><p>No filler or hedging patterns found</p></td></tr>
+<tr><td>meaning_preservation</td><td><span class="fail">1</span></td><td class="rationale"><p>Both the original text and the rewritten text appear to be empty/missing. There is no content to evaluate for meaning preservation. This represents a failure of the humanizer skill to produce any output.</p></td></tr>
+<tr><td>naturalness</td><td><span class="fail">1</span></td><td class="rationale"><p>There is no rewritten text provided to evaluate. An empty submission cannot demonstrate any human-like qualities, natural rhythm, personality, or concrete details.</p></td></tr>
+<tr><td>voice_announced</td><td><span class="fail">FAIL</span></td><td class="rationale"><p>No voice announcement found</p></td></tr>
+</table>
+<details open><summary>Input</summary><pre class="output">text_or_file: "Certainly! Here is a brief overview of the topic. The system leverages cutting-edge algorithms to deliver robust, scalable solutions. I hope this helps! Let me know if you have any questions."</pre></details>
+<details open><summary>Output files</summary>
+<div class="file-badge">annotations.yaml</div>
+<pre class="output">expected_voice: technical
+ai_patterns_present:
+  - chatbot_artifacts
+  - sycophantic_tone
+  - ai_vocabulary
+  - promotional_language
+difficulty: easy</pre>
+<div class="file-badge">input.yaml</div>
+<pre class="output">text_or_file: "Certainly! Here is a brief overview of the topic. The system leverages cutting-edge algorithms to deliver robust, scalable solutions. I hope this helps! Let me know if you have any questions."</pre>
+</details>
+</details>
+
+<script>
+(function () {
+  var btn = document.getElementById('theme-toggle');
+  if (!btn) return;
+  function paint() {
+    var t = document.documentElement.getAttribute('data-theme') || 'light';
+    btn.textContent = t === 'dark' ? '\u2600' : '\u263E';
+    btn.setAttribute('aria-label', t === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    btn.title = btn.getAttribute('aria-label');
+  }
+  btn.addEventListener('click', function () {
+    var current = document.documentElement.getAttribute('data-theme') || 'light';
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('eval-report-theme', next); } catch (e) {}
+    paint();
+  });
+  paint();
+})();
+</script>
+<script>
+(function () {
+  document.querySelectorAll('.img-compare').forEach(function (widget) {
+    var tabs = widget.querySelectorAll('.img-compare-tab');
+    var panels = widget.querySelectorAll('.img-compare-panel');
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        tabs.forEach(function (t) { t.classList.remove('active'); });
+        panels.forEach(function (p) { p.classList.remove('active'); });
+        tab.classList.add('active');
+        var target = widget.querySelector('#' + tab.dataset.panel);
+        if (target) target.classList.add('active');
+      });
+    });
+    var swipe = widget.querySelector('.img-compare-swipe');
+    if (swipe) {
+      (function (sw) {
+        var sl = sw.querySelector('input[type="range"]');
+        var ref = sw.querySelector('.swipe-ref');
+        var ln = sw.querySelector('.swipe-line');
+        if (sl && ref) {
+          function update() {
+            var p = sl.value;
+            ref.style.clipPath = 'inset(0 ' + (100 - p) + '% 0 0)';
+            if (ln) ln.style.marginLeft = p + '%';
+          }
+          sl.addEventListener('input', update);
+          update();
+        }
+      })(swipe);
+    }
+    var onion = widget.querySelector('.img-compare-onion');
+    if (onion) {
+      (function (on) {
+        var sl = on.querySelector('input[type="range"]');
+        var top = on.querySelector('.onion-top');
+        var lbl = on.querySelector('.onion-label');
+        if (sl && top) {
+          function update() {
+            top.style.opacity = sl.value / 100;
+            if (lbl) lbl.textContent = 'Generated opacity: ' + sl.value + '%';
+          }
+          sl.addEventListener('input', update);
+          update();
+        }
+      })(onion);
+    }
+  });
+})();
+</script>
+</body>
+</html>

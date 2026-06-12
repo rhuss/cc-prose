@@ -1,0 +1,133 @@
+judges:
+  ai_patterns_removed:
+    mean: 0.0
+    pass_rate: 0.0
+  filler_and_hedging:
+    mean: 0.4
+    pass_rate: 0.4
+  meaning_preservation:
+    mean: 1.0
+    pass_rate: null
+  naturalness:
+    mean: 1.0
+    pass_rate: null
+  voice_announced:
+    mean: 0.0
+    pass_rate: 0.0
+per_case:
+  case-001-simple-technical-prose:
+    ai_patterns_removed:
+      rationale: 'AI patterns remain: {''leverage'': 8, ''serves_as'': 8, ''crucial'':
+        10, ''landscape_abstract'': 8, ''underscore_verb'': 12}'
+      value: false
+    filler_and_hedging:
+      rationale: No filler or hedging patterns found
+      value: true
+    meaning_preservation:
+      rationale: The rewritten text is completely empty. All meaning from the original
+        text has been lost since there is no output at all.
+      value: 1
+    naturalness:
+      rationale: There is no rewritten text provided to evaluate. An empty submission
+        cannot demonstrate any human-like qualities, natural rhythm, personality,
+        or concrete details.
+      value: 1
+    voice_announced:
+      rationale: No voice announcement found
+      value: false
+  case-002-dense-slop-all-categories:
+    ai_patterns_removed:
+      rationale: 'AI patterns remain: {''delve'': 8, ''serves_as'': 14, ''stands_as'':
+        8, ''testament'': 8, ''pivotal'': 14, ''landscape_abstract'': 14, ''underscore_verb'':
+        14, ''showcase'': 12, ''foster'': 16, ''em_dash'': 20, ''chatbot_hope'': 8,
+        ''chatbot_letmeknow'': 8, ''chatbot_hereis'': 6, ''chatbot_great_question'':
+        8, ''emoji_decorative'': 15}'
+      value: false
+    filler_and_hedging:
+      rationale: 'Found 3 filler/hedging patterns: [''filler: \\b[Ii]n order to\\b'',
+        ''hedging: \\bcould potentially\\b'', ''hedging: \\bcould potentially possibly\\b'']'
+      value: false
+    meaning_preservation:
+      rationale: The rewritten text is completely empty. All meaning from the original
+        text has been lost, as no content was produced at all.
+      value: 1
+    naturalness:
+      rationale: There is no rewritten text provided to evaluate. An empty submission
+        cannot demonstrate any human-like qualities, natural rhythm, personality,
+        or concrete details.
+      value: 1
+    voice_announced:
+      rationale: No voice announcement found
+      value: false
+  case-003-opinion-piece-pov-voice:
+    ai_patterns_removed:
+      rationale: 'AI patterns remain: {''leverage'': 9, ''serves_as'': 9, ''pivotal'':
+        2, ''crucial'': 9, ''landscape_abstract'': 7, ''tapestry'': 9, ''showcase'':
+        9}'
+      value: false
+    filler_and_hedging:
+      rationale: 'Found 4 filler/hedging patterns: [''filler: \\b[Ii]n order to\\b'',
+        ''filler: \\b[Ii]t is important to note that\\b'', ''hedging: \\bcould potentially\\b'']'
+      value: false
+    meaning_preservation:
+      rationale: The rewritten text is completely empty. All meaning from the original
+        text has been lost, as no content was produced at all.
+      value: 1
+    naturalness:
+      rationale: There is no rewritten text provided to evaluate. An empty submission
+        cannot demonstrate any human-like qualities, natural rhythm, personality,
+        or concrete details.
+      value: 1
+    voice_announced:
+      rationale: No voice announcement found
+      value: false
+  case-004-tutorial-with-code:
+    ai_patterns_removed:
+      rationale: 'AI patterns remain: {''delve'': 10, ''leverage'': 8, ''serves_as'':
+        8, ''crucial'': 10, ''showcase'': 8, ''foster'': 8, ''chatbot_hope'': 8, ''chatbot_letmeknow'':
+        8}'
+      value: false
+    filler_and_hedging:
+      rationale: 'Found 3 filler/hedging patterns: [''filler: \\b[Ii]n order to\\b'',
+        ''filler: \\b[Dd]ue to the fact that\\b'', ''filler: \\b[Ii]t is important
+        to note that\\b'']'
+      value: false
+    meaning_preservation:
+      rationale: The rewritten text is completely empty. All meaning from the original
+        text has been lost, as no content was produced at all.
+      value: 1
+    naturalness:
+      rationale: There is no rewritten text provided to evaluate. An empty submission
+        cannot demonstrate any human-like qualities, natural rhythm, personality,
+        or concrete details.
+      value: 1
+    voice_announced:
+      rationale: No voice announcement found
+      value: false
+  case-005-edge-short-chatbot-artifact:
+    ai_patterns_removed:
+      rationale: 'AI patterns remain: {''leverage'': 5, ''chatbot_hope'': 5, ''chatbot_letmeknow'':
+        5, ''chatbot_hereis'': 5, ''chatbot_certainly'': 5}'
+      value: false
+    filler_and_hedging:
+      rationale: No filler or hedging patterns found
+      value: true
+    meaning_preservation:
+      rationale: Both the original text and the rewritten text appear to be empty/missing.
+        There is no content to evaluate for meaning preservation. This represents
+        a failure of the humanizer skill to produce any output.
+      value: 1
+    naturalness:
+      rationale: There is no rewritten text provided to evaluate. An empty submission
+        cannot demonstrate any human-like qualities, natural rhythm, personality,
+        or concrete details.
+      value: 1
+    voice_announced:
+      rationale: No voice announcement found
+      value: false
+run_id: 2026-05-04-opus
+run_metrics:
+  cache_hit_rate: 0.761006
+  cost_per_mtok_usd: 2.0793
+  cost_per_turn_usd: 0.084118
+  output_tokens_per_turn: 355.53

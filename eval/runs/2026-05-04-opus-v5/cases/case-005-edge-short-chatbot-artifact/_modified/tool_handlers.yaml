@@ -1,0 +1,11 @@
+handlers:
+- match: Questions asked to the user via AskUserQuestion
+  patterns:
+  - AskUserQuestion
+  prompt: 'Answer based on the test case context in input.yaml.
+
+    If asked about voice preference, use the voice from input.yaml if present.
+
+    Default: pick the first option or answer "yes" for confirmations.
+
+    '

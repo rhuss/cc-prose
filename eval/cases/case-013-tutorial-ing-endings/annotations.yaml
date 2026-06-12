@@ -1,0 +1,8 @@
+expected_voice: tutorial
+ai_patterns_present:
+  - superficial_ing_endings
+  - filler_phrases
+  - ai_vocabulary
+  - promotional_language
+difficulty: easy
+personality_level: 0.7

@@ -1,0 +1,9 @@
+The WebAssembly specification reached version 2.0 in 2024, adding features like multiple return values and reference types. All four major browsers ship full Wasm 2.0 support, and server-side runtimes like Wasmtime and WasmEdge have kept pace.
+
+Wasm modules run fast. A 2023 benchmark by the University of Stuttgart measured Wasm at 1.1-1.5x native speed for compute-heavy workloads (matrix math, image processing), though I/O-bound tasks showed less improvement. Production adoption has grown too. Fermyon reported over 10,000 Wasm-based microservices running on their platform by mid-2024, up from a few hundred the year before.
+
+The sandbox model is the interesting part. Each Wasm module runs in its own linear memory with no direct access to the host OS. That is a real isolation win compared to shared-process plugin architectures. The Component Model proposal takes this further by defining typed interfaces between modules. No major vulnerabilities have hit the core spec so far, though side-channel attacks against the JIT tier remain an active research area.
+
+WebAssembly is not a JavaScript replacement. JavaScript handles DOM manipulation, event wiring, and the glue code that holds web apps together. Wasm handles the parts where you need predictable performance: codecs, physics engines, cryptography, data processing. They share the same runtime and call each other through well-defined bindings.
+
+Tooling depends on your source language. C, C++, and Rust compile to Wasm through LLVM and produce small, optimized binaries. Go added native Wasm support but produces larger output. Languages like Python and Ruby can run in Wasm through interpreters (Pyodide, ruby.wasm), though the cold-start cost is noticeable. The toolchain is functional, not polished. Expect rough edges in debugging and profiling.

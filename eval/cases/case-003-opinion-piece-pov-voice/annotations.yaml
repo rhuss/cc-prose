@@ -1,0 +1,11 @@
+expected_voice: pov
+ai_patterns_present:
+  - vague_attributions
+  - ai_vocabulary
+  - significance_inflation
+  - copula_avoidance
+  - filler_phrases
+  - excessive_hedging
+  - generic_positive_conclusions
+difficulty: medium
+personality_level: 0.9

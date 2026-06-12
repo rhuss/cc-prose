@@ -1,0 +1,8 @@
+expected_voice: reference
+ai_patterns_present:
+  - elegant_variation
+  - copula_avoidance
+  - ai_vocabulary
+  - significance_inflation
+difficulty: easy
+personality_level: 0.2

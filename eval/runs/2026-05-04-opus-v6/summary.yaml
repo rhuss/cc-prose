@@ -1,0 +1,191 @@
+judges:
+  ai_patterns_removed:
+    mean: 1.0
+    pass_rate: 1.0
+  filler_and_hedging:
+    mean: 1.0
+    pass_rate: 1.0
+  meaning_preservation:
+    mean: 4.6
+    pass_rate: null
+  naturalness:
+    mean: 4.2
+    pass_rate: null
+  voice_announced:
+    mean: 0.6
+    pass_rate: 0.6
+per_case:
+  case-001-simple-technical-prose:
+    ai_patterns_removed:
+      rationale: No high-confidence AI patterns detected
+      value: true
+    filler_and_hedging:
+      rationale: No filler or hedging patterns found
+      value: true
+    meaning_preservation:
+      rationale: 'The rewritten source.md preserves every factual claim from the original:
+        declarative configuration model, scheduler distributing workloads, automatic
+        Pod restarts, enterprise adoption growth since 2020, the CNCF 2023 survey
+        stat (84% vs 58% in 2020), rolling updates and canary releases, etcd as a
+        distributed key-value store, leader election/failover, and control plane availability.
+        No facts were changed, removed, or added. Minor phrasing changes (e.g., ''built-in
+        scheduler'' instead of original phrasing, ''a big part of why'' instead of
+        a more formal construction) are natural and don''t alter meaning. All qualifications
+        are intact (e.g., ''responding organizations'', ''use or evaluate'').'
+      value: 5
+    naturalness:
+      rationale: 'The prose in source.md reads naturally and hits the moderate personality
+        level (0.6) well. It''s technical and informative — discussing Kubernetes
+        architecture, etcd, control plane behavior — while incorporating subtle personality
+        touches like ''a big part of why'' and concrete data points (the CNCF survey
+        percentages). Sentence length varies naturally across the three paragraphs.
+        The AI patterns from the original (copula avoidance, significance inflation,
+        vague attributions, promotional language) appear to have been cleaned up:
+        attributions are specific (''CNCF''s 2023 survey''), claims are grounded in
+        numbers, and the tone is professional without being breathlessly promotional.
+        The phrase ''a big part of why'' adds just enough conversational warmth for
+        a 0.6 personality level without overdoing it. One minor quibble: the transition
+        between paragraphs feels slightly abrupt, and ''Enterprise adoption has grown
+        steadily since 2020'' is a touch generic. Overall though, it reads like competent
+        technical writing from a knowledgeable human author.'
+      value: 4
+    voice_announced:
+      rationale: 'Voice announced: technical'
+      value: true
+  case-002-dense-slop-all-categories:
+    ai_patterns_removed:
+      rationale: No high-confidence AI patterns detected
+      value: true
+    filler_and_hedging:
+      rationale: No filler or hedging patterns found
+      value: true
+    meaning_preservation:
+      rationale: 'The rewritten source.md preserves every factual claim, argument,
+        and nuance from the original. All key points are intact: independent deployment
+        as the main benefit, the caveat about small teams not needing microservices,
+        per-service scaling with the image-processing example, failure containment
+        with the circuit breaker qualification, all tradeoffs (network latency, partial
+        failures, serialization, data consistency, distributed tracing, operational
+        complexity), and both references (Sam Newman''s book with edition details
+        and Martin Fowler''s ''Monolith First'' article with the author''s agreement).
+        No claims were added or removed. The rewrite reads naturally and maintains
+        all qualifications and caveats from the original.'
+      value: 5
+    naturalness:
+      rationale: 'The source.md prose is excellent for a technical voice at personality_level
+        0.6. It reads like a senior engineer explaining microservices to a colleague
+        — professional but not sterile, with concrete examples (image-processing bottleneck,
+        team of five) and genuine opinions (''I think that''s right for most teams'').
+        Sentence length varies naturally. The writing is direct and specific: ''Network
+        calls replace function calls, so you get latency, partial failures, and serialization
+        overhead that didn''t exist before.'' No AI-typical patterns are present —
+        no rule-of-three lists, no significance inflation, no vague attributions,
+        no em-dash overuse, no sycophantic tone. The moderate personality comes through
+        in phrases like ''Operational complexity goes up, period'' and the skeptical
+        framing of tradeoffs (''The tradeoffs are real''). The specific book reference
+        with edition and year adds credibility. This reads like something a thoughtful
+        engineer would actually write.'
+      value: 5
+    voice_announced:
+      rationale: 'Voice announced: technical'
+      value: true
+  case-003-opinion-piece-pov-voice:
+    ai_patterns_removed:
+      rationale: No high-confidence AI patterns detected
+      value: true
+    filler_and_hedging:
+      rationale: No filler or hedging patterns found
+      value: true
+    meaning_preservation:
+      rationale: 'The rewritten source.md preserves every factual claim, argument,
+        and nuance from the original. All key points are intact: AI code generators
+        compared to autocomplete, personal experience with Copilot and Claude, the
+        SQL migration anecdote, the 2024 Google study finding, the pull request review
+        observation about technically correct but poorly designed code, and the concluding
+        stance to use the tools but not pretend they replace thinking. No claims were
+        added or removed. The qualifications (''real but narrow,'' ''No measurable
+        improvement,'' ''worked in isolation and failed as a system'') are all preserved.
+        The first-person voice and opinionated tone remain consistent. The rewriting
+        appears to have made only very minor stylistic adjustments while maintaining
+        perfect semantic fidelity.'
+      value: 5
+    naturalness:
+      rationale: 'This is exactly what a 0.9 personality level POV voice should sound
+        like. The writing has a specific, opinionated human behind it — someone who
+        actually uses these tools and has strong views. First-person throughout (''I''ve
+        used Copilot and Claude for months,'' ''I''ve watched a model confidently
+        generate a SQL migration''). Punchy, varied sentence rhythm: ''They''re useful.
+        They are not the revolution people keep selling you.'' Concrete, specific
+        details (the SQL migration that would have dropped a production column, the
+        Google study reference). The voice has genuine irritation (''stop pretending
+        they replace thinking'') without being performative. No AI vocabulary artifacts
+        — no ''delve,'' ''landscape,'' ''moreover,'' ''it''s worth noting.'' No hedging
+        or vague attributions. The conclusion is sharp and brief rather than generically
+        positive. Sentence lengths range from three words to full complex sentences.
+        This reads like a real developer''s blog post, not a rewritten AI output.'
+      value: 5
+    voice_announced:
+      rationale: 'Voice announced: pov'
+      value: true
+  case-004-tutorial-with-code:
+    ai_patterns_removed:
+      rationale: No high-confidence AI patterns detected
+      value: true
+    filler_and_hedging:
+      rationale: No filler or hedging patterns found
+      value: true
+    meaning_preservation:
+      rationale: The source.md file preserves every factual claim and technical detail
+        from the original. All code snippets are identical. The explanations of MaxConns,
+        MinConns, connection health checking, and reconnection behavior are all intact.
+        The prose is slightly more concise and natural (e.g., 'The pool checks connection
+        health automatically and reconnects when a connection goes stale. You don't
+        need to handle this yourself.' vs the original's similar phrasing), but no
+        meaning, nuance, or facts were lost or added.
+      value: 5
+    naturalness:
+      rationale: 'The prose in source.md reads like a competent developer writing
+        a tutorial they''ve actually used. It has personality touches that feel natural:
+        ''don''t pay the connection setup cost,'' ''You don''t need to handle this
+        yourself.'' The explanations are concrete and specific rather than vague.
+        Sentence length varies well. It avoids AI patterns like filler phrases, significance
+        inflation, and promotional language. For a 0.7 personality tutorial voice,
+        it hits the right balance—engaged and practical without being overly chatty.
+        The only thing keeping it from a 5 is that it could show slightly more personal
+        engagement or opinion (e.g., a brief note about gotchas or preferences), which
+        would better match the 0.7 personality target.'
+      value: 4
+    voice_announced:
+      rationale: Announced 'technical' but expected 'tutorial'
+      value: false
+  case-005-edge-short-chatbot-artifact:
+    ai_patterns_removed:
+      rationale: No high-confidence AI patterns detected
+      value: true
+    filler_and_hedging:
+      rationale: No modified source file (inline text case)
+      value: true
+    meaning_preservation:
+      rationale: There are no prose content files to evaluate in the modified output
+        — only infrastructure/config files (hooks/subagent_stop.py, hooks/tools.py,
+        tool_handlers.yaml). The instructions say to IGNORE these harness artifacts.
+        Since there is no prose content file modified, there's nothing meaningful
+        to judge for meaning preservation. The original input appears to be code/config,
+        and the output is code/config. Giving a neutral score of 3 as there's no evidence
+        of meaning loss or distortion in the relevant content, but also no prose to
+        confirm perfect preservation.
+      value: 3
+    naturalness:
+      rationale: No prose content was available to evaluate. The output consists entirely
+        of infrastructure/code files (hooks/subagent_stop.py, hooks/tools.py, tool_handlers.yaml)
+        which are harness artifacts, not skill output containing prose.
+      value: 3
+    voice_announced:
+      rationale: No voice announcement found
+      value: false
+run_id: 2026-05-04-opus-v6
+run_metrics:
+  cache_hit_rate: 0.771542
+  cost_per_mtok_usd: 2.0115
+  cost_per_turn_usd: 0.0825
+  output_tokens_per_turn: 349.95

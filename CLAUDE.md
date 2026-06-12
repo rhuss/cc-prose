@@ -2,24 +2,36 @@
 
 Claude Code plugin for proactive content generation with human voice and AI slop prevention.
 
-## PROACTIVE SKILL INVOCATION (READ THIS FIRST)
+## When to Use Prose Skills
 
-**CRITICAL:** This plugin's skills are designed to be invoked PROACTIVELY.
-You should NOT wait for the user to explicitly ask for them.
+Prose skills target **human-readable content meant for people to read**.
+Invoke them proactively when the output is prose, don't wait for the user to ask.
 
-**Before generating prose content:**
-1. Check if the content-generator skill should be invoked (see trigger conditions below)
-2. If yes, invoke `/prose:write` or the content-generator skill BEFORE generating
-3. This ensures AI patterns are prevented during generation, not fixed after
+**Do NOT activate prose skills for machine-targeted content:**
+- Code (source files, scripts, configs)
+- Structured data (JSON, YAML, TOML, CSV)
+- CLI output, log messages, error strings
+- Commit messages, PR descriptions, git metadata
+- API docs generated from code (OpenAPI specs, JSDoc)
+- Makefiles, Dockerfiles, CI pipeline definitions
+- SQL, queries, migration files
+- Template literals, interpolation strings
+- Comments inside source code
 
-**Before editing existing text:**
-1. Check if the humanizer skill should be invoked
-2. If user's text contains AI patterns, invoke the skill proactively
+**Do activate for human prose:**
+- Blog posts, articles, essays
+- Documentation written for humans (guides, tutorials, READMEs)
+- Emails, announcements, social media posts
+- Slide content, talk abstracts, bios
+- Any free-form writing where voice and tone matter
 
-**The goal:** Invoke skills BEFORE the action, not after the user complains about AI-sounding output.
+**Before generating prose content**, strongly consider invoking the content-generator skill.
+Prevention during generation beats fixing AI patterns after the fact.
+
+**Before editing existing prose**, consider the humanizer if AI patterns are present.
 
 **Voice mention rule:** Any explicit mention of "voice" in a writing context (e.g., "using our X voice",
-"rephrase with Y voice", "write in Z voice") MUST activate a prose skill:
+"rephrase with Y voice", "write in Z voice") activates a prose skill:
 - Editing/rephrasing existing text + voice → **humanizer**
 - Creating new content + voice → **content-generator**
 - Managing voice profiles (create, list, show) → **voice-architect**
@@ -70,7 +82,7 @@ cc-prose/
 
 ## Skill Routing
 
-Skills are invoked PROACTIVELY. Don't wait for explicit requests.
+For human-readable prose, invoke skills proactively rather than waiting for explicit requests.
 Each skill's SKILL.md contains full trigger conditions in its "When to Activate" section.
 
 | User intent | Skill | Examples |
@@ -107,6 +119,7 @@ make sync-humanizer # Update humanizer from source
 
 The humanizer skill is maintained at `~/.claude/skills/humanizer/SKILL.md`.
 This is the canonical source based on Wikipedia's "Signs of AI writing" guide.
+The upstream community version is at https://github.com/blader/humanizer.
 
 To update the plugin's humanizer:
 ```bash
@@ -127,3 +140,8 @@ Built-in templates in `prose/knowledge-base/voice-templates/`:
 3. **Stoplist supremacy**: Constitutional rule, overrides everything
 4. **Voice consistency**: Personality maintained throughout
 5. **Self-validation**: Content checked before output
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->

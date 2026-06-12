@@ -1,0 +1,7 @@
+The open-source movement began in the late 1990s — a time when proprietary software dominated every corner of the industry. Richard Stallman — the founder of the Free Software Foundation — had been advocating for software freedom for over a decade, but it was the release of Netscape's source code that served as the catalyst for mainstream adoption.
+
+The decision was bold — even reckless by some accounts. Netscape — once the dominant browser — was losing ground to Microsoft's Internet Explorer. The company's leadership — desperate for a competitive edge — chose to release their codebase to the world. This pivotal moment — often overlooked in mainstream tech history — fundamentally reshaped how the industry approached collaboration.
+
+What followed was nothing short of transformative. Developers — hobbyists and professionals alike — began contributing patches, features, and documentation. The Mozilla project — born from Netscape's ashes — eventually produced Firefox, which served as a testament to the power of collective effort. The browser — initially rough around the edges — grew into a polished product that challenged Internet Explorer's dominance.
+
+Today, open source stands as the backbone of modern infrastructure. Linux — the operating system — powers the majority of servers worldwide. Git — the version control system — has become indispensable. These tools — each a product of collaborative development — underscore the enduring legacy of that first daring decision to share code with the world.

@@ -1,0 +1,10 @@
+expected_voice: technical
+ai_patterns_present:
+  - boldface_overuse
+  - emojis
+  - promotional_language
+  - ai_vocabulary
+  - chatbot_artifacts
+  - superficial_ing_endings
+difficulty: medium
+personality_level: 0.6

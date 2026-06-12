@@ -1,0 +1,10 @@
+expected_voice: conversational
+ai_patterns_present:
+  - sycophantic_tone
+  - chatbot_artifacts
+  - generic_positive_conclusions
+  - promotional_language
+  - filler_phrases
+  - emojis
+difficulty: medium
+personality_level: 0.8

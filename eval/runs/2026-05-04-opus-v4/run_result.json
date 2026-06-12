@@ -1,0 +1,159 @@
+{
+  "exit_code": 0,
+  "duration_s": 177.7,
+  "wall_clock_s": 177.8,
+  "cost_usd": 1.58,
+  "token_usage": {
+    "input": 31,
+    "output": 7132,
+    "cache_read": 500273,
+    "cache_create": 183494
+  },
+  "num_turns": 17,
+  "per_model_usage": {
+    "claude-opus-4-6": {
+      "input": 31,
+      "output": 7132,
+      "cache_read": 500273,
+      "cache_create": 183494,
+      "cost_usd": 1.5754289999999997
+    }
+  },
+  "per_model_turns": {
+    "claude-opus-4-6": 17
+  },
+  "num_cases": 5,
+  "model": "claude-opus-4-6",
+  "agent": "claude-code",
+  "agent_version": "2.1.126 (Claude Code)",
+  "execution_mode": "case",
+  "eval_params": {
+    "skill": "humanizer",
+    "skill_args": "{text_or_file}",
+    "execution_mode": "case",
+    "max_budget_usd": 100.0,
+    "timeout_s": 300
+  },
+  "per_case": {
+    "case-001-simple-technical-prose": {
+      "exit_code": 0,
+      "duration_s": 23.7,
+      "token_usage": {
+        "input": 5,
+        "output": 1018,
+        "cache_read": 78539,
+        "cache_create": 40235
+      },
+      "cost_usd": 0.31621325,
+      "num_turns": 3,
+      "per_model_usage": {
+        "claude-opus-4-6": {
+          "input": 5,
+          "output": 1018,
+          "cache_read": 78539,
+          "cache_create": 40235,
+          "cost_usd": 0.31621325
+        }
+      },
+      "per_model_turns": {
+        "claude-opus-4-6": 3
+      }
+    },
+    "case-002-dense-slop-all-categories": {
+      "exit_code": 0,
+      "duration_s": 82.2,
+      "token_usage": {
+        "input": 13,
+        "output": 2866,
+        "cache_read": 243766,
+        "cache_create": 43281
+      },
+      "cost_usd": 0.46410424999999994,
+      "num_turns": 7,
+      "per_model_usage": {
+        "claude-opus-4-6": {
+          "input": 13,
+          "output": 2866,
+          "cache_read": 243766,
+          "cache_create": 43281,
+          "cost_usd": 0.46410424999999994
+        }
+      },
+      "per_model_turns": {
+        "claude-opus-4-6": 7
+      }
+    },
+    "case-003-opinion-piece-pov-voice": {
+      "exit_code": 0,
+      "duration_s": 33.2,
+      "token_usage": {
+        "input": 5,
+        "output": 1469,
+        "cache_read": 78617,
+        "cache_create": 40717
+      },
+      "cost_usd": 0.33053974999999997,
+      "num_turns": 3,
+      "per_model_usage": {
+        "claude-opus-4-6": {
+          "input": 5,
+          "output": 1469,
+          "cache_read": 78617,
+          "cache_create": 40717,
+          "cost_usd": 0.33053974999999997
+        }
+      },
+      "per_model_turns": {
+        "claude-opus-4-6": 3
+      }
+    },
+    "case-004-tutorial-with-code": {
+      "exit_code": 0,
+      "duration_s": 23.8,
+      "token_usage": {
+        "input": 5,
+        "output": 1197,
+        "cache_read": 78804,
+        "cache_create": 40642
+      },
+      "cost_usd": 0.32336449999999994,
+      "num_turns": 3,
+      "per_model_usage": {
+        "claude-opus-4-6": {
+          "input": 5,
+          "output": 1197,
+          "cache_read": 78804,
+          "cache_create": 40642,
+          "cost_usd": 0.32336449999999994
+        }
+      },
+      "per_model_turns": {
+        "claude-opus-4-6": 3
+      }
+    },
+    "case-005-edge-short-chatbot-artifact": {
+      "exit_code": 0,
+      "duration_s": 14.8,
+      "token_usage": {
+        "input": 3,
+        "output": 582,
+        "cache_read": 20547,
+        "cache_create": 18619
+      },
+      "cost_usd": 0.14120725,
+      "num_turns": 1,
+      "per_model_usage": {
+        "claude-opus-4-6": {
+          "input": 3,
+          "output": 582,
+          "cache_read": 20547,
+          "cache_create": 18619,
+          "cost_usd": 0.14120725
+        }
+      },
+      "per_model_turns": {
+        "claude-opus-4-6": 1
+      }
+    }
+  }
+}

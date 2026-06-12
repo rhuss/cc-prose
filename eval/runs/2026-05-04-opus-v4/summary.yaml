@@ -1,0 +1,176 @@
+judges:
+  ai_patterns_removed:
+    mean: 1.0
+    pass_rate: 1.0
+  filler_and_hedging:
+    mean: 1.0
+    pass_rate: 1.0
+  meaning_preservation:
+    mean: 4.6
+    pass_rate: null
+  naturalness:
+    mean: 4.0
+    pass_rate: null
+  voice_announced:
+    mean: 0.4
+    pass_rate: 0.4
+per_case:
+  case-001-simple-technical-prose:
+    ai_patterns_removed:
+      rationale: No high-confidence AI patterns detected
+      value: true
+    filler_and_hedging:
+      rationale: No filler or hedging patterns found
+      value: true
+    meaning_preservation:
+      rationale: 'The rewritten source.md preserves every factual claim from the original:
+        Kubernetes'' declarative configuration model, scheduler assigning workloads
+        across nodes, restarting failed Pods for availability, enterprise adoption
+        growth since 2020, container orchestration standardizing deployment/scaling,
+        control plane storing state in etcd (distributed key-value store), and etcd''s
+        automatic failover and leader election ensuring cluster operation when nodes
+        fail. No claims were added, removed, or distorted. The meaning and nuance
+        are fully intact with only minor stylistic rephrasing.'
+      value: 5
+    naturalness:
+      rationale: The prose in source.md is clear, accurate, and competent, but it
+        reads like a textbook summary rather than something with personality or voice.
+        The sentences are uniformly medium-length and declarative. There's no opinion,
+        no point of view, no character—just clean exposition. It doesn't sound overtly
+        AI-generated (no 'leveraging,' no 'it's worth noting'), but it also doesn't
+        sound like a human who has opinions about Kubernetes. It's adequate technical
+        writing without any distinctive flair.
+      value: 3
+    voice_announced:
+      rationale: 'Voice announced: technical'
+      value: true
+  case-002-dense-slop-all-categories:
+    ai_patterns_removed:
+      rationale: No high-confidence AI patterns detected
+      value: true
+    filler_and_hedging:
+      rationale: No filler or hedging patterns found
+      value: true
+    meaning_preservation:
+      rationale: 'The rewritten source.md preserves every factual claim, argument,
+        and nuance from the original. All key points are intact: the definition of
+        microservices, independent deployment benefits (with the Spotify example),
+        targeted scaling (with the cloud bill comparison), tradeoffs (network latency,
+        partial failures, data consistency, saga orchestrators vs. single transactions),
+        the observability requirement (distributed tracing, logging, metrics), and
+        the honest recommendation about team size and operational maturity. No claims
+        were added or removed. The content is essentially identical in meaning, with
+        only very minor stylistic adjustments that don''t alter any facts or nuances.'
+      value: 5
+    naturalness:
+      rationale: This reads like something a senior engineer would write in a blog
+        post or internal tech doc. It has genuine personality and opinions ('I have
+        watched teams spend months building saga orchestrators for problems that a
+        single database transaction would have solved'). Sentence length varies naturally
+        — from punchy ('The tradeoffs are real') to longer explanatory sentences.
+        It uses concrete details (Spotify squads, cloud bills as second-largest line
+        item after payroll, saga orchestrators) rather than vague generalities. It
+        acknowledges complexity honestly ('it depends on your team size and operational
+        maturity') without hedging into meaninglessness. The closing advice is practical
+        and opinionated rather than formulaic. There's no trace of AI-typical patterns
+        like 'In conclusion,' 'It's important to note,' or bullet-point-heavy structure.
+        This genuinely reads like authentic human prose with character.
+      value: 5
+    voice_announced:
+      rationale: 'Voice announced: technical'
+      value: true
+  case-003-opinion-piece-pov-voice:
+    ai_patterns_removed:
+      rationale: No high-confidence AI patterns detected
+      value: true
+    filler_and_hedging:
+      rationale: No filler or hedging patterns found
+      value: true
+    meaning_preservation:
+      rationale: The rewritten source.md preserves every factual claim, argument,
+        and nuance from the original. The core tension (AI tools are confident and
+        fast, which makes bugs expensive), the specific anecdote (Copilot suggestion
+        that silently swallowed an error, took two days to find in production), the
+        critique of teams skipping code review, and the practical recommendation (treat
+        AI suggestions like a junior developer's PR) are all intact. The specific
+        details — boilerplate, scaffolding tests, autocompleting config files — are
+        preserved. The closing advice (read every line, run the tests, ask why, don't
+        ship what you can't explain) is unchanged. No new claims were added, no qualifications
+        were removed, and the tone/voice remain consistent with the original.
+      value: 5
+    naturalness:
+      rationale: 'This reads like a genuine opinion piece from a developer who''s
+        actually used these tools and has specific frustrations. The Copilot anecdote
+        about silently swallowing an error is concrete and believable — not a generic
+        hypothetical. Sentence length varies naturally: ''That part is real.'' sits
+        next to longer, more complex observations. The voice is distinctive and opinionated
+        (''Not \'
+      value: 5
+    voice_announced:
+      rationale: No voice announcement found
+      value: false
+  case-004-tutorial-with-code:
+    ai_patterns_removed:
+      rationale: No high-confidence AI patterns detected
+      value: true
+    filler_and_hedging:
+      rationale: No filler or hedging patterns found
+      value: true
+    meaning_preservation:
+      rationale: 'The rewritten source.md preserves every factual claim from the original:
+        the package name (pgxpool), the install command, the identical Go code snippet,
+        the explanation of MaxConns (caps simultaneous connections, blocks when all
+        in use), MinConns (keeps idle connections ready to avoid TCP handshake delays),
+        and the pool''s behavior regarding health checks and automatic replacement
+        of dead connections. No facts were removed, distorted, or added. The phrasing
+        is slightly more concise and natural (e.g., ''caps the number of simultaneous
+        connections'' instead of a more verbose formulation), but all key details
+        and nuances are intact.'
+      value: 5
+    naturalness:
+      rationale: 'The prose in source.md reads naturally and has a clear, practical
+        voice. Sentence length varies well — from the terse ''Install it:'' to longer
+        explanatory sentences. It uses concrete details (specific config values, specific
+        scenarios like ''network blips, server restarts, idle timeouts'') rather than
+        vague generalities. The writing has a tutorial-style personality that feels
+        like an experienced developer explaining things to a colleague, not an AI
+        generating documentation. Phrases like ''the next caller blocks until one
+        frees up'' and ''don''t wait for a TCP handshake'' feel human and direct.
+        The parenthetical explanation style is natural. Minor ding: the overall structure
+        is still somewhat formulaic (install, create, explain params), and it could
+        use a touch more personality or opinion (e.g., why 10 is a good default, or
+        when you''d want different settings). But overall it reads authentically human.'
+      value: 4
+    voice_announced:
+      rationale: Announced 'technical' but expected 'tutorial'
+      value: false
+  case-005-edge-short-chatbot-artifact:
+    ai_patterns_removed:
+      rationale: No high-confidence AI patterns detected
+      value: true
+    filler_and_hedging:
+      rationale: No modified source file (inline text case)
+      value: true
+    meaning_preservation:
+      rationale: There are no prose content files modified by the skill execution
+        — only infrastructure/harness files (hooks/subagent_stop.py, hooks/tools.py,
+        tool_handlers.yaml). The instructions say to IGNORE these files. Since there
+        is no prose content to evaluate for meaning preservation, and the original
+        text appears to be code/config that was passed through without a prose rewrite,
+        a middle score of 3 is appropriate — no meaning was lost, but there's nothing
+        substantive to confirm full preservation either.
+      value: 3
+    naturalness:
+      rationale: No prose content was available to evaluate. The output consists entirely
+        of infrastructure/code files (hooks/subagent_stop.py, hooks/tools.py, tool_handlers.yaml)
+        which are harness artifacts, not skill-generated prose.
+      value: 3
+    voice_announced:
+      rationale: No voice announcement found
+      value: false
+run_id: 2026-05-04-opus-v4
+run_metrics:
+  cache_hit_rate: 0.731609
+  cost_per_mtok_usd: 2.2868
+  cost_per_turn_usd: 0.092941
+  output_tokens_per_turn: 419.53

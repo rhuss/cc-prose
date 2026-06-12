@@ -1,0 +1,326 @@
+name: cc-prose-humanizer
+description: Evaluate the humanizer skill's ability to remove AI writing patterns and apply voice profiles
+skill: humanizer
+
+execution:
+  mode: case
+  arguments: "{text_or_file}"
+  timeout: 300
+
+runner:
+  type: claude-code
+
+models:
+  skill: claude-opus-4-6
+  judge: claude-opus-4-6
+
+permissions:
+  allow:
+    - "Read"
+    - "Write"
+    - "Edit"
+  deny: []
+
+mlflow:
+  experiment: cc-prose-eval
+
+dataset:
+  path: eval/cases
+  schema: |
+    Each case directory contains:
+    - input.yaml: YAML file with fields:
+      - 'text_or_file': either inline text to humanize or a path to a file
+        in the case directory (e.g., 'source.md')
+      - 'voice' (optional): voice profile to apply (pov, reasoning, tutorial,
+        narrative, analytical, reference, conversational, technical)
+    - source.md (optional): the source text file when 'text_or_file' references
+      a file rather than inline text
+    - reference.md (optional): gold-standard humanized version for comparison
+    - annotations.yaml: expected metadata including:
+      - 'expected_voice': which voice should be auto-detected or applied
+      - 'ai_patterns_present': list of AI pattern categories in the source
+        (e.g., ['significance_inflation', 'copula_avoidance', 'chatbot_artifacts'])
+      - 'difficulty': easy, medium, or hard (density of AI patterns)
+
+inputs:
+  tools:
+    - match: Questions asked to the user via AskUserQuestion
+      prompt: |
+        Answer based on the test case context in input.yaml.
+        If asked about voice preference, use the voice from input.yaml if present.
+        Default: pick the first option or answer "yes" for confirmations.
+
+outputs:
+  - path: output
+    schema: |
+      The humanizer edits source files in-place via the Edit tool. The
+      collector captures modified files under _modified/source.md. Judges
+      should read from outputs["modified_files"]["source.md"] for the
+      rewritten content. The output/ directory itself may be empty.
+
+traces:
+  stdout: true
+  stderr: true
+  events: false
+  metrics: true
+
+judges:
+  - name: ai_patterns_removed
+    description: |
+      Reads the rewritten source.md from modified_files and scans for
+      high-confidence AI vocabulary and patterns from all 24 humanizer
+      categories. For inline text cases (no source file), falls back to
+      parsing assistant text from JSONL stdout.
+    check: |
+      import re, json
+      # Prefer modified source.md (file-based cases)
+      modified = outputs.get("modified_files", {})
+      text = modified.get("source.md", "")
+      # Fallback for inline text: extract rewritten content from assistant output
+      if not text.strip():
+          raw = outputs.get("stdout", "")
+          texts = []
+          for line in raw.splitlines():
+              try:
+                  evt = json.loads(line)
+              except (json.JSONDecodeError, ValueError):
+                  continue
+              if evt.get("type") != "assistant":
+                  continue
+              if evt.get("parent_tool_use_id"):
+                  continue
+              for block in evt.get("message", {}).get("content", []):
+                  if block.get("type") == "text":
+                      texts.append(block["text"])
+          combined = "\n".join(texts)
+          # Extract blockquoted rewritten text ("> lines")
+          bq_lines = [l[2:] for l in combined.split("\n") if l.startswith("> ")]
+          if bq_lines:
+              text = "\n".join(bq_lines)
+          else:
+              # Strip change summaries that quote original AI patterns
+              clean = []
+              for line in combined.split("\n"):
+                  if re.match(r"\*\*(Changes|What changed|Removed)", line):
+                      break
+                  clean.append(line)
+              text = "\n".join(clean)
+      if not text.strip():
+          return (False, "No rewritten text found")
+      patterns = {
+          "delve": r"\bdelve[sd]?\b",
+          "leverage": r"\bleverag(e[sd]?|ing)\b",
+          "serves_as": r"\bserves as\b",
+          "stands_as": r"\bstands as\b",
+          "testament": r"\btestament\b",
+          "pivotal": r"\bpivotal\b",
+          "crucial": r"\bcrucial\b",
+          "landscape_abstract": r"\b(evolving|technological|cultural) landscape\b",
+          "tapestry": r"\btapestry\b",
+          "underscore_verb": r"\bunderscor(e[sd]?|ing)\b",
+          "showcase": r"\bshowcas(e[sd]?|ing)\b",
+          "foster": r"\bfoster(s|ed|ing)\b",
+          "em_dash": "—",
+          "chatbot_hope": r"I hope this helps",
+          "chatbot_letmeknow": r"[Ll]et me know",
+          "chatbot_hereis": r"[Hh]ere is (a|an|the)\b",
+          "chatbot_certainly": r"\bCertainly!",
+          "chatbot_great_question": r"Great question",
+          "knowledge_cutoff": r"as of (my|the) (training|last|latest)",
+          "emoji_decorative": "[\U0001f680\U0001f4a1✅\U0001f525⭐]",
+      }
+      found = {}
+      for name, regex in patterns.items():
+          matches = re.findall(regex, text, re.IGNORECASE)
+          if matches:
+              found[name] = len(matches)
+      if found:
+          return (False, f"AI patterns remain: {found}")
+      return (True, "No high-confidence AI patterns detected")
+
+  - name: voice_announced
+    description: |
+      Checks that the humanizer announced which voice profile it is applying.
+      Looks in assistant text output for voice announcement patterns.
+    check: |
+      import re, json
+      raw = outputs.get("stdout", "")
+      texts = []
+      for line in raw.splitlines():
+          try:
+              evt = json.loads(line)
+          except (json.JSONDecodeError, ValueError):
+              continue
+          if evt.get("type") != "assistant":
+              continue
+          if evt.get("parent_tool_use_id"):
+              continue
+          for block in evt.get("message", {}).get("content", []):
+              if block.get("type") == "text":
+                  texts.append(block["text"])
+      text = " ".join(texts)
+      # Look for voice announcement patterns ([\w-]+ for hyphenated voices)
+      patterns = [
+          r"[Rr]ewriting with \*{0,2}([\w-]+)\*{0,2} voice",
+          r"(?:using|applying|with) (?:the )?[\"']?([\w-]+)[\"']? voice",
+          r"([\w-]+) voice (?:profile|applied|detected|selected)",
+      ]
+      voice = None
+      for p in patterns:
+          match = re.search(p, text, re.IGNORECASE)
+          if match:
+              voice = match.group(1)
+              break
+      if not voice:
+          return (False, "No voice announcement found")
+      expected = outputs.get("annotations", {}).get("expected_voice", "")
+      if expected:
+          v = voice.lower()
+          e = expected.lower()
+          # Accept exact match, or if expected voice appears as a component
+          # (e.g., "technical-casual" matches expected "technical")
+          if v != e and e not in v.split("-") and not v.startswith(e):
+              return (False, f"Announced '{voice}' but expected '{expected}'")
+      return (True, f"Voice announced: {voice}")
+
+  - name: filler_and_hedging
+    description: |
+      Reads the rewritten source.md from modified_files and checks for
+      remaining filler phrases and excessive hedging (categories 22-23).
+    check: |
+      import re
+      modified = outputs.get("modified_files", {})
+      text = modified.get("source.md", "")
+      if not text.strip():
+          return (True, "No modified source file (inline text case)")
+      filler = [
+          r"\b[Ii]n order to\b",
+          r"\b[Dd]ue to the fact that\b",
+          r"\b[Aa]t this point in time\b",
+          r"\b[Ii]n the event that\b",
+          r"\bhas the ability to\b",
+          r"\b[Ii]t is important to note that\b",
+      ]
+      hedging = [
+          r"\bcould potentially\b",
+          r"\bmight possibly\b",
+          r"\bcould potentially possibly\b",
+          r"\bit could be argued\b",
+      ]
+      issues = []
+      for p in filler:
+          if re.search(p, text):
+              issues.append(f"filler: {p}")
+      for p in hedging:
+          if re.search(p, text):
+              issues.append(f"hedging: {p}")
+      if issues:
+          return (False, f"Found {len(issues)} filler/hedging patterns: {issues[:3]}")
+      return (True, "No filler or hedging patterns found")
+
+  - name: meaning_preservation
+    description: |
+      LLM judge that compares the original input text with the rewritten output
+      to verify that core meaning, facts, and arguments are preserved.
+    prompt: |
+      You are evaluating whether a humanizer skill preserved the meaning of
+      the original text while removing AI writing patterns.
+
+      ## Original text (from the test case input):
+      {{ inputs }}
+
+      ## Rewritten text (modified files from skill execution):
+      {{ outputs }}
+
+      ## Important: what to evaluate
+
+      ONLY evaluate prose content files (e.g., source.md). IGNORE infrastructure
+      files like hooks/, tool_handlers.yaml, and similar config or code files.
+      These are harness artifacts, not skill output.
+
+      ## Evaluation criteria
+
+      Score 1-5:
+      1 = Major meaning lost or distorted; facts changed; new claims added
+      2 = Some meaning or important nuance lost; context removed
+      3 = Core meaning preserved; minor details rephrased or simplified
+      4 = Well preserved; natural edits only; all key facts and arguments intact
+      5 = Perfectly preserved; every fact, claim, and nuance intact
+
+      Focus on:
+      - Are all factual claims still present?
+      - Is the core argument or message unchanged?
+      - Were important qualifications or caveats kept?
+      - Did the rewrite add claims not in the original?
+
+  - name: naturalness
+    description: |
+      Voice-aware LLM judge that assesses whether rewritten text matches the
+      expected personality level for its voice profile. Technical/reference
+      voices should sound clean and precise (not opinionated). POV/narrative
+      voices should have strong personality. Evaluates prose content only.
+    prompt: |
+      You are evaluating whether rewritten text sounds naturally human-written
+      and matches the expected personality level for its voice profile.
+
+      ## Voice profile context (from test case annotations):
+      {{ annotations }}
+
+      The `personality_level` annotation (0.0-1.0) indicates how much
+      personality, opinion, and character the voice is SUPPOSED to have:
+      - 0.0-0.3: Minimal personality. Neutral, objective, encyclopedic.
+        Clean Wikipedia-style prose IS the goal. Score 5 for clear, precise,
+        well-structured informational writing.
+      - 0.4-0.6: Moderate personality. Professional but approachable.
+        Some sentence rhythm variation, occasional concrete observations.
+        Score 5 for competent, clear prose with subtle personality touches.
+      - 0.7-0.8: High personality. Engaged, warm, or persuasive.
+        Opinions, anecdotes, varied rhythm expected. Score 5 for writing
+        that feels like a real person explaining something they care about.
+      - 0.9-1.0: Very high personality. Strong opinions, first-person,
+        punchy rhythm, reactions. Score 5 for writing that sounds like a
+        specific person with a distinct voice and viewpoint.
+
+      ## Rewritten text (modified files from skill execution):
+      {{ outputs }}
+
+      ## Important: what to evaluate
+
+      ONLY evaluate files that contain prose content (e.g., source.md, any .md
+      files with actual writing). IGNORE infrastructure files like hooks/,
+      tool_handlers.yaml, subagent_stop.py, settings.json, and similar config
+      or code files. These are harness artifacts, not skill output.
+
+      If no prose file is present in the output (only code/config files),
+      score 3 and note that no prose content was available to evaluate.
+
+      ## Evaluation criteria
+
+      Score 1-5 (calibrated to the personality_level):
+      1 = Sounds AI-generated regardless of voice; formulaic; broken rhythm
+      2 = Some improvement but doesn't match the voice's personality target
+      3 = Adequate; matches personality level but reads as generic
+      4 = Good match for the voice; appropriate personality level applied well
+      5 = Excellent match; the prose sounds like exactly what this voice
+          profile should produce, whether that's clean reference docs or
+          opinionated blog posts
+
+      Consider (weight these based on personality_level):
+      - Does sentence length vary naturally?
+      - Is the personality level appropriate for the voice (not too much, not too little)?
+      - Does it use concrete details rather than vague claims?
+      - Would you guess this was written by a human?
+      - For high-personality voices: opinions, reactions, first-person, humor?
+      - For low-personality voices: precision, clarity, objectivity, structure?
+
+thresholds:
+  ai_patterns_removed:
+    min_pass_rate: 1.0
+  voice_announced:
+    min_pass_rate: 1.0
+  filler_and_hedging:
+    min_pass_rate: 1.0
+  meaning_preservation:
+    min_mean: 3.5
+  naturalness:
+    min_mean: 3.5

@@ -1,0 +1,9 @@
+expected_voice: narrative
+ai_patterns_present:
+  - em_dash_overuse
+  - ai_vocabulary
+  - copula_avoidance
+  - significance_inflation
+  - elegant_variation
+difficulty: medium
+personality_level: 0.8

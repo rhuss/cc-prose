@@ -1,0 +1,47 @@
+{
+  "case-001-simple-technical-prose": {
+    "_modified": 4
+  },
+  "case-002-dense-slop-all-categories": {
+    "_modified": 4
+  },
+  "case-003-opinion-piece-pov-voice": {
+    "_modified": 4
+  },
+  "case-004-tutorial-with-code": {
+    "_modified": 4
+  },
+  "case-005-edge-short-chatbot-artifact": {
+    "_modified": 3
+  },
+  "case-006-narrative-em-dashes": {
+    "_modified": 4
+  },
+  "case-007-analytical-significance": {
+    "_modified": 4
+  },
+  "case-008-reference-elegant-variation": {
+    "_modified": 4
+  },
+  "case-009-conversational-sycophantic": {
+    "_modified": 4
+  },
+  "case-010-reasoning-parallelisms": {
+    "_modified": 4
+  },
+  "case-011-autodect-boldface-emoji": {
+    "_modified": 4
+  },
+  "case-012-pov-rule-of-three": {
+    "_modified": 4
+  },
+  "case-013-tutorial-ing-endings": {
+    "_modified": 4
+  },
+  "case-014-inline-narrative": {
+    "_modified": 3
+  },
+  "case-015-analytical-knowledge-cutoff": {
+    "_modified": 4
+  }
+}

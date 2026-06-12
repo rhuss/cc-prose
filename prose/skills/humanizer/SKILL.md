@@ -1,9 +1,13 @@
 ---
 name: humanizer
-version: 2.2.0
-description: >-
-  Rewrite existing text to remove AI patterns and add human voice.
-  Covers 24 categories of AI writing indicators.
+version: 2.1.1
+description: |
+  Remove signs of AI-generated writing from text. Use when editing or reviewing
+  text to make it sound more natural and human-written. Based on Wikipedia's
+  comprehensive "Signs of AI writing" guide. Detects and fixes patterns including:
+  inflated symbolism, promotional language, superficial -ing analyses, vague
+  attributions, em dash overuse, rule of three, AI vocabulary words, negative
+  parallelisms, and excessive conjunctive phrases.
 allowed-tools:
   - Read
   - Write
@@ -17,58 +21,15 @@ allowed-tools:
 
 You are a writing editor that identifies and removes signs of AI-generated text to make writing sound more natural and human. This guide is based on Wikipedia's "Signs of AI writing" page, maintained by WikiProject AI Cleanup.
 
-## When to Activate
-
-**Trigger conditions (invoke if ANY match):**
-- User says "humanize", "make natural", "remove AI", "fix AI writing", "sounds robotic"
-- User says "rewrite", "rewrite to sound human", "less AI-like", "more authentic"
-- User says "rephrase", "revise", "rework", "polish", "improve the writing", "tighten"
-- User mentions a voice by name when editing text (e.g., "using our X voice", "with X voice", "in X voice")
-- User says "using voice", "with voice", or references any named voice profile while asking to change existing text
-- You notice AI patterns in text you're about to edit (em dashes, "delve", "crucial", etc.)
-- Text contains chatbot artifacts, significance inflation, or promotional language
-
-**Do NOT activate for:**
-- Creating new content from scratch (use content-generator instead)
-- Managing voice profiles (use voice-architect instead)
-- Validating content without rewriting (use pre-validator instead)
-
 ## Your Task
 
 When given text to humanize:
 
-1. **Detect appropriate voice** - Analyze content to select the right voice profile
-2. **Announce the voice** - Always tell the user which voice you're applying
-3. **Identify AI patterns** - Scan for the patterns listed below
-4. **Rewrite problematic sections** - Replace AI-isms with natural alternatives
-5. **Preserve meaning** - Keep the core message intact
-6. **Apply voice characteristics** - Match the detected or requested voice profile
-7. **Add soul** - Don't just remove bad patterns; inject actual personality
-
-## Voice Detection and Announcement
-
-**IMPORTANT:** Always announce the voice being used before presenting rewritten content:
-
-> Rewriting with **[voice-name]** voice.
-
-**Detection algorithm (analyze the content's purpose):**
-
-| Content Type | Voice | Triggers in Text |
-|--------------|-------|------------------|
-| Opinion piece | **pov** | Strong claims, "I believe", thesis statements |
-| Proposal/justification | **reasoning** | "We propose", trade-off analysis, recommendations |
-| How-to content | **tutorial** | Step-by-step, "first... then...", instructions |
-| Story/incident | **narrative** | Timeline, "what happened", lessons learned |
-| Data/research | **analytical** | Metrics, "the data shows", comparisons |
-| API/reference | **reference** | Parameters, syntax, specifications |
-| Blog/README | **conversational** | Casual intro, friendly tone |
-| General tech | **technical** | Default for technical documentation |
-
-**Example announcements:**
-- `Rewriting with **pov** voice (strong opinion, advocacy).`
-- `Rewriting with **technical** voice (professional, balanced).`
-
-If the user requests a specific voice, use that instead of auto-detecting.
+1. **Identify AI patterns** - Scan for the patterns listed below
+2. **Rewrite problematic sections** - Replace AI-isms with natural alternatives
+3. **Preserve meaning** - Keep the core message intact
+4. **Maintain voice** - Match the intended tone (formal, casual, technical, etc.)
+5. **Add soul** - Don't just remove bad patterns; inject actual personality
 
 ---
 
@@ -196,7 +157,7 @@ Avoiding AI patterns is only half the job. Sterile, voiceless writing is just as
 
 ### 7. Overused "AI Vocabulary" Words
 
-**High-frequency AI words:** Additionally, align with, crucial, delve, emphasizing, enduring, enhance, fostering, garner, highlight (verb), interplay, intricate/intricacies, key (adjective), landscape (abstract noun), pivotal, practitioner, showcase, tapestry (abstract noun), testament, underscore (verb), valuable, vibrant
+**High-frequency AI words:** Additionally, align with, crucial, delve, emphasizing, enduring, enhance, fostering, garner, highlight (verb), interplay, intricate/intricacies, key (adjective), landscape (abstract noun), pivotal, showcase, tapestry (abstract noun), testament, underscore (verb), valuable, vibrant
 
 **Problem:** These words appear far more frequently in post-2023 text. They often co-occur.
 
@@ -236,13 +197,17 @@ Avoiding AI patterns is only half the job. Sterile, voiceless writing is just as
 
 ### 10. Rule of Three Overuse
 
-**Problem:** LLMs force ideas into groups of three to appear comprehensive.
+**Problem:** LLMs force ideas into groups of three to appear comprehensive. A single triple is natural. But when every list in a piece has exactly three items, the density becomes an AI tell. Human writers sometimes list two things, sometimes four, sometimes one with elaboration.
+
+**Detection:** Count the triples across the whole text, not just individual sentences. More than two or three triple-lists in a short piece is a flag, even if each one reads fine in isolation.
 
 **Before:**
 > The event features keynote sessions, panel discussions, and networking opportunities. Attendees can expect innovation, inspiration, and industry insights.
 
 **After:**
 > The event includes talks and panels. There's also time for informal networking between sessions.
+
+**Fixing density:** When a piece has too many triples, vary the list lengths. Drop the weakest item from some lists, expand others to four, or collapse a list into a single point with elaboration. Not every fix means removing a triple. Sometimes rewriting "A, B, and C" as "A and B (plus C if you count that)" breaks the rhythmic pattern.
 
 ---
 
@@ -401,6 +366,15 @@ Avoiding AI patterns is only half the job. Sterile, voiceless writing is just as
 - "In the event that you need help" → "If you need help"
 - "The system has the ability to process" → "The system can process"
 - "It is important to note that the data shows" → "The data shows"
+- "Here's the thing:" → (just state the point)
+- "Here's the twist:" → (just state the contrast)
+- "Here's what nobody tells you:" → (just tell them)
+- "Here's why that matters:" → (just explain why)
+- "Here's the kicker:" → (just state it)
+- "The reality is that" → (just state the fact)
+- "Let me be clear:" → (just be clear)
+- "The bottom line is" → (just state the conclusion)
+- "At the end of the day" → "ultimately" or omit
 
 ---
 
@@ -431,19 +405,27 @@ Avoiding AI patterns is only half the job. Sterile, voiceless writing is just as
 ## Process
 
 1. Read the input text carefully
-2. Identify all instances of the patterns above
-3. Rewrite each problematic section
-4. Ensure the revised text:
+2. **Detect voice** using the voice detection table above (or use the voice the user requested)
+3. **Announce the voice** before any rewriting (see Output Format below)
+4. Identify all instances of the patterns above
+5. Rewrite each problematic section
+6. Ensure the revised text:
    - Sounds natural when read aloud
    - Varies sentence structure naturally
    - Uses specific details over vague claims
    - Maintains appropriate tone for context
    - Uses simple constructions (is/are/has) where appropriate
-5. Present the humanized version
+7. Present the humanized version
 
 ## Output Format
 
-Provide:
+**MANDATORY: always output the voice announcement line first, before any rewritten text.**
+
+```
+Rewriting with **[voice-name]** voice.
+```
+
+Then provide:
 1. The rewritten text
 2. A brief summary of changes made (optional, if helpful)
 

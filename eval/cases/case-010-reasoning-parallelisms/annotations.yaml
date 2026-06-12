@@ -1,0 +1,11 @@
+expected_voice: reasoning
+ai_patterns_present:
+  - negative_parallelisms
+  - false_ranges
+  - rule_of_three
+  - copula_avoidance
+  - significance_inflation
+  - ai_vocabulary
+  - excessive_hedging
+difficulty: hard
+personality_level: 0.5

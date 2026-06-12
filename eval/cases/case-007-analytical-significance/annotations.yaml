@@ -1,0 +1,9 @@
+expected_voice: analytical
+ai_patterns_present:
+  - significance_inflation
+  - vague_attributions
+  - ai_vocabulary
+  - false_ranges
+  - promotional_language
+difficulty: medium
+personality_level: 0.5

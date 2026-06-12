@@ -1,0 +1,9 @@
+expected_voice: technical
+ai_patterns_present:
+  - copula_avoidance
+  - ai_vocabulary
+  - significance_inflation
+  - vague_attributions
+  - promotional_language
+difficulty: easy
+personality_level: 0.6

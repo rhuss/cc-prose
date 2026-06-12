@@ -1,0 +1,10 @@
+expected_voice: tutorial
+ai_patterns_present:
+  - filler_phrases
+  - ai_vocabulary
+  - copula_avoidance
+  - significance_inflation
+  - promotional_language
+  - chatbot_artifacts
+  - superficial_ing_endings
+difficulty: medium

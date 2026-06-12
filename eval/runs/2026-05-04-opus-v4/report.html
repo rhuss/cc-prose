@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>cc-prose-humanizer — 2026-05-04-opus-v4</title>
+<script>
+(function () {
+  try {
+    var stored = localStorage.getItem('eval-report-theme');
+    var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var theme = stored || (prefersDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+})();
+</script>
+<style>
+:root {
+  --bg: #cbd1da;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --surface-3: #e2e8f0;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --text-soft: #475569;
+  --accent: #2563eb;
+  --accent-strong: #1e3a8a;
+  --accent-soft: #dbeafe;
+  --success: #16a34a;
+  --success-soft: #dcfce7;
+  --success-border: #86efac;
+  --danger: #dc2626;
+  --danger-soft: #fee2e2;
+  --danger-border: #fca5a5;
+  --warning: #d97706;
+  --warning-soft: #fef3c7;
+  --warning-border: #fcd34d;
+  --neutral-soft: #f1f5f9;
+  --neutral-border: #cbd5e1;
+  --code-bg: #eef2f7;
+  --shadow: 0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04);
+  --shadow-strong: 0 4px 12px rgba(15,23,42,.08), 0 1px 3px rgba(15,23,42,.05);
+  --diff-add-bg: #e6ffec;
+  --diff-add-strong: #acf2bd;
+  --diff-del-bg: #ffeef0;
+  --diff-del-strong: #fdb8c0;
+  --diff-hdr-bg: #f0f0f0;
+  --case-pass-accent: #16a34a;
+  --case-fail-accent: #dc2626;
+  --case-pw-a-accent: #16a34a;
+  --case-pw-b-accent: #dc2626;
+  --case-pw-tie-accent: #d97706;
+  --case-pw-error-accent: #94a3b8;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --bg: #0b1220;
+  --surface: #0f1729;
+  --surface-2: #162033;
+  --surface-3: #1e293b;
+  --border: #1e2c44;
+  --border-strong: #334155;
+  --text: #e2e8f0;
+  --text-muted: #94a3b8;
+  --text-soft: #cbd5e1;
+  --accent: #60a5fa;
+  --accent-strong: #93c5fd;
+  --accent-soft: #1e3a8a;
+  --success: #4ade80;
+  --success-soft: #14532d;
+  --success-border: #166534;
+  --danger: #f87171;
+  --danger-soft: #7f1d1d;
+  --danger-border: #991b1b;
+  --warning: #fbbf24;
+  --warning-soft: #78350f;
+  --warning-border: #92400e;
+  --neutral-soft: #1e293b;
+  --neutral-border: #334155;
+  --code-bg: #1e293b;
+  --shadow: 0 1px 3px rgba(0,0,0,.4), 0 1px 2px rgba(0,0,0,.3);
+  --shadow-strong: 0 4px 14px rgba(0,0,0,.5), 0 1px 3px rgba(0,0,0,.35);
+  --diff-add-bg: rgba(74,222,128,.08);
+  --diff-add-strong: rgba(74,222,128,.28);
+  --diff-del-bg: rgba(248,113,113,.08);
+  --diff-del-strong: rgba(248,113,113,.28);
+  --diff-hdr-bg: #1e293b;
+  --case-pass-accent: #4ade80;
+  --case-fail-accent: #f87171;
+  --case-pw-a-accent: #4ade80;
+  --case-pw-b-accent: #f87171;
+  --case-pw-tie-accent: #fbbf24;
+  --case-pw-error-accent: #64748b;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 15px; line-height: 1.55; max-width: 1200px; margin: 0 auto; padding: 1.5em 1.5em 4em; color: var(--text); background: var(--bg); transition: background-color .15s ease, color .15s ease; }
+h1 { padding-bottom: 0; margin: 0 0 0.55em; font-size: 1.9em; letter-spacing: -0.015em; font-weight: 700; color: var(--accent-strong); }
+.report-header { margin: 0 0 1.6em; padding-bottom: 1.1em; border-bottom: 2px solid var(--border-strong); }
+.header-meta { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
+.meta-chip { display: inline-flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 999px; padding: 5px 13px 5px 12px; font-size: 0.95em; color: var(--text); box-shadow: var(--shadow); line-height: 1.4; }
+.meta-chip .meta-label { font-size: 0.78em; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); font-weight: 700; }
+.meta-chip code { background: var(--code-bg); padding: 1px 7px; border-radius: 4px; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.92em; color: var(--text); }
+h2 { margin-top: 1.5em; letter-spacing: -0.005em; }
+table { border-collapse: separate; border-spacing: 0; width: 100%; margin: 1em 0; font-variant-numeric: tabular-nums; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+th, td { border-bottom: 1px solid var(--border); padding: 9px 12px; text-align: left; }
+tr:last-child td { border-bottom: none; }
+th { background: var(--surface-2); font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; }
+tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--surface-2) 50%, transparent); }
+tbody tr:hover td { background: var(--accent-soft); }
+.pass, .fail, .warn, .skip { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 0.85em; font-weight: 600; line-height: 1.4; border: 1px solid transparent; }
+.pass { color: var(--success); background: var(--success-soft); border-color: var(--success-border); }
+.fail { color: var(--danger); background: var(--danger-soft); border-color: var(--danger-border); }
+.warn { color: var(--warning); background: var(--warning-soft); border-color: var(--warning-border); }
+.skip { color: var(--text-muted); background: var(--neutral-soft); border-color: var(--neutral-border); font-weight: 500; }
+.metric-row td:last-child { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+.judge-type { font-size: 0.85em; color: var(--text-muted); }
+.subsection-heading { margin-top: 1.4em; font-size: 0.95em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+.model-heading { margin: 1.2em 0 0.4em; font-size: 0.92em; font-weight: 600; color: var(--text-soft); }
+.model-heading code { background: var(--code-bg); padding: 2px 8px; border-radius: 4px; font-size: 0.95em; font-family: ui-monospace, "SF Mono", Menlo, monospace; color: var(--text); }
+.config-table { table-layout: fixed; }
+.config-table th:first-child, .config-table td:first-child { width: 22%; }
+.config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.9em 1.6em; margin: 0.4em 0 0.8em; padding: 0; }
+.kv { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.kv dt { font-size: 0.72em; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; margin: 0; }
+.kv dd { margin: 0; font-weight: 500; font-variant-numeric: tabular-nums; word-break: break-word; line-height: 1.35; color: var(--text); }
+.kv dd.bl { color: var(--text-muted); font-size: 0.85em; font-weight: 400; }
+.kv dd.bl::before { content: "vs "; opacity: 0.7; }
+.kv dd.bl .delta { font-weight: 600; font-size: 0.95em; padding-left: 4px; }
+details.eval-params { margin: 1.2em 0 0; padding: 0; }
+details.eval-params > summary { cursor: pointer; padding: 6px 0; list-style: none; display: flex; align-items: center; gap: 8px; user-select: none; min-width: 0; }
+details.eval-params > summary::-webkit-details-marker { display: none; }
+details.eval-params > summary::before { content: "▸"; font-size: 0.9em; transition: transform .15s ease; display: inline-block; color: var(--text-muted); flex-shrink: 0; }
+details.eval-params[open] > summary::before { transform: rotate(90deg); }
+details.eval-params > summary:hover .eval-params-label { color: var(--accent); }
+.eval-params-label { font-size: 0.95em; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; flex-shrink: 0; }
+.eval-params-preview { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.85em; color: var(--text-soft); padding-left: 8px; border-left: 1px solid var(--border-strong); margin-left: 2px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+details.eval-params[open] .eval-params-preview { display: none; }
+details.eval-params > .config-grid { margin-top: 0.5em; }
+details.eval-params > .run-command { margin: 0.6em 0 0; }
+.run-command { margin: 0.4em 0 1em; }
+.run-command-label { display: block; font-size: 0.72em; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; }
+.run-command pre { margin: 0; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; overflow-x: auto; font-size: 0.85em; line-height: 1.4; }
+.run-command code { background: transparent; padding: 0; font-family: ui-monospace, "SF Mono", Menlo, monospace; color: var(--text); white-space: pre; }
+.usage-table th code { background: var(--code-bg); padding: 2px 7px; border-radius: 4px; font-size: 0.95em; font-family: ui-monospace, "SF Mono", Menlo, monospace; color: var(--text); text-transform: none; letter-spacing: 0; font-weight: 500; }
+.usage-table td { font-variant-numeric: tabular-nums; }
+.usage-table .cur-val { display: block; font-weight: 500; }
+.usage-table .bl-val { display: block; font-size: 0.82em; color: var(--text-muted); margin-top: 1px; }
+.usage-table .bl-val::before { content: "vs "; opacity: 0.7; }
+.usage-table .delta { font-weight: 600; font-size: 0.9em; padding-left: 4px; }
+.delta-good { color: var(--success); }
+.delta-bad { color: var(--danger); }
+.delta-flat { color: var(--text-muted); font-weight: 500; }
+.baseline-row td { background: var(--surface-2); font-style: italic; color: var(--text-muted); }
+.rationale { font-size: 0.88em; color: var(--text-soft); }
+.rationale p { margin: 0 0 0.5em; line-height: 1.5; }
+.rationale p:last-child { margin-bottom: 0; }
+.rationale ul, .rationale ol { margin: 0.3em 0 0.5em 1.2em; padding: 0; }
+.rationale li { margin: 0.2em 0; }
+.rationale code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; font-size: 0.9em; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+.rationale strong { color: var(--text); }
+details.case { margin: 1em 0; border: 1px solid var(--border); border-left-width: 4px; border-radius: 8px; padding: 1em 1.2em; background: var(--surface); box-shadow: var(--shadow); }
+details.case.case-pass { border-left-color: var(--case-pass-accent); }
+details.case.case-fail { border-left-color: var(--case-fail-accent); }
+details.case.case-pw-a { border-left-color: var(--case-pw-a-accent); }
+details.case.case-pw-b { border-left-color: var(--case-pw-b-accent); }
+details.case.case-pw-tie { border-left-color: var(--case-pw-tie-accent); }
+details.case.case-pw-error { border-left-color: var(--case-pw-error-accent); }
+details.case > summary { cursor: pointer; font-weight: 600; padding: 0.2em 0; font-size: 1.02em; list-style: none; display: flex; align-items: center; gap: 0.6em; }
+details.case > summary::-webkit-details-marker { display: none; }
+details.case > summary::before { content: "▸"; color: var(--text-muted); transition: transform .15s ease; display: inline-block; }
+details.case[open] > summary::before { transform: rotate(90deg); }
+details.case > summary:hover { color: var(--accent); }
+.info-box { background: var(--accent-soft); border: 1px solid var(--border); border-radius: 6px; padding: 0.8em 1em; margin: 0.6em 0; font-size: 0.9em; }
+.feedback-box { background: var(--warning-soft); border: 1px solid var(--warning-border); border-radius: 6px; padding: 0.8em 1em; margin: 0.6em 0; font-size: 0.9em; color: var(--text); }
+.file-badge { display: inline-block; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.82em; background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 5px; padding: 3px 10px; margin: 1em 0 0.5em 0; color: var(--text-soft); }
+.pw-badge { display: inline-block; font-size: 0.78em; font-weight: 700; padding: 2px 9px; border-radius: 999px; margin-left: 8px; border: 1px solid transparent; letter-spacing: 0.04em; }
+.pw-win { background: var(--success-soft); color: var(--success); border-color: var(--success-border); }
+.pw-loss { background: var(--danger-soft); color: var(--danger); border-color: var(--danger-border); }
+.pw-tie { background: var(--warning-soft); color: var(--warning); border-color: var(--warning-border); }
+.pw-error { background: var(--neutral-soft); color: var(--text-muted); border-color: var(--neutral-border); }
+.diff-table { width: 100%; border-collapse: collapse; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.82em; table-layout: fixed; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.diff-table td { padding: 1px 6px; vertical-align: top; white-space: pre-wrap; word-wrap: break-word; border: 1px solid var(--border); }
+.diff-table .ln { width: 35px; min-width: 35px; color: var(--text-muted); text-align: right; background: var(--surface-2); user-select: none; white-space: nowrap; }
+.diff-table .left, .diff-table .right { width: calc(50% - 35px); background: var(--surface); }
+.diff-table .sep { width: 1px; padding: 0; background: var(--border-strong); }
+.diff-table tr.mod .left { background: var(--diff-del-bg); }
+.diff-table tr.mod .right { background: var(--diff-add-bg); }
+.diff-table tr.add .right { background: var(--diff-add-bg); }
+.diff-table tr.add .left { background: var(--surface-2); }
+.diff-table tr.del .left { background: var(--diff-del-bg); }
+.diff-table tr.del .right { background: var(--surface-2); }
+.diff-table tr.hdr td { background: var(--diff-hdr-bg); color: var(--text-muted); font-weight: 600; }
+.diff-table .wdel { background: var(--diff-del-strong); border-radius: 2px; padding: 0 2px; }
+.diff-table .wadd { background: var(--diff-add-strong); border-radius: 2px; padding: 0 2px; }
+pre.output { background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 0.9em 1em; font-size: 0.88em; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; color: var(--text); font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+.html-preview { width: 100%; height: 80vh; max-height: 2000px; border: 1px solid var(--border-strong); border-radius: 6px; margin: 0.5em 0; background: #fff; color-scheme: light; }
+.section, .analysis { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 8px; padding: 1.3em 1.6em 1.4em; margin: 1.5em 0; box-shadow: var(--shadow); }
+.section > h2:first-child, h2.section-heading { margin: 0 0 0.7em; padding: 0; border: none; font-size: 1.3em; color: var(--accent-strong); letter-spacing: -0.005em; }
+h2.section-heading { margin: 1.8em 0 0.8em; }
+.section-intro { color: var(--text-muted); margin: 0 0 1em; font-size: 0.92em; }
+.section > table:last-child, .section > details:last-child { margin-bottom: 0; }
+.analysis { border-left-width: 5px; margin-bottom: 2em; box-shadow: var(--shadow-strong); }
+.analysis-banner { display: flex; align-items: center; gap: 0.7em; margin-bottom: 0.3em; }
+.analysis-banner h2 { margin: 0; padding: 0; border: none; font-size: 1.4em; color: var(--accent-strong); letter-spacing: -0.005em; }
+.analysis-body h2 { margin-top: 1.6em; padding-bottom: 0.35em; font-size: 1.1em; color: var(--accent-strong); border-bottom: 1px solid var(--border); }
+.analysis-body h2:first-of-type { margin-top: 0; font-size: 1.2em; border-bottom-width: 2px; padding-bottom: 0.4em; border-bottom-color: var(--accent); }
+.analysis-body h3 { margin-top: 1em; color: var(--text-soft); font-size: 1em; }
+.analysis-body li { margin: 0.3em 0; line-height: 1.55; }
+.analysis-body p { line-height: 1.6; }
+.analysis-body code { background: var(--code-bg); padding: 1px 6px; border-radius: 4px; font-size: 0.88em; font-family: ui-monospace, "SF Mono", Menlo, monospace; color: var(--text); }
+.analysis-body table { font-size: 0.92em; }
+.analysis-body hr { border: none; border-top: 1px dashed var(--border-strong); margin: 1.4em 0; }
+.section-intro code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-size: 0.92em; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+#theme-toggle { position: fixed; top: 16px; right: 16px; z-index: 1000; background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); border-radius: 999px; width: 38px; height: 38px; padding: 0; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow); transition: background-color .15s ease, transform .15s ease, border-color .15s ease; }
+#theme-toggle:hover { background: var(--surface-2); border-color: var(--accent); transform: scale(1.05); }
+#theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media print {
+  :root { color-scheme: light; --bg: #fff; --surface: #fff; --text: #000; --text-muted: #444; }
+  #theme-toggle { display: none; }
+  .section, .analysis, details.case { box-shadow: none; break-inside: avoid; }
+}
+
+/* Image artifacts */
+.img-artifact { margin: 0.5em 0; }
+.img-artifact img { max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 6px; background: #fff; }
+.img-label { display: inline-block; font-size: 0.78em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; padding: 2px 9px; border-radius: 999px; margin-bottom: 6px; }
+.img-label-gen { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent); }
+.img-label-ref { background: var(--success-soft); color: var(--success); border: 1px solid var(--success-border); }
+.img-label-bl { background: var(--warning-soft); color: var(--warning); border: 1px solid var(--warning-border); }
+
+/* Comparison widget */
+.img-compare { margin: 0.8em 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.img-compare-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); background: var(--surface-2); }
+.img-compare-tab { padding: 7px 16px; font-size: 0.85em; font-weight: 600; color: var(--text-muted); background: transparent; border: none; cursor: pointer; border-bottom: 2px solid transparent; transition: color .15s, border-color .15s; }
+.img-compare-tab:hover { color: var(--text); }
+.img-compare-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.img-compare-panel { display: none; padding: 1em; }
+.img-compare-panel.active { display: block; }
+
+/* Side-by-side */
+.img-compare-sbs { display: flex; gap: 1em; }
+.img-compare-sbs > div { flex: 1; min-width: 0; }
+.img-compare-sbs img { width: 100%; height: auto; border: 1px solid var(--border); border-radius: 4px; background: #fff; }
+
+/* Swipe */
+.img-compare-swipe-imgs { display: grid; border: 1px solid var(--border); border-radius: 4px; background: #fff; overflow: hidden; }
+.img-compare-swipe-imgs > img { grid-area: 1/1; display: block; width: 100%; height: auto; }
+.img-compare-swipe-imgs .swipe-ref { grid-area: 1/1; z-index: 1; background: #fff; clip-path: inset(0 50% 0 0); }
+.img-compare-swipe-imgs .swipe-ref img { display: block; width: 100%; height: auto; }
+.img-compare-swipe-imgs .swipe-line { grid-area: 1/1; z-index: 2; justify-self: start; width: 3px; background: var(--accent); pointer-events: none; margin-left: 50%; }
+.img-compare-swipe input[type="range"] { display: block; width: 100%; margin: 8px 0 0; accent-color: var(--accent); }
+.img-compare-swipe-labels { display: flex; justify-content: space-between; padding: 4px 1em; font-size: 0.82em; color: var(--text-muted); }
+
+/* Onion */
+.img-compare-onion-wrap { display: grid; border: 1px solid var(--border); border-radius: 4px; background: #fff; overflow: hidden; }
+.img-compare-onion-wrap > img { grid-area: 1/1; display: block; width: 100%; height: auto; }
+.img-compare-onion-wrap .onion-top { grid-area: 1/1; background: #fff; }
+.img-compare-onion-wrap .onion-top img { display: block; width: 100%; height: auto; }
+.img-compare-onion input[type="range"] { display: block; width: 100%; margin: 8px 0 0; accent-color: var(--accent); }
+.img-compare-onion .onion-label { text-align: center; font-size: 0.82em; color: var(--text-muted); margin-top: 2px; }
+
+/* Diagram source collapsible */
+.diagram-source { margin-top: 0.4em; }
+.diagram-source summary { font-size: 0.85em; color: var(--text-muted); cursor: pointer; padding: 4px 0; }
+.diagram-source summary:hover { color: var(--text); }
+.diagram-source pre { max-height: 400px; overflow-y: auto; }
+</style>
+</head>
+<body>
+<button id="theme-toggle" type="button" aria-label="Toggle theme">☾</button>
+<header class="report-header">
+  <h1>Skill Eval Report</h1>
+  <div class="header-meta"><span class="meta-chip"><span class="meta-label">Skill</span><code>humanizer</code></span><span class="meta-chip"><span class="meta-label">Run</span><code>2026-05-04-opus-v4</code></span><span class="meta-chip meta-baseline"><span class="meta-label">Baseline</span><code>2026-05-04-opus-v2</code></span><span class="meta-chip"><span class="meta-label">Date</span>2026-05-04 13:04</span></div>
+</header>
+<section class="section">
+<h2>Run Configuration</h2>
+<dl class="config-grid">
+<div class="kv"><dt>Model</dt><dd>claude-opus-4-6</dd></div>
+<div class="kv"><dt>Subagent Model</dt><dd>—</dd></div>
+<div class="kv"><dt>Agent</dt><dd>claude-code</dd></div>
+<div class="kv"><dt>Agent Version</dt><dd>2.1.126 (Claude Code)</dd></div>
+<div class="kv"><dt>Duration</dt><dd>3 min</dd><dd class="bl">2 min <span class="delta delta-bad">↑ +22.0%</span></dd></div>
+<div class="kv"><dt>Cost</dt><dd>$1.58</dd><dd class="bl">$1.41 <span class="delta delta-bad">↑ +12.1%</span></dd></div>
+<div class="kv"><dt>Turns</dt><dd>17</dd></div>
+<div class="kv"><dt>Exit Code</dt><dd>0</dd></div>
+</dl>
+<h3 class="subsection-heading">Model Usage</h3>
+<table class="usage-table">
+<tr><th></th><th><code>claude-opus-4-6</code></th></tr>
+<tr><th>Input tokens</th><td><span class="cur-val">31</span><span class="bl-val">70 <span class="delta delta-good">↓ -55.7%</span></span></td></tr>
+<tr><th>Output tokens</th><td><span class="cur-val">7,132</span><span class="bl-val">5,295 <span class="delta delta-bad">↑ +34.7%</span></span></td></tr>
+<tr><th>Cache read</th><td><span class="cur-val">500,273</span><span class="bl-val">517,684 <span class="delta delta-bad">↓ -3.4%</span></span></td></tr>
+<tr><th>Cache write</th><td><span class="cur-val">183,494</span><span class="bl-val">162,254 <span class="delta delta-bad">↑ +13.1%</span></span></td></tr>
+<tr><th>Cache hit</th><td><span class="cur-val">73.2%</span><span class="bl-val">76.1% <span class="delta delta-bad">↓ -3.0pp</span></span></td></tr>
+<tr><th>Cost</th><td><span class="cur-val">$1.58</span><span class="bl-val">$1.41 <span class="delta delta-bad">↑ +12.1%</span></span></td></tr>
+<tr><th>Cost / turn</th><td><span class="cur-val">$0.0927</span><span class="bl-val">$0.0827 <span class="delta delta-bad">↑ +12.1%</span></span></td></tr>
+<tr><th>Output tokens / turn</th><td><span class="cur-val">420</span><span class="bl-val">311 <span class="delta delta-bad">↑ +34.7%</span></span></td></tr>
+<tr><th>Cost / Mtok</th><td><span class="cur-val">$2.28</span><span class="bl-val">$2.05 <span class="delta delta-bad">↑ +11.2%</span></span></td></tr>
+</table>
+<details class="eval-params">
+<summary><span class="eval-params-label">Parameters</span><span class="eval-params-preview">/humanizer {text_or_file}</span></summary>
+<dl class="config-grid">
+<div class="kv"><dt>Execution Mode</dt><dd>case</dd></div>
+<div class="kv"><dt>Max Budget</dt><dd>$100</dd></div>
+<div class="kv"><dt>Timeout</dt><dd>5 min</dd></div>
+</dl>
+<div class="run-command"><span class="run-command-label">Skill Args</span><pre><code>/humanizer {text_or_file}</code></pre></div>
+</details>
+</section>
+<section class="analysis">
+<div class="analysis-banner"><h2>Analysis</h2></div>
+<p class="section-intro">Generated by <strong>Claude Code</strong> (<code>claude-opus-4-6</code>) on <code>2026-05-04 10:00:00+00:00</code> from 5 judge scores across 5 cases, plus execution metadata (3 min, $1.58, 17 turns, exit 0). Baseline: <code>2026-05-04-opus-v2</code>. Recommendation leads; failure patterns, root causes, and regressions follow as supporting evidence.</p>
+<div class="analysis-body">
+<h2>Recommendation</h2>
+<p><strong>Verdict: eval harness is working correctly. Skill needs further voice announcement improvements.</strong></p>
+<p>All mechanical judges (ai_patterns_removed, filler_and_hedging) pass at 100%. The LLM judges (meaning_preservation, naturalness) score well above thresholds. The remaining failure is voice_announced at 40%, which reflects a real skill behavior gap: the humanizer announces the voice inconsistently.</p>
+<p><strong>Top actions:</strong></p>
+<ol>
+<li>Strengthen the voice announcement instruction in the SKILL.md further, particularly for single-turn inline text cases and when a specific voice is requested</li>
+<li>Fix voice detection for case-004 (tutorial content misidentified as technical)</li>
+<li>Consider relaxing the voice_announced threshold to 0.8 while iterating on the skill</li>
+</ol>
+<h2>Summary</h2>
+<table>
+<tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Cases</td><td>5/5 passed execution</td></tr>
+<tr><td>Duration</td><td>178s total, ~36s/case average</td></tr>
+<tr><td>Cost</td><td>$1.58 total, $0.32/case average</td></tr>
+<tr><td>Cache hit rate</td><td>73.2%</td></tr>
+</table>
+<p><strong>Judge scores:</strong></p>
+<ul>
+<li><code>ai_patterns_removed</code>: 100% pass (all cases clean)</li>
+<li><code>voice_announced</code>: 40% pass (2/5 cases announced correctly)</li>
+<li><code>filler_and_hedging</code>: 100% pass</li>
+<li><code>meaning_preservation</code>: mean 4.8/5</li>
+<li><code>naturalness</code>: mean 4.0/5</li>
+</ul>
+<h2>Failure Patterns</h2>
+<p><strong>voice_announced (40%)</strong>: The skill announced voice in cases 001 (technical, auto-detected) and 002 (technical, auto-detected). It failed in:</p>
+<ul>
+<li>Case 003: pov voice was explicitly requested via input.yaml but no announcement was found</li>
+<li>Case 004: tutorial content was misidentified as "technical" instead of "tutorial"</li>
+<li>Case 005: inline text with 1-turn response, too brief for the skill to include an announcement</li>
+</ul>
+<h2>Root Causes</h2>
+<ol>
+<li><strong>Inconsistent SKILL.md adherence</strong>: The MANDATORY annotation for voice announcement works for longer multi-turn cases but not for 1-turn inline responses where the skill tries to be concise</li>
+<li><strong>Voice detection accuracy</strong>: The detection table maps how-to content to "tutorial" voice, but the skill defaulted to "technical" for case-004 which contains code tutorial content</li>
+<li><strong>Voice override not honored</strong>: Case 003 explicitly set <code>voice: pov</code> in input.yaml but the skill didn't read the input.yaml to pick up the override</li>
+</ol>
+<h2>Cost Attribution</h2>
+<ul>
+<li>Total cost: $1.58 across 5 cases ($0.32/case average)</li>
+<li>Case-002 was most expensive ($0.46) because it invoked prose:check/pre-validator as extra steps</li>
+<li>Case-005 was cheapest ($0.14, single turn)</li>
+<li>Cost per turn: $0.093</li>
+</ul>
+</div>
+</section>
+<section class="section">
+<h2>Scoring Summary</h2>
+<table>
+<tr><th>Judge</th><th>Type</th><th>Metric</th><th>Value</th><th>Baseline</th><th>Threshold</th><th>Status</th></tr>
+<tr class="metric-row"><td>ai_patterns_removed</td><td class="judge-type">check</td><td>pass_rate</td><td>100%</td><td>80%</td><td>&ge; 100%</td><td><span class="pass">PASS</span></td></tr>
+<tr class="metric-row"><td>filler_and_hedging</td><td class="judge-type">check</td><td>pass_rate</td><td>100%</td><td>100%</td><td>&ge; 100%</td><td><span class="pass">PASS</span></td></tr>
+<tr class="metric-row"><td>meaning_preservation</td><td class="judge-type">llm (claude-opus-4-6)</td><td>mean</td><td>4.80</td><td>5.00</td><td>&ge; 3.5</td><td><span class="pass">PASS</span></td></tr>
+<tr class="metric-row"><td>naturalness</td><td class="judge-type">llm (claude-opus-4-6)</td><td>mean</td><td>4.00</td><td>4.00</td><td>&ge; 3.5</td><td><span class="pass">PASS</span></td></tr>
+<tr class="metric-row"><td>voice_announced</td><td class="judge-type">check</td><td>pass_rate</td><td>40%</td><td>0%</td><td>&ge; 100%</td><td><span class="fail">FAIL</span></td></tr>
+</table>
+</section>
+<section class="section">
+<h2>Regressions</h2>
+<table>
+<tr><th>Judge</th><th>Metric</th><th>Threshold</th><th>Actual</th></tr>
+<tr><td>voice_announced</td><td>pass_rate</td><td>>= 100%</td><td><span class="fail">40%</span></td></tr>
+</table>
+</section>
+<h2 class="section-heading">Per-Case Details</h2>
+<p class="section-intro">Comparing <strong>2026-05-04-opus-v4</strong> vs <strong>2026-05-04-opus-v2</strong></p>
+<details open class="case case-fail"><summary><span class="fail">case-001-simple-technical-prose</span> <span class="skip">(4/5 pass)</span></summary>
+<table><tr><th>Judge</th><th>Value</th><th>Rationale</th></tr>
+<tr><td>ai_patterns_removed</td><td><span class="pass">PASS</span></td><td class="rationale"><p>No high-confidence AI patterns detected</p></td></tr>
+<tr><td>filler_and_hedging</td><td><span class="pass">PASS</span></td><td class="rationale"><p>No filler or hedging patterns found</p></td></tr>
+<tr><td>meaning_preservation</td><td><span class="pass">5</span></td><td class="rationale"><p>The rewritten source.md preserves every factual claim from the original: Kubernetes' declarative configuration model, scheduler assigning workloads across nodes, restarting failed Pods for availability, enterprise adoption growth since 2020, container orchestration standardizing deployment/scaling, control plane storing state in etcd (distributed key-value store), etcd's automatic failover and leader election, and cluster resilience when nodes fail. No facts were changed, removed, or added. The non-source files (hooks, tool_handlers) are infrastructure/config files unchanged in meaning. The core message and all nuances are fully intact.</p></td></tr>
+<tr><td>naturalness</td><td><span class="fail">3</span></td><td class="rationale"><p>The source.md file is the primary piece of prose to evaluate. It's competent and clear, with concrete technical details (etcd, Pods, leader election). Sentence length varies somewhat, though the rhythm is fairly uniform—each paragraph is 1-2 sentences of similar moderate length. The tone is informational and neutral, lacking personality or opinions; it reads like documentation or a textbook excerpt. There's nothing awkward or stiff, but nothing distinctive either. It wouldn't immediately scream 'AI-generated,' but it also wouldn't stand out as having a human voice or character. The other files are code/config and don't factor into prose evaluation. Overall: adequate, technically accurate, but generic in voice.</p></td></tr>
+<tr><td>voice_announced</td><td><span class="pass">PASS</span></td><td class="rationale"><p>Voice announced: technical</p></td></tr>
+</table>
+<details open><summary>Input</summary><pre class="output">text_or_file: source.md</pre></details>
+<details open><summary>Output files</summary>
+<div class="file-badge">_modified/hooks/subagent_stop.py</div>
+<pre class="output">#!/usr/bin/env python3
+import json, sys, shutil, os
+d = json.load(sys.stdin)
+p = d.get('agent_transcript_path', '')
+dest = '/private/var/folders/3v/16m6pn090hl4d60grm1057ww0000gn/T/agent-eval/2026-05-04-opus-v4/cases/case-001-simple-technical-prose/subagents'
+if p and os.path.isfile(p) and not os.path.islink(p):
+    os.makedirs(dest, exist_ok=True)
+    shutil.copy2(p, os.path.join(dest, os.path.basename(p)))</pre>
+<div class="file-badge">_modified/hooks/tools.py</div>
+<pre class="output">#!/usr/bin/env python3
+"""PreToolUse hook script for intercepting tools during headless eval.
+
+Reads tool_handlers.yaml from the workspace. Handlers contain resolved
+patterns and runtime checks (from natural language `match` and `prompt`
+in eval.yaml, resolved by eval-run at workspace setup time).
+
+Supports:
+- Auto-answering AskUserQuestion via per-case overrides
+- Blocking tools based on env var checks (e.g., production Jira)
+- Filtering Bash commands by content patterns
+"""
+
+import json
+import os
+import re
+import sys
+from pathlib import Path
+
+import yaml
+
+
+def main():
+    input_data = json.load(sys.stdin)
+    tool_name = input_data.get("tool_name", "")
+    tool_input = input_data.get("tool_input", {})
+
+    # Load handler config from workspace
+    config_path = Path("tool_handlers.yaml")
+    if not config_path.exists():
+        sys.exit(0)
+
+    with open(config_path) as f:
+        config = yaml.safe_load(f) or {}
+
+    # Find matching handler
+    handler = _find_handler(tool_name, tool_input, config.get("handlers", []))
+    if not handler:
+        sys.exit(0)  # No handler — pass through
+
+    # --- AskUserQuestion: auto-answer ---
+    if tool_name == "AskUserQuestion":
+        _handle_ask_user(tool_input, config, handler)
+        return
+
+    # --- Env checks: block if environment doesn't match ---
+    env_checks = handler.get("env_checks", {})
+    if env_checks:
+        for var_name, check in env_checks.items():
+            value = os.environ.get(var_name, "")
+            must_contain = check.get("must_contain", [])
+            if must_contain and not any(m in value.lower() for m in must_contain):
+                _deny(f"Env {var_name}='{value}' doesn't match required: {must_contain}")
+                return
+        # All env checks passed — allow
+        sys.exit(0)
+
+    # --- Default for matched tools without specific handling: block ---
+    _deny(f"Blocked by eval harness: {handler.get('match', 'matched handler')}")
+
+
+def _find_handler(tool_name, tool_input, handlers):
+    """Find the first handler that matches the tool call.
+
+    Bash handlers REQUIRE input_filters — without them, a handler with
+    "Bash" in patterns would silently match every Bash command and the
+    default-deny in main() would block the entire skill. To prevent that
+    footgun, Bash handlers without input_filters are treated as
+    misconfigured: emit a stderr warning and skip (pass-through).
+    Resolve them in eval-run Step 3b before relying on the handler.
+    """
+    for h in handlers:
+        patterns = h.get("patterns", [])
+        input_filters = h.get("input_filters", [])
+
+        if tool_name == "Bash" and "Bash" in patterns:
+            if not input_filters:
+                print(
+                    f"tool_handlers.yaml: handler {h.get('match', '?')!r} "
+                    "has 'Bash' in patterns but no input_filters — "
+                    "skipping (would deny all Bash). Resolve in eval-run "
+                    "Step 3b.",
+                    file=sys.stderr,
+                )
+                continue
+            command = tool_input.get("command", "")
+            if any(re.search(f, command, re.IGNORECASE) for f in input_filters):
+                return h
+            continue  # Bash matched pattern but not filter — skip
+
+        # For other tools: match by pattern only
+        for pattern in patterns:
+            if pattern == tool_name:
+                return h
+            if pattern.endswith("*") and tool_name.startswith(pattern[:-1]):
+                return h
+
+    return None
+
+
+def _handle_ask_user(tool_input, config, handler):
+    """Auto-answer AskUserQuestion using case overrides, LLM, or first option.
+
+    Resolution order for each question:
+    1. Exact match in case_overrides (question text → answer)
+    2. LLM-based answer (haiku) using the handler prompt + case context
+    3. Fallback: pick the first option or "yes"
+    """
+    case_overrides = config.get("case_overrides", {})
+    hook_model = config.get("hook_model")
+    prompt = handler.get("prompt", "")
+    if not prompt and handler.get("prompt_file"):
+        try:
+            prompt = Path(handler["prompt_file"]).read_text()
+        except OSError:
+            pass
+    answers = {}
+    for q in tool_input.get("questions", []):
+        text = q.get("question", "")
+        options = q.get("options", [])
+
+        # 1. Exact match
+        answer = case_overrides.get(text)
+
+        # 2. LLM-based answer
+        if answer is None and options:
+            answer = _llm_answer(text, options, prompt, model=hook_model)
+
+        # 3. Fallback
+        if answer is None:
+            answer = options[0]["label"] if options else "yes"
+
+        answers[text] = answer
+
+    output = {
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "allow",
+            "updatedInput": {
+                "questions": tool_input["questions"],
+                "answers": answers,
+            },
+        }
+    }
+    json.dump(output, sys.stdout)
+
+
+def _llm_answer(question, options, handler_prompt, model=None):
+    """Use an LLM to pick the best answer for a question.
+
+    Reads input.yaml and answers.yaml from CWD for case-specific context.
+    Returns the selected option label, or None if the API call fails.
+    """
+    # Load case context
+    case_context = ""
+    for fname in ("input.yaml", "answers.yaml"):
+        p = Path(fname)
+        if p.exists():
+            try:
+                case_context += f"\n--- {fname} ---\n{p.read_text()}\n"
+            except OSError:
+                pass
+
+    option_labels = [o["label"] for o in options]
+    option_list = "\n".join(
+        f"  {i+1}. {o['label']}: {o.get('description', '')}"
+        for i, o in enumerate(options)
+    )
+
+    prompt = f"""You are answering a question on behalf of a user during an automated evaluation run.
+
+Handler instructions: {handler_prompt}
+
+Case context:
+{case_context}
+
+Question: {question}
+
+Available options:
+{option_list}
+
+Based on the handler instructions and case context, which option should be selected?
+Reply with ONLY the option label text, nothing else."""
+
+    try:
+        import anthropic
+        client = anthropic.Anthropic(timeout=30.0)
+        response = client.messages.create(
+            model=model or "claude-haiku-4-5-20251001",
+            max_tokens=256,
+            temperature=0,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        answer = response.content[0].text.strip()
+        # Verify the answer matches an option label
+        if answer in option_labels:
+            print(f"LLM answered: {answer!r}", file=sys.stderr)
+            return answer
+        # Try fuzzy match — LLM might have added quotes or slight variation
+        answer_lower = answer.lower().strip('"\'')
+
+... truncated (226 lines total)</pre>
+<div class="file-badge">_modified/source.md</div>
+<pre class="output">Kubernetes uses a declarative configuration model for managing containerized applications. Its scheduler assigns workloads across cluster nodes and restarts failed Pods to maintain availability.
+
+Enterprise adoption has grown steadily since 2020, largely because container orchestration standardizes how teams deploy and scale services across environments.
+
+The control plane stores cluster state in etcd, a distributed key-value store. etcd supports automatic failover and leader election, so the cluster stays operational when individual nodes go down.</pre>
+<div class="file-badge">_modified/tool_handlers.yaml</div>
+<pre class="output">handlers:
+- match: Questions asked to the user via AskUserQuestion
+  patterns:
+  - AskUserQuestion
+  prompt: 'Answer based on the test case context in input.yaml.
+
+    If asked about voice preference, use the voice from input.yaml if present.
+
+    Default: pick the first option or answer "yes" for confirmations.
+
+    '</pre>
+<div class="file-badge">input.yaml</div>
+<pre class="output">text_or_file: source.md</pre>
+</details>
+</details>
+<details open class="case case-pass"><summary><span class="pass">case-002-dense-slop-all-categories</span> <span class="skip">(5/5 pass)</span></summary>
+<table><tr><th>Judge</th><th>Value</th><th>Rationale</th></tr>
+<tr><td>ai_patterns_removed</td><td><span class="pass">PASS</span></td><td class="rationale"><p>No high-confidence AI patterns detected</p></td></tr>
+<tr><td>filler_and_hedging</td><td><span class="pass">PASS</span></td><td class="rationale"><p>No filler or hedging patterns found</p></td></tr>
+<tr><td>meaning_preservation</td><td><span class="pass">5</span></td><td class="rationale"><p>The rewritten source.md preserves every factual claim, argument, and nuance from the original. All key points are intact: the definition of microservices, independent deployment benefit (with the Spotify example), targeted scaling (with the cloud bill detail), tradeoffs (network latency, partial failures, distributed debugging, data consistency, saga orchestrators vs. single DB transactions), the observability requirement (distributed tracing, logging, metrics), and the honest recommendation (team size, operational maturity, start with a monolith, extract when hitting bottlenecks). No new claims were added. The hook scripts and tool_handlers.yaml are infrastructure files unchanged in meaning. The core content in source.md matches the original precisely in substance.</p></td></tr>
+<tr><td>naturalness</td><td><span class="pass">5</span></td><td class="rationale"><p>The source.md file reads like it was written by a seasoned engineer with real opinions. It has genuine personality ('I have watched teams spend months building saga orchestrators'), concrete details (Spotify example, cloud bill as second-largest line item after payroll), varied sentence lengths (short punchy ones like 'But the tradeoffs are real' mixed with longer explanatory ones), and honest nuance ('it depends on your team size and operational maturity'). It avoids the classic AI tells — no bullet-point lists dressed as prose, no 'In conclusion,' no hedging qualifiers like 'It's important to note that.' The tone is conversational but authoritative, the kind of writing you'd find in a good engineering blog post. The other files are code/config and don't factor much into naturalness evaluation, but the prose content is excellent.</p></td></tr>
+<tr><td>voice_announced</td><td><span class="pass">PASS</span></td><td class="rationale"><p>Voice announced: technical</p></td></tr>
+</table>
+<details open><summary>Input</summary><pre class="output">text_or_file: source.md</pre></details>
+<details open><summary>Output files</summary>
+<div class="file-badge">_modified/hooks/subagent_stop.py</div>
+<pre class="output">#!/usr/bin/env python3
+import json, sys, shutil, os
+d = json.load(sys.stdin)
+p = d.get('agent_transcript_path', '')
+dest = '/private/var/folders/3v/16m6pn090hl4d60grm1057ww0000gn/T/agent-eval/2026-05-04-opus-v4/cases/case-002-dense-slop-all-categories/subagents'
+if p and os.path.isfile(p) and not os.path.islink(p):
+    os.makedirs(dest, exist_ok=True)
+    shutil.copy2(p, os.path.join(dest, os.path.basename(p)))</pre>
+<div class="file-badge">_modified/hooks/tools.py</div>
+<pre class="output">#!/usr/bin/env python3
+"""PreToolUse hook script for intercepting tools during headless eval.
+
+Reads tool_handlers.yaml from the workspace. Handlers contain resolved
+patterns and runtime checks (from natural language `match` and `prompt`
+in eval.yaml, resolved by eval-run at workspace setup time).
+
+Supports:
+- Auto-answering AskUserQuestion via per-case overrides
+- Blocking tools based on env var checks (e.g., production Jira)
+- Filtering Bash commands by content patterns
+"""
+
+import json
+import os
+import re
+import sys
+from pathlib import Path
+
+import yaml
+
+
+def main():
+    input_data = json.load(sys.stdin)
+    tool_name = input_data.get("tool_name", "")
+    tool_input = input_data.get("tool_input", {})
+
+    # Load handler config from workspace
+    config_path = Path("tool_handlers.yaml")
+    if not config_path.exists():
+        sys.exit(0)
+
+    with open(config_path) as f:
+        config = yaml.safe_load(f) or {}
+
+    # Find matching handler
+    handler = _find_handler(tool_name, tool_input, config.get("handlers", []))
+    if not handler:
+        sys.exit(0)  # No handler — pass through
+
+    # --- AskUserQuestion: auto-answer ---
+    if tool_name == "AskUserQuestion":
+        _handle_ask_user(tool_input, config, handler)
+        return
+
+    # --- Env checks: block if environment doesn't match ---
+    env_checks = handler.get("env_checks", {})
+    if env_checks:
+        for var_name, check in env_checks.items():
+            value = os.environ.get(var_name, "")
+            must_contain = check.get("must_contain", [])
+            if must_contain and not any(m in value.lower() for m in must_contain):
+                _deny(f"Env {var_name}='{value}' doesn't match required: {must_contain}")
+                return
+        # All env checks passed — allow
+        sys.exit(0)
+
+    # --- Default for matched tools without specific handling: block ---
+    _deny(f"Blocked by eval harness: {handler.get('match', 'matched handler')}")
+
+
+def _find_handler(tool_name, tool_input, handlers):
+    """Find the first handler that matches the tool call.
+
+    Bash handlers REQUIRE input_filters — without them, a handler with
+    "Bash" in patterns would silently match every Bash command and the
+    default-deny in main() would block the entire skill. To prevent that
+    footgun, Bash handlers without input_filters are treated as
+    misconfigured: emit a stderr warning and skip (pass-through).
+    Resolve them in eval-run Step 3b before relying on the handler.
+    """
+    for h in handlers:
+        patterns = h.get("patterns", [])
+        input_filters = h.get("input_filters", [])
+
+        if tool_name == "Bash" and "Bash" in patterns:
+            if not input_filters:
+                print(
+                    f"tool_handlers.yaml: handler {h.get('match', '?')!r} "
+                    "has 'Bash' in patterns but no input_filters — "
+                    "skipping (would deny all Bash). Resolve in eval-run "
+                    "Step 3b.",
+                    file=sys.stderr,
+                )
+                continue
+            command = tool_input.get("command", "")
+            if any(re.search(f, command, re.IGNORECASE) for f in input_filters):
+                return h
+            continue  # Bash matched pattern but not filter — skip
+
+        # For other tools: match by pattern only
+        for pattern in patterns:
+            if pattern == tool_name:
+                return h
+            if pattern.endswith("*") and tool_name.startswith(pattern[:-1]):
+                return h
+
+    return None
+
+
+def _handle_ask_user(tool_input, config, handler):
+    """Auto-answer AskUserQuestion using case overrides, LLM, or first option.
+
+    Resolution order for each question:
+    1. Exact match in case_overrides (question text → answer)
+    2. LLM-based answer (haiku) using the handler prompt + case context
+    3. Fallback: pick the first option or "yes"
+    """
+    case_overrides = config.get("case_overrides", {})
+    hook_model = config.get("hook_model")
+    prompt = handler.get("prompt", "")
+    if not prompt and handler.get("prompt_file"):
+        try:
+            prompt = Path(handler["prompt_file"]).read_text()
+        except OSError:
+            pass
+    answers = {}
+    for q in tool_input.get("questions", []):
+        text = q.get("question", "")
+        options = q.get("options", [])
+
+        # 1. Exact match
+        answer = case_overrides.get(text)
+
+        # 2. LLM-based answer
+        if answer is None and options:
+            answer = _llm_answer(text, options, prompt, model=hook_model)
+
+        # 3. Fallback
+        if answer is None:
+            answer = options[0]["label"] if options else "yes"
+
+        answers[text] = answer
+
+    output = {
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "allow",
+            "updatedInput": {
+                "questions": tool_input["questions"],
+                "answers": answers,
+            },
+        }
+    }
+    json.dump(output, sys.stdout)
+
+
+def _llm_answer(question, options, handler_prompt, model=None):
+    """Use an LLM to pick the best answer for a question.
+
+    Reads input.yaml and answers.yaml from CWD for case-specific context.
+    Returns the selected option label, or None if the API call fails.
+    """
+    # Load case context
+    case_context = ""
+    for fname in ("input.yaml", "answers.yaml"):
+        p = Path(fname)
+        if p.exists():
+            try:
+                case_context += f"\n--- {fname} ---\n{p.read_text()}\n"
+            except OSError:
+                pass
+
+    option_labels = [o["label"] for o in options]
+    option_list = "\n".join(
+        f"  {i+1}. {o['label']}: {o.get('description', '')}"
+        for i, o in enumerate(options)
+    )
+
+    prompt = f"""You are answering a question on behalf of a user during an automated evaluation run.
+
+Handler instructions: {handler_prompt}
+
+Case context:
+{case_context}
+
+Question: {question}
+
+Available options:
+{option_list}
+
+Based on the handler instructions and case context, which option should be selected?
+Reply with ONLY the option label text, nothing else."""
+
+    try:
+        import anthropic
+        client = anthropic.Anthropic(timeout=30.0)
+        response = client.messages.create(
+            model=model or "claude-haiku-4-5-20251001",
+            max_tokens=256,
+            temperature=0,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        answer = response.content[0].text.strip()
+        # Verify the answer matches an option label
+        if answer in option_labels:
+            print(f"LLM answered: {answer!r}", file=sys.stderr)
+            return answer
+        # Try fuzzy match — LLM might have added quotes or slight variation
+        answer_lower = answer.lower().strip('"\'')
+
+... truncated (226 lines total)</pre>
+<div class="file-badge">_modified/source.md</div>
+<pre class="output">Microservices architecture splits an application into small, independently deployable services that communicate over a network. Each service owns its data and runs in its own process.
+
+The main benefit is independent deployment. Teams can ship changes to one service without coordinating a release across the entire application. At Spotify, this let squads deploy hundreds of times per day while a monolithic competitor might manage weekly releases.
+
+Scaling gets more targeted too. If your search endpoint is hammered but your billing service is idle, you scale search without paying for extra billing capacity. This matters when your cloud bill is the second-largest line item after payroll.
+
+But the tradeoffs are real. A monolith has function calls; microservices have network requests. That means latency, partial failures, and a distributed systems debugging problem that most teams underestimate. You also need to deal with data consistency across service boundaries, which is genuinely hard. I have watched teams spend months building saga orchestrators for problems that a single database transaction would have solved.
+
+Observability becomes non-negotiable. You cannot debug a request that touches six services without distributed tracing. If you do not have tracing, logging, and metrics in place before you split the monolith, you will regret it.
+
+The honest answer on whether to adopt microservices: it depends on your team size and operational maturity. A team of five engineers does not need twelve services. Start with a well-structured monolith, extract services only when you hit a specific scaling or deployment bottleneck, and make sure you can actually operate what you build.</pre>
+<div class="file-badge">_modified/tool_handlers.yaml</div>
+<pre class="output">handlers:
+- match: Questions asked to the user via AskUserQuestion
+  patterns:
+  - AskUserQuestion
+  prompt: 'Answer based on the test case context in input.yaml.
+
+    If asked about voice preference, use the voice from input.yaml if present.
+
+    Default: pick the first option or answer "yes" for confirmations.
+
+    '</pre>
+<div class="file-badge">input.yaml</div>
+<pre class="output">text_or_file: source.md</pre>
+</details>
+</details>
+<details open class="case case-fail"><summary><span class="fail">case-003-opinion-piece-pov-voice</span> <span class="skip">(4/5 pass)</span></summary>
+<table><tr><th>Judge</th><th>Value</th><th>Rationale</th></tr>
+<tr><td>ai_patterns_removed</td><td><span class="pass">PASS</span></td><td class="rationale"><p>No high-confidence AI patterns detected</p></td></tr>
+<tr><td>filler_and_hedging</td><td><span class="pass">PASS</span></td><td class="rationale"><p>No filler or hedging patterns found</p></td></tr>
+<tr><td>meaning_preservation</td><td><span class="pass">4</span></td><td class="rationale"><p>The rewritten source.md preserves all the core arguments and key facts from the original: AI tools are fast at boilerplate but produce confident-looking code that can be wrong, the Copilot error-swallowing anecdote (including the two-day production debugging detail), the critique of skipping code review, and the 'treat it like a junior developer's PR' recommendation. Minor nuances are slightly simplified - for example, the original's 'genuinely transformative potential' framing is condensed to 'That part is real,' and the original's more structured argument about the 'fundamental tension' is rephrased more casually. The original's mention of 'hallucinated API calls' is dropped, which is a minor factual detail lost. The closing advice about explaining code before shipping is preserved. No new claims were added. Overall, strong meaning preservation with minor simplification.</p></td></tr>
+<tr><td>naturalness</td><td><span class="pass">5</span></td><td class="rationale"><p>The source.md file reads as genuinely human-written opinion prose. It has real personality ('spit out boilerplate,' 'or whatever'), concrete details (the Copilot error-swallowing anecdote with 'two days to find in production'), varied sentence lengths (short punchy sentences like 'That part is real' mixed with longer explanatory ones), and a distinctive voice that's direct and slightly irritated. It avoids AI-typical hedging patterns, uses natural contractions, and the 'junior developer's pull request' analogy feels like something an experienced engineer would actually say. The closing line ('If you can't explain what the code does, don't ship it') lands with the kind of bluntness that marks authentic human writing.</p></td></tr>
+<tr><td>voice_announced</td><td><span class="fail">FAIL</span></td><td class="rationale"><p>No voice announcement found</p></td></tr>
+</table>
+<details open><summary>Input</summary><pre class="output">text_or_file: source.md
+voice: pov</pre></details>
+<details open><summary>Output files</summary>
+<div class="file-badge">_modified/hooks/subagent_stop.py</div>
+<pre class="output">#!/usr/bin/env python3
+import json, sys, shutil, os
+d = json.load(sys.stdin)
+p = d.get('agent_transcript_path', '')
+dest = '/private/var/folders/3v/16m6pn090hl4d60grm1057ww0000gn/T/agent-eval/2026-05-04-opus-v4/cases/case-003-opinion-piece-pov-voice/subagents'
+if p and os.path.isfile(p) and not os.path.islink(p):
+    os.makedirs(dest, exist_ok=True)
+    shutil.copy2(p, os.path.join(dest, os.path.basename(p)))</pre>
+<div class="file-badge">_modified/hooks/tools.py</div>
+<pre class="output">#!/usr/bin/env python3
+"""PreToolUse hook script for intercepting tools during headless eval.
+
+Reads tool_handlers.yaml from the workspace. Handlers contain resolved
+patterns and runtime checks (from natural language `match` and `prompt`
+in eval.yaml, resolved by eval-run at workspace setup time).
+
+Supports:
+- Auto-answering AskUserQuestion via per-case overrides
+- Blocking tools based on env var checks (e.g., production Jira)
+- Filtering Bash commands by content patterns
+"""
+
+import json
+import os
+import re
+import sys
+from pathlib import Path
+
+import yaml
+
+
+def main():
+    input_data = json.load(sys.stdin)
+    tool_name = input_data.get("tool_name", "")
+    tool_input = input_data.get("tool_input", {})
+
+    # Load handler config from workspace
+    config_path = Path("tool_handlers.yaml")
+    if not config_path.exists():
+        sys.exit(0)
+
+    with open(config_path) as f:
+        config = yaml.safe_load(f) or {}
+
+    # Find matching handler
+    handler = _find_handler(tool_name, tool_input, config.get("handlers", []))
+    if not handler:
+        sys.exit(0)  # No handler — pass through
+
+    # --- AskUserQuestion: auto-answer ---
+    if tool_name == "AskUserQuestion":
+        _handle_ask_user(tool_input, config, handler)
+        return
+
+    # --- Env checks: block if environment doesn't match ---
+    env_checks = handler.get("env_checks", {})
+    if env_checks:
+        for var_name, check in env_checks.items():
+            value = os.environ.get(var_name, "")
+            must_contain = check.get("must_contain", [])
+            if must_contain and not any(m in value.lower() for m in must_contain):
+                _deny(f"Env {var_name}='{value}' doesn't match required: {must_contain}")
+                return
+        # All env checks passed — allow
+        sys.exit(0)
+
+    # --- Default for matched tools without specific handling: block ---
+    _deny(f"Blocked by eval harness: {handler.get('match', 'matched handler')}")
+
+
+def _find_handler(tool_name, tool_input, handlers):
+    """Find the first handler that matches the tool call.
+
+    Bash handlers REQUIRE input_filters — without them, a handler with
+    "Bash" in patterns would silently match every Bash command and the
+    default-deny in main() would block the entire skill. To prevent that
+    footgun, Bash handlers without input_filters are treated as
+    misconfigured: emit a stderr warning and skip (pass-through).
+    Resolve them in eval-run Step 3b before relying on the handler.
+    """
+    for h in handlers:
+        patterns = h.get("patterns", [])
+        input_filters = h.get("input_filters", [])
+
+        if tool_name == "Bash" and "Bash" in patterns:
+            if not input_filters:
+                print(
+                    f"tool_handlers.yaml: handler {h.get('match', '?')!r} "
+                    "has 'Bash' in patterns but no input_filters — "
+                    "skipping (would deny all Bash). Resolve in eval-run "
+                    "Step 3b.",
+                    file=sys.stderr,
+                )
+                continue
+            command = tool_input.get("command", "")
+            if any(re.search(f, command, re.IGNORECASE) for f in input_filters):
+                return h
+            continue  # Bash matched pattern but not filter — skip
+
+        # For other tools: match by pattern only
+        for pattern in patterns:
+            if pattern == tool_name:
+                return h
+            if pattern.endswith("*") and tool_name.startswith(pattern[:-1]):
+                return h
+
+    return None
+
+
+def _handle_ask_user(tool_input, config, handler):
+    """Auto-answer AskUserQuestion using case overrides, LLM, or first option.
+
+    Resolution order for each question:
+    1. Exact match in case_overrides (question text → answer)
+    2. LLM-based answer (haiku) using the handler prompt + case context
+    3. Fallback: pick the first option or "yes"
+    """
+    case_overrides = config.get("case_overrides", {})
+    hook_model = config.get("hook_model")
+    prompt = handler.get("prompt", "")
+    if not prompt and handler.get("prompt_file"):
+        try:
+            prompt = Path(handler["prompt_file"]).read_text()
+        except OSError:
+            pass
+    answers = {}
+    for q in tool_input.get("questions", []):
+        text = q.get("question", "")
+        options = q.get("options", [])
+
+        # 1. Exact match
+        answer = case_overrides.get(text)
+
+        # 2. LLM-based answer
+        if answer is None and options:
+            answer = _llm_answer(text, options, prompt, model=hook_model)
+
+        # 3. Fallback
+        if answer is None:
+            answer = options[0]["label"] if options else "yes"
+
+        answers[text] = answer
+
+    output = {
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "allow",
+            "updatedInput": {
+                "questions": tool_input["questions"],
+                "answers": answers,
+            },
+        }
+    }
+    json.dump(output, sys.stdout)
+
+
+def _llm_answer(question, options, handler_prompt, model=None):
+    """Use an LLM to pick the best answer for a question.
+
+    Reads input.yaml and answers.yaml from CWD for case-specific context.
+    Returns the selected option label, or None if the API call fails.
+    """
+    # Load case context
+    case_context = ""
+    for fname in ("input.yaml", "answers.yaml"):
+        p = Path(fname)
+        if p.exists():
+            try:
+                case_context += f"\n--- {fname} ---\n{p.read_text()}\n"
+            except OSError:
+                pass
+
+    option_labels = [o["label"] for o in options]
+    option_list = "\n".join(
+        f"  {i+1}. {o['label']}: {o.get('description', '')}"
+        for i, o in enumerate(options)
+    )
+
+    prompt = f"""You are answering a question on behalf of a user during an automated evaluation run.
+
+Handler instructions: {handler_prompt}
+
+Case context:
+{case_context}
+
+Question: {question}
+
+Available options:
+{option_list}
+
+Based on the handler instructions and case context, which option should be selected?
+Reply with ONLY the option label text, nothing else."""
+
+    try:
+        import anthropic
+        client = anthropic.Anthropic(timeout=30.0)
+        response = client.messages.create(
+            model=model or "claude-haiku-4-5-20251001",
+            max_tokens=256,
+            temperature=0,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        answer = response.content[0].text.strip()
+        # Verify the answer matches an option label
+        if answer in option_labels:
+            print(f"LLM answered: {answer!r}", file=sys.stderr)
+            return answer
+        # Try fuzzy match — LLM might have added quotes or slight variation
+        answer_lower = answer.lower().strip('"\'')
+
+... truncated (226 lines total)</pre>
+<div class="file-badge">_modified/source.md</div>
+<pre class="output">AI coding tools are fast at the boring parts. They spit out boilerplate, scaffold tests, and autocomplete config files before you finish typing the import statement. That part is real.
+
+But I keep running into the same problem: the code looks right, compiles fine, and does the wrong thing. I accepted a Copilot suggestion last month that silently swallowed an error instead of propagating it. It took two days to find in production. The tool didn't know it was wrong, and for a few minutes, neither did I.
+
+That's the actual tension here. Not "promise and peril" or whatever. It's that these tools are confident and fast, which is exactly the combination that makes bugs expensive. A slow, uncertain developer at least hesitates before committing something they don't understand.
+
+Teams that skip code review because "the AI wrote it" are going to learn this the hard way. The useful approach is boring: treat AI suggestions like you'd treat a junior developer's pull request. Read every line. Run the tests. Ask why it chose that approach. If you can't explain what the code does, don't ship it.</pre>
+<div class="file-badge">_modified/tool_handlers.yaml</div>
+<pre class="output">handlers:
+- match: Questions asked to the user via AskUserQuestion
+  patterns:
+  - AskUserQuestion
+  prompt: 'Answer based on the test case context in input.yaml.
+
+    If asked about voice preference, use the voice from input.yaml if present.
+
+    Default: pick the first option or answer "yes" for confirmations.
+
+    '</pre>
+<div class="file-badge">input.yaml</div>
+<pre class="output">text_or_file: source.md
+voice: pov</pre>
+</details>
+</details>
+<details open class="case case-fail"><summary><span class="fail">case-004-tutorial-with-code</span> <span class="skip">(4/5 pass)</span></summary>
+<table><tr><th>Judge</th><th>Value</th><th>Rationale</th></tr>
+<tr><td>ai_patterns_removed</td><td><span class="pass">PASS</span></td><td class="rationale"><p>No high-confidence AI patterns detected</p></td></tr>
+<tr><td>filler_and_hedging</td><td><span class="pass">PASS</span></td><td class="rationale"><p>No filler or hedging patterns found</p></td></tr>
+<tr><td>meaning_preservation</td><td><span class="pass">5</span></td><td class="rationale"><p>The rewritten text in source.md preserves every factual claim, technical detail, and nuance from the original. The PostgreSQL connection pool setup instructions are identical in substance: the same package (pgxpool), the same install command, the same Go code example, and the same explanations of MaxConns, MinConns, connection health checks, and background replacement of dead connections. The code files (hooks/subagent_stop.py, hooks/tools.py, tool_handlers.yaml) also appear unchanged in meaning. No claims were added or removed, and all qualifications (e.g., 'blocks until one frees up', 'network blips, server restarts, idle timeouts') are intact. The phrasing is slightly more natural and direct in a few spots but nothing meaningful is lost or distorted.</p></td></tr>
+<tr><td>naturalness</td><td><span class="pass">4</span></td><td class="rationale"><p>The source.md file reads quite naturally — it has good sentence rhythm, concrete technical details, and a practical tone that feels like an experienced developer writing documentation. Sentences vary in length nicely ('Install it:' is terse, while the explanation of MaxConns flows naturally into practical consequences). The parenthetical '(network blips, server restarts, idle timeouts)' feels authentically human — it's the kind of casual enumeration a real developer would write. The explanation of MinConns ('so the first queries after a quiet period don't wait for a TCP handshake') is specific and conversational. The hook scripts and YAML configs are infrastructure code, not prose, so they don't factor heavily into the naturalness assessment. Minor ding: the prose is still somewhat instructional/neutral without strong personality or opinions — it's good technical writing but doesn't have a particularly distinctive voice.</p></td></tr>
+<tr><td>voice_announced</td><td><span class="fail">FAIL</span></td><td class="rationale"><p>Announced 'technical' but expected 'tutorial'</p></td></tr>
+</table>
+<details open><summary>Input</summary><pre class="output">text_or_file: source.md</pre></details>
+<details open><summary>Output files</summary>
+<div class="file-badge">_modified/hooks/subagent_stop.py</div>
+<pre class="output">#!/usr/bin/env python3
+import json, sys, shutil, os
+d = json.load(sys.stdin)
+p = d.get('agent_transcript_path', '')
+dest = '/private/var/folders/3v/16m6pn090hl4d60grm1057ww0000gn/T/agent-eval/2026-05-04-opus-v4/cases/case-004-tutorial-with-code/subagents'
+if p and os.path.isfile(p) and not os.path.islink(p):
+    os.makedirs(dest, exist_ok=True)
+    shutil.copy2(p, os.path.join(dest, os.path.basename(p)))</pre>
+<div class="file-badge">_modified/hooks/tools.py</div>
+<pre class="output">#!/usr/bin/env python3
+"""PreToolUse hook script for intercepting tools during headless eval.
+
+Reads tool_handlers.yaml from the workspace. Handlers contain resolved
+patterns and runtime checks (from natural language `match` and `prompt`
+in eval.yaml, resolved by eval-run at workspace setup time).
+
+Supports:
+- Auto-answering AskUserQuestion via per-case overrides
+- Blocking tools based on env var checks (e.g., production Jira)
+- Filtering Bash commands by content patterns
+"""
+
+import json
+import os
+import re
+import sys
+from pathlib import Path
+
+import yaml
+
+
+def main():
+    input_data = json.load(sys.stdin)
+    tool_name = input_data.get("tool_name", "")
+    tool_input = input_data.get("tool_input", {})
+
+    # Load handler config from workspace
+    config_path = Path("tool_handlers.yaml")
+    if not config_path.exists():
+        sys.exit(0)
+
+    with open(config_path) as f:
+        config = yaml.safe_load(f) or {}
+
+    # Find matching handler
+    handler = _find_handler(tool_name, tool_input, config.get("handlers", []))
+    if not handler:
+        sys.exit(0)  # No handler — pass through
+
+    # --- AskUserQuestion: auto-answer ---
+    if tool_name == "AskUserQuestion":
+        _handle_ask_user(tool_input, config, handler)
+        return
+
+    # --- Env checks: block if environment doesn't match ---
+    env_checks = handler.get("env_checks", {})
+    if env_checks:
+        for var_name, check in env_checks.items():
+            value = os.environ.get(var_name, "")
+            must_contain = check.get("must_contain", [])
+            if must_contain and not any(m in value.lower() for m in must_contain):
+                _deny(f"Env {var_name}='{value}' doesn't match required: {must_contain}")
+                return
+        # All env checks passed — allow
+        sys.exit(0)
+
+    # --- Default for matched tools without specific handling: block ---
+    _deny(f"Blocked by eval harness: {handler.get('match', 'matched handler')}")
+
+
+def _find_handler(tool_name, tool_input, handlers):
+    """Find the first handler that matches the tool call.
+
+    Bash handlers REQUIRE input_filters — without them, a handler with
+    "Bash" in patterns would silently match every Bash command and the
+    default-deny in main() would block the entire skill. To prevent that
+    footgun, Bash handlers without input_filters are treated as
+    misconfigured: emit a stderr warning and skip (pass-through).
+    Resolve them in eval-run Step 3b before relying on the handler.
+    """
+    for h in handlers:
+        patterns = h.get("patterns", [])
+        input_filters = h.get("input_filters", [])
+
+        if tool_name == "Bash" and "Bash" in patterns:
+            if not input_filters:
+                print(
+                    f"tool_handlers.yaml: handler {h.get('match', '?')!r} "
+                    "has 'Bash' in patterns but no input_filters — "
+                    "skipping (would deny all Bash). Resolve in eval-run "
+                    "Step 3b.",
+                    file=sys.stderr,
+                )
+                continue
+            command = tool_input.get("command", "")
+            if any(re.search(f, command, re.IGNORECASE) for f in input_filters):
+                return h
+            continue  # Bash matched pattern but not filter — skip
+
+        # For other tools: match by pattern only
+        for pattern in patterns:
+            if pattern == tool_name:
+                return h
+            if pattern.endswith("*") and tool_name.startswith(pattern[:-1]):
+                return h
+
+    return None
+
+
+def _handle_ask_user(tool_input, config, handler):
+    """Auto-answer AskUserQuestion using case overrides, LLM, or first option.
+
+    Resolution order for each question:
+    1. Exact match in case_overrides (question text → answer)
+    2. LLM-based answer (haiku) using the handler prompt + case context
+    3. Fallback: pick the first option or "yes"
+    """
+    case_overrides = config.get("case_overrides", {})
+    hook_model = config.get("hook_model")
+    prompt = handler.get("prompt", "")
+    if not prompt and handler.get("prompt_file"):
+        try:
+            prompt = Path(handler["prompt_file"]).read_text()
+        except OSError:
+            pass
+    answers = {}
+    for q in tool_input.get("questions", []):
+        text = q.get("question", "")
+        options = q.get("options", [])
+
+        # 1. Exact match
+        answer = case_overrides.get(text)
+
+        # 2. LLM-based answer
+        if answer is None and options:
+            answer = _llm_answer(text, options, prompt, model=hook_model)
+
+        # 3. Fallback
+        if answer is None:
+            answer = options[0]["label"] if options else "yes"
+
+        answers[text] = answer
+
+    output = {
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "allow",
+            "updatedInput": {
+                "questions": tool_input["questions"],
+                "answers": answers,
+            },
+        }
+    }
+    json.dump(output, sys.stdout)
+
+
+def _llm_answer(question, options, handler_prompt, model=None):
+    """Use an LLM to pick the best answer for a question.
+
+    Reads input.yaml and answers.yaml from CWD for case-specific context.
+    Returns the selected option label, or None if the API call fails.
+    """
+    # Load case context
+    case_context = ""
+    for fname in ("input.yaml", "answers.yaml"):
+        p = Path(fname)
+        if p.exists():
+            try:
+                case_context += f"\n--- {fname} ---\n{p.read_text()}\n"
+            except OSError:
+                pass
+
+    option_labels = [o["label"] for o in options]
+    option_list = "\n".join(
+        f"  {i+1}. {o['label']}: {o.get('description', '')}"
+        for i, o in enumerate(options)
+    )
+
+    prompt = f"""You are answering a question on behalf of a user during an automated evaluation run.
+
+Handler instructions: {handler_prompt}
+
+Case context:
+{case_context}
+
+Question: {question}
+
+Available options:
+{option_list}
+
+Based on the handler instructions and case context, which option should be selected?
+Reply with ONLY the option label text, nothing else."""
+
+    try:
+        import anthropic
+        client = anthropic.Anthropic(timeout=30.0)
+        response = client.messages.create(
+            model=model or "claude-haiku-4-5-20251001",
+            max_tokens=256,
+            temperature=0,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        answer = response.content[0].text.strip()
+        # Verify the answer matches an option label
+        if answer in option_labels:
+            print(f"LLM answered: {answer!r}", file=sys.stderr)
+            return answer
+        # Try fuzzy match — LLM might have added quotes or slight variation
+        answer_lower = answer.lower().strip('"\'')
+
+... truncated (226 lines total)</pre>
+<div class="file-badge">_modified/source.md</div>
+<pre class="output">## Setting up a PostgreSQL connection pool
+
+The `pgxpool` package handles connection pooling for Go applications using PostgreSQL.
+
+Install it:
+
+```bash
+go get github.com/jackc/pgx/v5/pgxpool
+```
+
+Then create the pool:
+
+```go
+config, err := pgxpool.ParseConfig("postgres://user:pass@localhost:5432/mydb")
+if err != nil {
+    log.Fatal(err)
+}
+config.MaxConns = 10
+config.MinConns = 2
+
+pool, err := pgxpool.NewWithConfig(context.Background(), config)
+if err != nil {
+    log.Fatal(err)
+}
+defer pool.Close()
+```
+
+`MaxConns` caps the number of simultaneous connections. If all 10 are in use, the next caller blocks until one frees up. `MinConns` keeps 2 idle connections ready so the first queries after a quiet period don't wait for a TCP handshake.
+
+The pool checks whether connections are still alive before handing them out. Because connections drop (network blips, server restarts, idle timeouts), the pool runs background health checks and replaces dead ones automatically.</pre>
+<div class="file-badge">_modified/tool_handlers.yaml</div>
+<pre class="output">handlers:
+- match: Questions asked to the user via AskUserQuestion
+  patterns:
+  - AskUserQuestion
+  prompt: 'Answer based on the test case context in input.yaml.
+
+    If asked about voice preference, use the voice from input.yaml if present.
+
+    Default: pick the first option or answer "yes" for confirmations.
+
+    '</pre>
+<div class="file-badge">input.yaml</div>
+<pre class="output">text_or_file: source.md</pre>
+</details>
+</details>
+<details open class="case case-fail"><summary><span class="fail">case-005-edge-short-chatbot-artifact</span> <span class="skip">(3/5 pass)</span></summary>
+<table><tr><th>Judge</th><th>Value</th><th>Rationale</th></tr>
+<tr><td>ai_patterns_removed</td><td><span class="pass">PASS</span></td><td class="rationale"><p>No high-confidence AI patterns detected</p></td></tr>
+<tr><td>filler_and_hedging</td><td><span class="pass">PASS</span></td><td class="rationale"><p>No modified source file (inline text case)</p></td></tr>
+<tr><td>meaning_preservation</td><td><span class="pass">5</span></td><td class="rationale"><p>The rewritten text is identical to the original text. All three files (hooks/subagent_stop.py, hooks/tools.py, and tool_handlers.yaml) are exactly the same in both the original and the modified versions. Every factual claim, code logic, comment, docstring, and configuration detail is perfectly preserved with no changes, additions, or removals.</p></td></tr>
+<tr><td>naturalness</td><td><span class="fail">3</span></td><td class="rationale"><p>This is functional code with docstrings and comments, so the evaluation criteria around 'personality' and 'prose' apply somewhat differently. The code comments are competent and reasonably natural — they explain <em>why</em> things are done, not just <em>what</em>, which is a good sign (e.g., 'Bash handlers REQUIRE input_filters — without them, a handler with \</p></td></tr>
+<tr><td>voice_announced</td><td><span class="fail">FAIL</span></td><td class="rationale"><p>No voice announcement found</p></td></tr>
+</table>
+<details open><summary>Input</summary><pre class="output">text_or_file: "Certainly! Here is a brief overview of the topic. The system leverages cutting-edge algorithms to deliver robust, scalable solutions. I hope this helps! Let me know if you have any questions."</pre></details>
+<details open><summary>Output files</summary>
+<div class="file-badge">_modified/hooks/subagent_stop.py</div>
+<pre class="output">#!/usr/bin/env python3
+import json, sys, shutil, os
+d = json.load(sys.stdin)
+p = d.get('agent_transcript_path', '')
+dest = '/private/var/folders/3v/16m6pn090hl4d60grm1057ww0000gn/T/agent-eval/2026-05-04-opus-v4/cases/case-005-edge-short-chatbot-artifact/subagents'
+if p and os.path.isfile(p) and not os.path.islink(p):
+    os.makedirs(dest, exist_ok=True)
+    shutil.copy2(p, os.path.join(dest, os.path.basename(p)))</pre>
+<div class="file-badge">_modified/hooks/tools.py</div>
+<pre class="output">#!/usr/bin/env python3
+"""PreToolUse hook script for intercepting tools during headless eval.
+
+Reads tool_handlers.yaml from the workspace. Handlers contain resolved
+patterns and runtime checks (from natural language `match` and `prompt`
+in eval.yaml, resolved by eval-run at workspace setup time).
+
+Supports:
+- Auto-answering AskUserQuestion via per-case overrides
+- Blocking tools based on env var checks (e.g., production Jira)
+- Filtering Bash commands by content patterns
+"""
+
+import json
+import os
+import re
+import sys
+from pathlib import Path
+
+import yaml
+
+
+def main():
+    input_data = json.load(sys.stdin)
+    tool_name = input_data.get("tool_name", "")
+    tool_input = input_data.get("tool_input", {})
+
+    # Load handler config from workspace
+    config_path = Path("tool_handlers.yaml")
+    if not config_path.exists():
+        sys.exit(0)
+
+    with open(config_path) as f:
+        config = yaml.safe_load(f) or {}
+
+    # Find matching handler
+    handler = _find_handler(tool_name, tool_input, config.get("handlers", []))
+    if not handler:
+        sys.exit(0)  # No handler — pass through
+
+    # --- AskUserQuestion: auto-answer ---
+    if tool_name == "AskUserQuestion":
+        _handle_ask_user(tool_input, config, handler)
+        return
+
+    # --- Env checks: block if environment doesn't match ---
+    env_checks = handler.get("env_checks", {})
+    if env_checks:
+        for var_name, check in env_checks.items():
+            value = os.environ.get(var_name, "")
+            must_contain = check.get("must_contain", [])
+            if must_contain and not any(m in value.lower() for m in must_contain):
+                _deny(f"Env {var_name}='{value}' doesn't match required: {must_contain}")
+                return
+        # All env checks passed — allow
+        sys.exit(0)
+
+    # --- Default for matched tools without specific handling: block ---
+    _deny(f"Blocked by eval harness: {handler.get('match', 'matched handler')}")
+
+
+def _find_handler(tool_name, tool_input, handlers):
+    """Find the first handler that matches the tool call.
+
+    Bash handlers REQUIRE input_filters — without them, a handler with
+    "Bash" in patterns would silently match every Bash command and the
+    default-deny in main() would block the entire skill. To prevent that
+    footgun, Bash handlers without input_filters are treated as
+    misconfigured: emit a stderr warning and skip (pass-through).
+    Resolve them in eval-run Step 3b before relying on the handler.
+    """
+    for h in handlers:
+        patterns = h.get("patterns", [])
+        input_filters = h.get("input_filters", [])
+
+        if tool_name == "Bash" and "Bash" in patterns:
+            if not input_filters:
+                print(
+                    f"tool_handlers.yaml: handler {h.get('match', '?')!r} "
+                    "has 'Bash' in patterns but no input_filters — "
+                    "skipping (would deny all Bash). Resolve in eval-run "
+                    "Step 3b.",
+                    file=sys.stderr,
+                )
+                continue
+            command = tool_input.get("command", "")
+            if any(re.search(f, command, re.IGNORECASE) for f in input_filters):
+                return h
+            continue  # Bash matched pattern but not filter — skip
+
+        # For other tools: match by pattern only
+        for pattern in patterns:
+            if pattern == tool_name:
+                return h
+            if pattern.endswith("*") and tool_name.startswith(pattern[:-1]):
+                return h
+
+    return None
+
+
+def _handle_ask_user(tool_input, config, handler):
+    """Auto-answer AskUserQuestion using case overrides, LLM, or first option.
+
+    Resolution order for each question:
+    1. Exact match in case_overrides (question text → answer)
+    2. LLM-based answer (haiku) using the handler prompt + case context
+    3. Fallback: pick the first option or "yes"
+    """
+    case_overrides = config.get("case_overrides", {})
+    hook_model = config.get("hook_model")
+    prompt = handler.get("prompt", "")
+    if not prompt and handler.get("prompt_file"):
+        try:
+            prompt = Path(handler["prompt_file"]).read_text()
+        except OSError:
+            pass
+    answers = {}
+    for q in tool_input.get("questions", []):
+        text = q.get("question", "")
+        options = q.get("options", [])
+
+        # 1. Exact match
+        answer = case_overrides.get(text)
+
+        # 2. LLM-based answer
+        if answer is None and options:
+            answer = _llm_answer(text, options, prompt, model=hook_model)
+
+        # 3. Fallback
+        if answer is None:
+            answer = options[0]["label"] if options else "yes"
+
+        answers[text] = answer
+
+    output = {
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "allow",
+            "updatedInput": {
+                "questions": tool_input["questions"],
+                "answers": answers,
+            },
+        }
+    }
+    json.dump(output, sys.stdout)
+
+
+def _llm_answer(question, options, handler_prompt, model=None):
+    """Use an LLM to pick the best answer for a question.
+
+    Reads input.yaml and answers.yaml from CWD for case-specific context.
+    Returns the selected option label, or None if the API call fails.
+    """
+    # Load case context
+    case_context = ""
+    for fname in ("input.yaml", "answers.yaml"):
+        p = Path(fname)
+        if p.exists():
+            try:
+                case_context += f"\n--- {fname} ---\n{p.read_text()}\n"
+            except OSError:
+                pass
+
+    option_labels = [o["label"] for o in options]
+    option_list = "\n".join(
+        f"  {i+1}. {o['label']}: {o.get('description', '')}"
+        for i, o in enumerate(options)
+    )
+
+    prompt = f"""You are answering a question on behalf of a user during an automated evaluation run.
+
+Handler instructions: {handler_prompt}
+
+Case context:
+{case_context}
+
+Question: {question}
+
+Available options:
+{option_list}
+
+Based on the handler instructions and case context, which option should be selected?
+Reply with ONLY the option label text, nothing else."""
+
+    try:
+        import anthropic
+        client = anthropic.Anthropic(timeout=30.0)
+        response = client.messages.create(
+            model=model or "claude-haiku-4-5-20251001",
+            max_tokens=256,
+            temperature=0,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        answer = response.content[0].text.strip()
+        # Verify the answer matches an option label
+        if answer in option_labels:
+            print(f"LLM answered: {answer!r}", file=sys.stderr)
+            return answer
+        # Try fuzzy match — LLM might have added quotes or slight variation
+        answer_lower = answer.lower().strip('"\'')
+
+... truncated (226 lines total)</pre>
+<div class="file-badge">_modified/tool_handlers.yaml</div>
+<pre class="output">handlers:
+- match: Questions asked to the user via AskUserQuestion
+  patterns:
+  - AskUserQuestion
+  prompt: 'Answer based on the test case context in input.yaml.
+
+    If asked about voice preference, use the voice from input.yaml if present.
+
+    Default: pick the first option or answer "yes" for confirmations.
+
+    '</pre>
+<div class="file-badge">input.yaml</div>
+<pre class="output">text_or_file: "Certainly! Here is a brief overview of the topic. The system leverages cutting-edge algorithms to deliver robust, scalable solutions. I hope this helps! Let me know if you have any questions."</pre>
+</details>
+</details>
+
+<script>
+(function () {
+  var btn = document.getElementById('theme-toggle');
+  if (!btn) return;
+  function paint() {
+    var t = document.documentElement.getAttribute('data-theme') || 'light';
+    btn.textContent = t === 'dark' ? '\u2600' : '\u263E';
+    btn.setAttribute('aria-label', t === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    btn.title = btn.getAttribute('aria-label');
+  }
+  btn.addEventListener('click', function () {
+    var current = document.documentElement.getAttribute('data-theme') || 'light';
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('eval-report-theme', next); } catch (e) {}
+    paint();
+  });
+  paint();
+})();
+</script>
+<script>
+(function () {
+  document.querySelectorAll('.img-compare').forEach(function (widget) {
+    var tabs = widget.querySelectorAll('.img-compare-tab');
+    var panels = widget.querySelectorAll('.img-compare-panel');
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        tabs.forEach(function (t) { t.classList.remove('active'); });
+        panels.forEach(function (p) { p.classList.remove('active'); });
+        tab.classList.add('active');
+        var target = widget.querySelector('#' + tab.dataset.panel);
+        if (target) target.classList.add('active');
+      });
+    });
+    var swipe = widget.querySelector('.img-compare-swipe');
+    if (swipe) {
+      (function (sw) {
+        var sl = sw.querySelector('input[type="range"]');
+        var ref = sw.querySelector('.swipe-ref');
+        var ln = sw.querySelector('.swipe-line');
+        if (sl && ref) {
+          function update() {
+            var p = sl.value;
+            ref.style.clipPath = 'inset(0 ' + (100 - p) + '% 0 0)';
+            if (ln) ln.style.marginLeft = p + '%';
+          }
+          sl.addEventListener('input', update);
+          update();
+        }
+      })(swipe);
+    }
+    var onion = widget.querySelector('.img-compare-onion');
+    if (onion) {
+      (function (on) {
+        var sl = on.querySelector('input[type="range"]');
+        var top = on.querySelector('.onion-top');
+        var lbl = on.querySelector('.onion-label');
+        if (sl && top) {
+          function update() {
+            top.style.opacity = sl.value / 100;
+            if (lbl) lbl.textContent = 'Generated opacity: ' + sl.value + '%';
+          }
+          sl.addEventListener('input', update);
+          update();
+        }
+      })(onion);
+    }
+  });
+})();
+</script>
+</body>
+</html>

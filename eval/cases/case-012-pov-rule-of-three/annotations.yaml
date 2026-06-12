@@ -1,0 +1,10 @@
+expected_voice: pov
+ai_patterns_present:
+  - rule_of_three
+  - generic_positive_conclusions
+  - significance_inflation
+  - ai_vocabulary
+  - copula_avoidance
+  - vague_attributions
+difficulty: hard
+personality_level: 0.9

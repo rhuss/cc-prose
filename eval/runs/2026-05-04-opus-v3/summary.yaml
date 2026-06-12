@@ -1,0 +1,189 @@
+judges:
+  ai_patterns_removed:
+    mean: 1.0
+    pass_rate: 1.0
+  filler_and_hedging:
+    mean: 1.0
+    pass_rate: 1.0
+  meaning_preservation:
+    mean: 5.0
+    pass_rate: null
+  naturalness:
+    mean: 4.2
+    pass_rate: null
+  voice_announced:
+    mean: 0.0
+    pass_rate: 0.0
+per_case:
+  case-001-simple-technical-prose:
+    ai_patterns_removed:
+      rationale: No high-confidence AI patterns detected
+      value: true
+    filler_and_hedging:
+      rationale: No filler or hedging patterns found
+      value: true
+    meaning_preservation:
+      rationale: 'The rewritten source.md preserves every factual claim from the original:
+        Kubernetes uses declarative configuration, desired state is described in YAML,
+        the scheduler places workloads across nodes for availability, enterprise adoption
+        has grown steadily since 2018, teams wanted a standard way to deploy containers
+        without reinventing service discovery and rollback, the control plane stores
+        state in etcd (a distributed key-value store), and etcd handles failover and
+        leader election so the cluster stays up when nodes fail. No facts were removed,
+        distorted, or added. The non-source files (hooks, tool_handlers) are infrastructure/config
+        files and not part of the meaning evaluation. The core message and all nuances
+        are fully intact.'
+      value: 5
+    naturalness:
+      rationale: The source.md file reads naturally and with good variation. 'You
+        describe the desired state in YAML' is direct and concrete. 'mostly because
+        teams wanted a standard way to deploy containers without reinventing service
+        discovery and rollback for each project' has a casual, opinionated feel that
+        sounds genuinely human — it names a specific frustration rather than speaking
+        in abstractions. Sentence lengths vary well (short declarative, then longer
+        explanatory). The tone is knowledgeable but conversational, not stiff. It
+        loses a point because it's still fairly textbook-expository — there's no real
+        personality or voice beyond 'competent technical writer,' and it doesn't express
+        any mixed feelings or nuance about Kubernetes adoption (e.g., downsides, tradeoffs).
+        But overall it would pass as human-written technical prose without raising
+        suspicion.
+      value: 4
+    voice_announced:
+      rationale: No voice announcement found
+      value: false
+  case-002-dense-slop-all-categories:
+    ai_patterns_removed:
+      rationale: No high-confidence AI patterns detected
+      value: true
+    filler_and_hedging:
+      rationale: No filler or hedging patterns found
+      value: true
+    meaning_preservation:
+      rationale: 'The rewritten source.md preserves every factual claim, argument,
+        and nuance from the original. All key points are intact: the definition of
+        microservices, independent deployment (with the Spotify example), independent
+        scaling (with the qualification that it matters for only a few services),
+        the concrete costs (network latency, partial failures, retry logic, data consistency,
+        distributed tracing with specific tools mentioned), and Sam Newman''s book
+        recommendation with his advice about starting with a monolith. No new claims
+        were added, and no important qualifications or caveats were removed. The hook
+        scripts and tool handler config are infrastructure files that don''t affect
+        the semantic content being evaluated.'
+      value: 5
+    naturalness:
+      rationale: The source.md file reads like authentic human prose written by someone
+        with real experience. It has genuine personality ('Most teams I've talked
+        to say this matters for maybe two or three services, not all of them'), concrete
+        examples (Spotify squads, Jaeger/Zipkin), opinionated takes ('Splitting for
+        the sake of splitting just trades one set of problems for a worse set'), and
+        natural sentence length variation including short punchy sentences ('The costs
+        are concrete.'). It acknowledges nuance ('Independent scaling is real but
+        narrower than people think') rather than making blanket claims. The conversational
+        asides and specific references (Sam Newman's book, 2nd ed., 2021) feel like
+        a knowledgeable practitioner writing, not an AI generating content. The code
+        files are infrastructure/tooling and not really prose to evaluate, but the
+        main content file is excellent.
+      value: 5
+    voice_announced:
+      rationale: No voice announcement found
+      value: false
+  case-003-opinion-piece-pov-voice:
+    ai_patterns_removed:
+      rationale: No high-confidence AI patterns detected
+      value: true
+    filler_and_hedging:
+      rationale: No filler or hedging patterns found
+      value: true
+    meaning_preservation:
+      rationale: The rewritten source.md preserves every factual claim, argument,
+        and nuance from the original. The core argument (AI coding assistants speed
+        up boilerplate but create review risks; teams don't review AI code rigorously
+        enough; start with tests) is fully intact. The specific stat about 1.8 million
+        Copilot users is preserved. The 2024 Uplevel study finding about no measurable
+        PR throughput difference is preserved. The key qualifications ('sometimes,'
+        'sort of,' 'most don't') are all retained. The closing argument about tests
+        is unchanged. No new claims were added. The meaning is perfectly preserved
+        while the writing style has been made more natural and direct.
+      value: 5
+    naturalness:
+      rationale: The source.md file reads as authentically human-written opinion prose.
+        It has genuine personality and voice — 'the stuff nobody wanted to write by
+        hand anyway,' 'that is exactly when it burns you,' 'skip the cultural manifestos.'
+        Sentence length varies naturally from punchy short sentences ('It can, sort
+        of.') to longer analytical ones. It uses concrete details (GitHub's 1.8M Copilot
+        users, the 2024 Uplevel study) rather than vague claims. The piece acknowledges
+        complexity — AI tools do help with some things but create new problems — without
+        falling into formulaic 'on one hand / on the other hand' structure. The closing
+        is direct and opinionated ('That is the whole story') in a way that feels
+        like a real person's writing. Nothing about the rhythm, structure, or word
+        choice flags as AI-generated.
+      value: 5
+    voice_announced:
+      rationale: No voice announcement found
+      value: false
+  case-004-tutorial-with-code:
+    ai_patterns_removed:
+      rationale: No high-confidence AI patterns detected
+      value: true
+    filler_and_hedging:
+      rationale: No filler or hedging patterns found
+      value: true
+    meaning_preservation:
+      rationale: Comparing the original and rewritten texts across all files, the
+        meaning is perfectly preserved. The source.md tutorial about PostgreSQL connection
+        pooling retains all factual claims, code examples, and explanations. The hook
+        scripts (subagent_stop.py, tools.py, tool_handlers.yaml) are unchanged in
+        their logic, comments, and functionality. No facts were altered, no claims
+        were added, and all qualifications and technical details remain intact.
+      value: 5
+    naturalness:
+      rationale: The source.md file reads naturally and concisely—it has varied sentence
+        lengths, concrete technical details, and practical explanations without the
+        typical AI hedging or filler. Phrases like 'don't wait for a fresh TCP handshake'
+        and 'callers block until a connection frees up' feel like how a developer
+        actually writes documentation. The code files (hooks/tools.py, hooks/subagent_stop.py,
+        tool_handlers.yaml) are configuration/infrastructure code and don't really
+        factor into prose naturalness, but they're written in a clean, pragmatic style
+        with useful comments that don't feel over-explained. The source.md could have
+        slightly more personality or opinionated asides to push it to a 5, but it
+        reads authentically human.
+      value: 4
+    voice_announced:
+      rationale: No voice announcement found
+      value: false
+  case-005-edge-short-chatbot-artifact:
+    ai_patterns_removed:
+      rationale: No high-confidence AI patterns detected
+      value: true
+    filler_and_hedging:
+      rationale: No modified source file (inline text case)
+      value: true
+    meaning_preservation:
+      rationale: The rewritten text is identical to the original text. There are no
+        changes whatsoever - every file, every comment, every line of code is exactly
+        the same. All factual claims, code logic, comments, and documentation are
+        perfectly preserved.
+      value: 5
+    naturalness:
+      rationale: 'This is source code (Python scripts and a YAML config file), not
+        prose, so evaluating it for ''human-written prose'' qualities is somewhat
+        awkward. That said, the code comments and docstrings read naturally enough
+        — they''re functional and clear, with some personality in phrases like ''footgun''
+        and practical inline explanations. The YAML handler prompt is straightforward
+        and utilitarian. The code structure follows standard Python conventions without
+        being overly formulaic. However, there''s nothing distinctively personal or
+        characterful — it reads like competent, clean engineering code that could
+        have been written by either a skilled developer or an AI. The docstrings are
+        thorough but somewhat mechanical in their enumeration style (''Resolution
+        order for each question: 1. ... 2. ... 3. ...''). Overall, it''s adequate
+        and mostly natural for code, but not distinctively human.'
+      value: 3
+    voice_announced:
+      rationale: No voice announcement found
+      value: false
+run_id: 2026-05-04-opus-v3
+run_metrics:
+  cache_hit_rate: 0.690126
+  cost_per_mtok_usd: 2.5007
+  cost_per_turn_usd: 0.1
+  output_tokens_per_turn: 381.85

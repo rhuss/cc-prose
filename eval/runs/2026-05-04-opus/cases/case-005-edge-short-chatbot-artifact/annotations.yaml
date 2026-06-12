@@ -1,0 +1,7 @@
+expected_voice: technical
+ai_patterns_present:
+  - chatbot_artifacts
+  - sycophantic_tone
+  - ai_vocabulary
+  - promotional_language
+difficulty: easy

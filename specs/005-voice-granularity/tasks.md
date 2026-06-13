@@ -151,6 +151,11 @@
 - [ ] T031 Add new parameter voice consistency checks to prose/skills/pre-validator/SKILL.md: validate confidence, directness, emotional_range, specificity against generated content
 - [ ] T032 Add measurement deviation check to prose/skills/pre-validator/SKILL.md: when measurements present, report deviations using same thresholds as self-audit
 - [ ] T033 Verify all 8 templates pass schema validation: each template has all required new fields with valid enum/range values
+- [ ] T034 Add measurements-only profile handling to prose/skills/content-generator/SKILL.md and prose/skills/humanizer/SKILL.md: when a profile has a `measurements` section but no human-readable knobs (confidence, directness, etc.), derive reasonable defaults from measurements (e.g., high hedge_density_per_1000 implies low confidence) and warn that explicit parameters produce better results
+- [ ] T035 Add parameter validation at load time in prose/skills/content-generator/SKILL.md and prose/skills/humanizer/SKILL.md: validate that confidence is in [0.0, 1.0], directness is one of hedged/balanced/blunt, emotional_range is one of flat/moderate/dynamic, etc. Report the invalid field and value, fall back to defaults for invalid fields, continue processing
+- [ ] T036 Add error handling for corrupted/unreadable corpus files in prose/skills/voice-extractor/SKILL.md: skip unreadable files with a warning identifying each skipped file, continue processing remaining files. If all files are unreadable, report an error and produce no output
+- [ ] T037 Add measurement computation edge case handling in prose/skills/voice-extractor/SKILL.md: when corpus is too small or uniform to compute a metric (e.g., zero sentences for stdev, division by zero), omit that field from the measurements section rather than writing NaN or infinity
+- [ ] T038 Add non-interactive migration handling in prose/skills/content-generator/SKILL.md and prose/skills/humanizer/SKILL.md: when old-format detection triggers in a non-interactive context (piped input, CI), silently apply defaults without prompting and log an informational message noting the auto-migration
 
 ---
 
@@ -197,7 +202,8 @@
 ## Notes
 
 - All changes are to SKILL.md prompt files and YAML templates. No compiled code.
-- Total tasks: 33
+- Total tasks: 38
 - Parallel template tasks: 8 (Phase 1)
 - Parallel skill tasks: Phases 2, 3, 4, 7 can run concurrently (different files)
 - MVP scope: Phases 1-3 (16 tasks) delivers core value
+- T034-T038 added by plan review to cover spec error handling and edge cases

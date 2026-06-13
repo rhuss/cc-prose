@@ -78,6 +78,82 @@ When an inline sample is used, ignore the configured voice profile for this requ
 **Persistent profiles for repeated use:** If you find yourself matching the same writing sample across multiple requests, consider using the voice-extractor to create a reusable voice profile. It performs deeper multi-file analysis with confidence scoring.
 
 
+## Voice Profile Parameter Validation
+
+After loading a voice profile, validate all parameter values at load time. For each invalid value, report the field and value, fall back to the default for that field, and continue processing with the valid fields.
+
+**Validation rules:**
+
+| Parameter | Valid Values | Default |
+|-----------|-------------|---------|
+| `characteristics.confidence` | Float in [0.0, 1.0] | 0.5 |
+| `paragraph_patterns.avg_length` | `short`, `medium`, `long` | `medium` |
+| `paragraph_patterns.opening_style` | `direct`, `contextual`, `anecdotal`, `varied` | `varied` |
+| `paragraph_patterns.transition_style` | `explicit`, `organic`, `minimal` | `organic` |
+| `sentence_patterns.sentence_starters` | `pronoun-heavy`, `varied`, `formal-lead` | `varied` |
+| `personality_traits.emotional_range` | `flat`, `moderate`, `dynamic` | `moderate` |
+| `personality_traits.self_correction` | `true`, `false` (boolean) | `false` |
+| `personality_traits.directness` | `hedged`, `balanced`, `blunt` | `balanced` |
+| `elaboration.specificity` | `abstract`, `balanced`, `concrete` | `balanced` |
+
+**Example warning:**
+```
+Warning: Invalid value for confidence: 2.0 (expected float in [0.0, 1.0]).
+Using default: 0.5.
+```
+
+Processing continues with all valid fields. Invalid fields do not prevent the skill from running.
+
+## Voice Profile Format Detection
+
+After loading a voice profile, check whether it uses the old format (missing new parameters). Detection: if the loaded profile has a `characteristics` section but no `confidence` field within it, the profile is old-format.
+
+**When old-format is detected:**
+
+1. **Interactive context** (normal usage): Warn the user and offer migration:
+   ```
+   This voice profile uses an older format without the expanded voice parameters
+   (confidence, directness, emotional_range, etc.). Would you like to migrate it
+   with sensible defaults? The profile will work either way, but migration enables
+   finer voice control.
+   ```
+   If the user accepts, add these defaults to the profile:
+   - `characteristics.confidence: 0.5`
+   - `paragraph_patterns.avg_length: medium`
+   - `paragraph_patterns.opening_style: varied`
+   - `paragraph_patterns.transition_style: organic`
+   - `sentence_patterns.sentence_starters: varied`
+   - `personality_traits.emotional_range: moderate`
+   - `personality_traits.self_correction: false`
+   - `personality_traits.directness: balanced`
+   - `elaboration.specificity: balanced`
+   No `measurements` section is added during migration.
+
+2. **Non-interactive context** (piped input, CI, automated pipelines): Silently apply the same defaults without prompting. Log an informational message: "Auto-migrated voice profile to current format with default values."
+
+3. **User declines migration**: Use the defaults silently for this session without modifying the file. Processing continues normally.
+
+
+## Measurements-Only Profile Handling
+
+If a loaded voice profile contains a `measurements` section but is missing human-readable knobs (`confidence`, `directness`, `emotional_range`, etc.), derive reasonable defaults from the measurements:
+
+| Measurement | Derived Parameter | Logic |
+|-------------|------------------|-------|
+| `hedge_density_per_1000` > 10 | `confidence: 0.3` | High hedging implies low confidence |
+| `hedge_density_per_1000` 4-10 | `confidence: 0.5` | Moderate hedging |
+| `hedge_density_per_1000` < 4 | `confidence: 0.7` | Low hedging implies high confidence |
+| `passive_voice_pct` > 20 | `directness: hedged` | Heavy passive voice implies indirectness |
+| `passive_voice_pct` < 5 | `directness: blunt` | Very low passive voice implies directness |
+| `one_sentence_paragraph_rate` > 25 | `paragraph_patterns.avg_length: short` | Many single-sentence paragraphs |
+| `sentence_length_stdev` > 8 | Sentence `variation: high` | High variation in sentence length |
+| `contraction_rate_per_1000` > 10 | `contractions: true` | Frequent contractions |
+| `contraction_rate_per_1000` < 2 | `contractions: false` | Rare contractions |
+
+For any parameter not derivable from measurements, use the same defaults as the migration defaults (confidence: 0.5, directness: balanced, emotional_range: moderate, self_correction: false, specificity: balanced, etc.).
+
+**Warn the user:** "This profile contains measurements but no explicit voice parameters. I've derived reasonable defaults from the measurements, but explicit parameters produce more consistent results. Consider running the voice-architect to add human-readable parameters."
+
 ## PERSONALITY AND SOUL
 
 Avoiding AI patterns is only half the job. Sterile, voiceless writing is just as obvious as slop. Good writing has a human behind it.
@@ -91,6 +167,53 @@ Avoiding AI patterns is only half the job. Sterile, voiceless writing is just as
 - No first-person perspective when appropriate
 - No humor, no edge, no personality
 - Reads like a Wikipedia article or press release
+
+### Expanded Voice Parameters
+
+When a voice profile is loaded that contains the expanded parameters, apply them during rewriting:
+
+#### Confidence and Directness
+
+Apply `confidence` (0.0-1.0) and `directness` (hedged/balanced/blunt) to control how the rewrite handles assertions and hedging:
+
+| Confidence Range | Rewrite Behavior |
+|-----------------|-----------------|
+| 0.0-0.3 (hedged) | **Preserve** existing hedging language. Add qualifiers where appropriate. Do not make text more assertive than the profile intends. |
+| 0.4-0.6 (moderate) | Rewrite naturally. Remove excessive hedging but keep reasonable qualifications. Default behavior. |
+| 0.7-1.0 (assertive) | **Remove** hedging qualifiers ("perhaps", "might", "somewhat"). Convert "X might cause Y" to "X causes Y". Make claims direct. |
+
+| Directness | Rewrite Behavior |
+|-----------|-----------------|
+| hedged | Soften blunt statements. "Do this" becomes "you might want to consider this". Even confident rewrites get diplomatic phrasing. |
+| balanced | Natural mix. Default behavior. |
+| blunt | Sharpen delivery. Remove diplomatic padding. "You might want to consider" becomes "do this". |
+
+**Confidence and directness are independent.** Low confidence + blunt directness: "I'm not sure, but here it is plainly." High confidence + hedged directness: "I'm certain, but I'll phrase it gently."
+
+#### Paragraph Patterns
+
+Apply `paragraph_patterns` during rewriting:
+
+- **opening_style**: When rewriting paragraph openings, match the profile. If `anecdotal`, restructure openings to lead with examples. If `direct`, move the main point to the front. If `contextual`, ensure context precedes the main point.
+- **transition_style**: If `explicit`, ensure clear transition words between paragraphs. If `organic`, remove heavy connectors ("Furthermore", "Moreover", "Additionally") and let paragraphs flow naturally. If `minimal`, strip transition words and let paragraph breaks do the work.
+- **avg_length**: When restructuring, target the profile's paragraph length. Split long paragraphs for `short`, merge short paragraphs for `long`.
+
+#### Emotional Range and Self-Correction
+
+- **emotional_range = flat**: Even out emotional variation. Remove excitement spikes and dramatic shifts. Maintain steady register.
+- **emotional_range = moderate**: Allow measured variation. Default behavior.
+- **emotional_range = dynamic**: Amplify emotional variation. Let enthusiasm, frustration, and amusement come through. Match the content's natural emotional arc.
+
+- **self_correction = true**: Preserve or add natural self-correction markers ("actually", "well", "I mean") sparingly. These signal real-time thinking.
+- **self_correction = false**: Remove self-correction markers. Clean, pre-considered prose.
+
+#### Specificity
+
+Apply `specificity` from the `elaboration` group:
+
+- **abstract**: Allow generalizations to stand. Do not force concrete examples into every claim.
+- **balanced**: Mix generalizations with specifics. Default behavior.
+- **concrete**: Replace vague generalizations with specific examples, real names, actual numbers. "Services can fail" becomes "the payment service returned 503 errors for 12 minutes."
 
 ### How to add voice:
 
@@ -632,6 +755,32 @@ When you see these, lean toward leaving the prose alone — they are evidence of
    > Return a short list of remaining AI tells found, or "No additional AI tells found." if the text reads as human-written. Be concise.
 
    Use the subagent's response as the self-audit findings for step 4.
+
+   **Measurement Validation (when measurements section is present):**
+
+   If the loaded voice profile contains a `measurements` section, add a measurement validation pass after the self-audit subagent returns. Compare the rewritten text against the numeric targets:
+
+   For each measurement field present in the profile:
+
+   1. Compute the actual value from the rewritten text (sentence_length_mean, sentence_length_stdev, paragraph_length_mean, passive_voice_pct, hedge_density_per_1000, connector_variety, concrete_abstract_ratio, punctuation_entropy, one_sentence_paragraph_rate, contraction_rate_per_1000).
+
+   2. Calculate deviation: `deviation_pct = abs(actual - target) / target * 100`.
+
+   3. Classify using thresholds:
+      - < 10%: PASS (not reported)
+      - 10-25%: INFORMATIONAL (report as note)
+      - > 25%: FLAGGED (actionable finding, address in rewrite)
+
+   4. Low-confidence measurements (`sample_confidence: low`): Use relaxed thresholds:
+      - < 25%: PASS
+      - 25-50%: INFORMATIONAL (advisory)
+      - > 50%: FLAGGED (advisory)
+
+   5. Report concrete numeric deviations. Example: "passive_voice_pct is 22.0, target is 8.3 (165% deviation, FLAGGED)".
+
+   When measurements are absent, skip measurement validation entirely.
+
+   When measurements conflict with human-readable params, the human-readable parameters guide the rewrite. Report the discrepancy with: "Measurement target conflicts with voice parameter; voice parameter took precedence."
 
 4. **Conditional final rewrite.**
    - If the self-audit found tells: write a final rewrite that addresses them.

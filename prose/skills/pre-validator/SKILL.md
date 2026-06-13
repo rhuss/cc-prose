@@ -345,6 +345,7 @@ If a voice profile is active (explicit or auto-detected):
 **Characteristics:**
 - [ ] Formality level matches profile
 - [ ] Personality level matches profile
+- [ ] Confidence level matches profile (hedging frequency appropriate for confidence value)
 - [ ] Pronoun usage matches profile
 - [ ] Contractions match profile setting
 
@@ -352,11 +353,48 @@ If a voice profile is active (explicit or auto-detected):
 - [ ] Short punchy sentences included (if profile specifies)
 - [ ] Sentence length variation appropriate
 - [ ] Rhetorical questions included (if profile specifies)
+- [ ] Sentence starters match profile (pronoun-heavy/varied/formal-lead)
+
+**Paragraph Patterns:**
+- [ ] Paragraph length matches profile avg_length (short/medium/long)
+- [ ] Opening style matches profile (direct/contextual/anecdotal/varied)
+- [ ] Transition style matches profile (explicit/organic/minimal)
+
+**Elaboration:**
+- [ ] Specificity matches profile (abstract/balanced/concrete)
 
 **Personality Traits:**
 - [ ] Opinions expressed (if profile specifies)
 - [ ] Complexity acknowledged (if profile specifies)
 - [ ] Humor level appropriate (if profile specifies)
+- [ ] Emotional range matches profile (flat/moderate/dynamic)
+- [ ] Self-correction markers present/absent per profile
+- [ ] Directness matches profile (hedged/balanced/blunt)
+
+**Measurement Validation (when measurements section present):**
+
+When the voice profile contains a `measurements` section, validate the content against numeric targets using the same thresholds as the self-audit:
+
+For each measurement field present:
+1. Compute the actual value from the content
+2. Calculate deviation: `deviation_pct = abs(actual - target) / target * 100`
+3. Classify:
+   - < 10%: PASS (not reported in voice section)
+   - 10-25%: INFORMATIONAL (note in report)
+   - > 25%: FLAGGED (scored as voice mismatch)
+
+Low-confidence measurements (`sample_confidence: low`): Use relaxed thresholds:
+   - < 25%: PASS
+   - 25-50%: INFORMATIONAL (advisory)
+   - > 50%: FLAGGED (advisory)
+
+Report measurement deviations in the Voice Consistency section with concrete values:
+```
+| Metric | Target | Actual | Deviation | Status |
+|--------|--------|--------|-----------|--------|
+| sentence_length_mean | 16.2 | 18.5 | 14% | INFORMATIONAL |
+| passive_voice_pct | 8.3 | 22.0 | 165% | FLAGGED |
+```
 
 ### Phase 7: Readability Metrics
 

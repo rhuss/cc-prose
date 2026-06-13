@@ -18,14 +18,14 @@
 
 **Purpose**: Update all 8 built-in voice templates with new parameters. This is the foundation all skill changes depend on.
 
-- [ ] T001 [P] Add new parameters (confidence, paragraph_patterns, sentence_starters, emotional_range, self_correction, directness, specificity) to prose/knowledge-base/voice-templates/technical.yaml
-- [ ] T002 [P] Add new parameters to prose/knowledge-base/voice-templates/conversational.yaml
-- [ ] T003 [P] Add new parameters to prose/knowledge-base/voice-templates/analytical.yaml
-- [ ] T004 [P] Add new parameters to prose/knowledge-base/voice-templates/narrative.yaml
-- [ ] T005 [P] Add new parameters to prose/knowledge-base/voice-templates/pov.yaml
-- [ ] T006 [P] Add new parameters to prose/knowledge-base/voice-templates/reasoning.yaml
-- [ ] T007 [P] Add new parameters to prose/knowledge-base/voice-templates/reference.yaml
-- [ ] T008 [P] Add new parameters to prose/knowledge-base/voice-templates/tutorial.yaml
+- [x] T001 [P] Add new parameters (confidence, paragraph_patterns, sentence_starters, emotional_range, self_correction, directness, specificity) to prose/knowledge-base/voice-templates/technical.yaml
+- [x] T002 [P] Add new parameters to prose/knowledge-base/voice-templates/conversational.yaml
+- [x] T003 [P] Add new parameters to prose/knowledge-base/voice-templates/analytical.yaml
+- [x] T004 [P] Add new parameters to prose/knowledge-base/voice-templates/narrative.yaml
+- [x] T005 [P] Add new parameters to prose/knowledge-base/voice-templates/pov.yaml
+- [x] T006 [P] Add new parameters to prose/knowledge-base/voice-templates/reasoning.yaml
+- [x] T007 [P] Add new parameters to prose/knowledge-base/voice-templates/reference.yaml
+- [x] T008 [P] Add new parameters to prose/knowledge-base/voice-templates/tutorial.yaml
 
 **Values per template** (from plan.md):
 
@@ -52,12 +52,12 @@
 
 ### Implementation for User Story 1
 
-- [ ] T009 [US1] Add `confidence` parameter interpretation to the voice application section (Step 3) in prose/skills/content-generator/SKILL.md: map 0.0-0.3 to heavy hedging, 0.4-0.6 to moderate, 0.7-1.0 to assertive
-- [ ] T010 [US1] Add `paragraph_patterns` consumption section in prose/skills/content-generator/SKILL.md: instructions for opening_style (direct/contextual/anecdotal/varied), transition_style (explicit/organic/minimal), avg_length (short/medium/long)
-- [ ] T011 [US1] Add `sentence_starters` to sentence pattern instructions in prose/skills/content-generator/SKILL.md: pronoun-heavy starts most sentences with I/You/We, varied mixes approaches, formal-lead uses topic-first constructions
-- [ ] T012 [US1] Add `emotional_range`, `self_correction`, `directness` to personality injection section in prose/skills/content-generator/SKILL.md
-- [ ] T013 [US1] Add `specificity` to elaboration instructions in prose/skills/content-generator/SKILL.md: abstract allows generalizations, concrete demands examples and details, balanced mixes both
-- [ ] T014 [US1] Add old-format detection logic to voice profile loading in prose/skills/content-generator/SKILL.md: if profile lacks `confidence` field, warn user and offer to add defaults
+- [x] T009 [US1] Add `confidence` parameter interpretation to the voice application section (Step 3) in prose/skills/content-generator/SKILL.md: map 0.0-0.3 to heavy hedging, 0.4-0.6 to moderate, 0.7-1.0 to assertive
+- [x] T010 [US1] Add `paragraph_patterns` consumption section in prose/skills/content-generator/SKILL.md: instructions for opening_style (direct/contextual/anecdotal/varied), transition_style (explicit/organic/minimal), avg_length (short/medium/long)
+- [x] T011 [US1] Add `sentence_starters` to sentence pattern instructions in prose/skills/content-generator/SKILL.md: pronoun-heavy starts most sentences with I/You/We, varied mixes approaches, formal-lead uses topic-first constructions
+- [x] T012 [US1] Add `emotional_range`, `self_correction`, `directness` to personality injection section in prose/skills/content-generator/SKILL.md
+- [x] T013 [US1] Add `specificity` to elaboration instructions in prose/skills/content-generator/SKILL.md: abstract allows generalizations, concrete demands examples and details, balanced mixes both
+- [x] T014 [US1] Add old-format detection logic to voice profile loading in prose/skills/content-generator/SKILL.md: if profile lacks `confidence` field, warn user and offer to add defaults
 
 **Checkpoint**: Content-generator respects all new params. Test by creating content with extreme values (confidence: 0.9, directness: blunt).
 
@@ -71,10 +71,10 @@
 
 ### Implementation for User Story 2
 
-- [ ] T015 [US2] Add `confidence` and `directness` to voice matching guidance in prose/skills/humanizer/SKILL.md: low confidence preserves hedging, high confidence removes it, directness controls delivery softness
-- [ ] T016 [US2] Add `paragraph_patterns` to rewrite guidance in prose/skills/humanizer/SKILL.md: respect opening_style preferences, adjust transition density per transition_style setting
-- [ ] T017 [US2] Add `emotional_range`, `self_correction`, `specificity` to personality preservation in prose/skills/humanizer/SKILL.md
-- [ ] T018 [US2] Add old-format detection logic to voice profile loading in prose/skills/humanizer/SKILL.md: same logic as content-generator (check for `confidence` field)
+- [x] T015 [US2] Add `confidence` and `directness` to voice matching guidance in prose/skills/humanizer/SKILL.md: low confidence preserves hedging, high confidence removes it, directness controls delivery softness
+- [x] T016 [US2] Add `paragraph_patterns` to rewrite guidance in prose/skills/humanizer/SKILL.md: respect opening_style preferences, adjust transition density per transition_style setting
+- [x] T017 [US2] Add `emotional_range`, `self_correction`, `specificity` to personality preservation in prose/skills/humanizer/SKILL.md
+- [x] T018 [US2] Add old-format detection logic to voice profile loading in prose/skills/humanizer/SKILL.md: same logic as content-generator (check for `confidence` field)
 
 **Checkpoint**: Humanizer respects all new params during rewriting. Test with low-confidence profile on assertive text.
 
@@ -88,10 +88,10 @@
 
 ### Implementation for User Story 3
 
-- [ ] T019 [US3] Add measurement computation step to the extraction workflow in prose/skills/voice-extractor/SKILL.md: after parameter extraction, compute all 10 measurement fields (sentence_length_mean, sentence_length_stdev, paragraph_length_mean, passive_voice_pct, hedge_density_per_1000, connector_variety, concrete_abstract_ratio, punctuation_entropy, one_sentence_paragraph_rate, contraction_rate_per_1000)
-- [ ] T020 [US3] Add `sample_confidence` computation to prose/skills/voice-extractor/SKILL.md: < 1000 words = low, 1000-5000 = medium, > 5000 = high
-- [ ] T021 [US3] Add measurements section to the output YAML template in prose/skills/voice-extractor/SKILL.md: include all 10 fields plus sample_confidence, with field descriptions as comments
-- [ ] T022 [US3] Add new human-readable parameter extraction logic for confidence, paragraph_patterns, sentence_starters, emotional_range, self_correction, directness, specificity in prose/skills/voice-extractor/SKILL.md
+- [x] T019 [US3] Add measurement computation step to the extraction workflow in prose/skills/voice-extractor/SKILL.md: after parameter extraction, compute all 10 measurement fields (sentence_length_mean, sentence_length_stdev, paragraph_length_mean, passive_voice_pct, hedge_density_per_1000, connector_variety, concrete_abstract_ratio, punctuation_entropy, one_sentence_paragraph_rate, contraction_rate_per_1000)
+- [x] T020 [US3] Add `sample_confidence` computation to prose/skills/voice-extractor/SKILL.md: < 1000 words = low, 1000-5000 = medium, > 5000 = high
+- [x] T021 [US3] Add measurements section to the output YAML template in prose/skills/voice-extractor/SKILL.md: include all 10 fields plus sample_confidence, with field descriptions as comments
+- [x] T022 [US3] Add new human-readable parameter extraction logic for confidence, paragraph_patterns, sentence_starters, emotional_range, self_correction, directness, specificity in prose/skills/voice-extractor/SKILL.md
 
 **Checkpoint**: Extractor produces complete profiles with new params and measurements section.
 
@@ -105,9 +105,9 @@
 
 ### Implementation for User Story 4
 
-- [ ] T023 [US4] Update self-audit subagent prompt in prose/skills/content-generator/SKILL.md: when measurements section is present, append measurement validation instructions with thresholds (>25% deviation = flagged, 10-25% = informational, <10% = pass)
-- [ ] T024 [US4] Update self-audit subagent prompt in prose/skills/humanizer/SKILL.md: same measurement validation logic as content-generator
-- [ ] T025 [US4] Add low-confidence measurement handling: when sample_confidence is "low", use relaxed threshold (>50% = flagged) and prefix findings with "advisory"
+- [x] T023 [US4] Update self-audit subagent prompt in prose/skills/content-generator/SKILL.md: when measurements section is present, append measurement validation instructions with thresholds (>25% deviation = flagged, 10-25% = informational, <10% = pass)
+- [x] T024 [US4] Update self-audit subagent prompt in prose/skills/humanizer/SKILL.md: same measurement validation logic as content-generator
+- [x] T025 [US4] Add low-confidence measurement handling: when sample_confidence is "low", use relaxed threshold (>50% = flagged) and prefix findings with "advisory"
 
 **Checkpoint**: Self-audit reports concrete numeric deviations when measurements present, runs normally without measurements.
 
@@ -121,8 +121,8 @@
 
 ### Implementation for User Story 5
 
-- [ ] T026 [US5] Verify old-format detection already added in T014 (content-generator) and T018 (humanizer), ensure consistent migration defaults across both skills
-- [ ] T027 [US5] Add fallback behavior documentation: when user declines migration, skills use defaults silently (confidence: 0.5, directness: balanced, emotional_range: moderate, self_correction: false, specificity: balanced, paragraph_patterns: medium/varied/organic, sentence_starters: varied)
+- [x] T026 [US5] Verify old-format detection already added in T014 (content-generator) and T018 (humanizer), ensure consistent migration defaults across both skills
+- [x] T027 [US5] Add fallback behavior documentation: when user declines migration, skills use defaults silently (confidence: 0.5, directness: balanced, emotional_range: moderate, self_correction: false, specificity: balanced, paragraph_patterns: medium/varied/organic, sentence_starters: varied)
 
 **Checkpoint**: Old profiles load without errors in both content-generator and humanizer.
 
@@ -136,9 +136,9 @@
 
 ### Implementation for User Story 6
 
-- [ ] T028 [US6] Add questions for new parameters to the interactive create workflow in prose/skills/voice-architect/SKILL.md: confidence (slider 0.0-1.0), paragraph avg_length, opening_style, transition_style, sentence_starters, emotional_range, self_correction, directness, specificity
-- [ ] T029 [US6] Add new parameters to the edit workflow in prose/skills/voice-architect/SKILL.md: support editing individual new params
-- [ ] T030 [US6] Ensure voice-architect never generates a measurements section (add explicit note: measurements are extractor-only)
+- [x] T028 [US6] Add questions for new parameters to the interactive create workflow in prose/skills/voice-architect/SKILL.md: confidence (slider 0.0-1.0), paragraph avg_length, opening_style, transition_style, sentence_starters, emotional_range, self_correction, directness, specificity
+- [x] T029 [US6] Add new parameters to the edit workflow in prose/skills/voice-architect/SKILL.md: support editing individual new params
+- [x] T030 [US6] Ensure voice-architect never generates a measurements section (add explicit note: measurements are extractor-only)
 
 **Checkpoint**: Architect produces complete profiles in updated schema without measurements.
 
@@ -148,14 +148,14 @@
 
 **Purpose**: Pre-validator update and final consistency checks.
 
-- [ ] T031 Add new parameter voice consistency checks to prose/skills/pre-validator/SKILL.md: validate confidence, directness, emotional_range, specificity against generated content
-- [ ] T032 Add measurement deviation check to prose/skills/pre-validator/SKILL.md: when measurements present, report deviations using same thresholds as self-audit
-- [ ] T033 Verify all 8 templates pass schema validation: each template has all required new fields with valid enum/range values
-- [ ] T034 Add measurements-only profile handling to prose/skills/content-generator/SKILL.md and prose/skills/humanizer/SKILL.md: when a profile has a `measurements` section but no human-readable knobs (confidence, directness, etc.), derive reasonable defaults from measurements (e.g., high hedge_density_per_1000 implies low confidence) and warn that explicit parameters produce better results
-- [ ] T035 Add parameter validation at load time in prose/skills/content-generator/SKILL.md and prose/skills/humanizer/SKILL.md: validate that confidence is in [0.0, 1.0], directness is one of hedged/balanced/blunt, emotional_range is one of flat/moderate/dynamic, etc. Report the invalid field and value, fall back to defaults for invalid fields, continue processing
-- [ ] T036 Add error handling for corrupted/unreadable corpus files in prose/skills/voice-extractor/SKILL.md: skip unreadable files with a warning identifying each skipped file, continue processing remaining files. If all files are unreadable, report an error and produce no output
-- [ ] T037 Add measurement computation edge case handling in prose/skills/voice-extractor/SKILL.md: when corpus is too small or uniform to compute a metric (e.g., zero sentences for stdev, division by zero), omit that field from the measurements section rather than writing NaN or infinity
-- [ ] T038 Add non-interactive migration handling in prose/skills/content-generator/SKILL.md and prose/skills/humanizer/SKILL.md: when old-format detection triggers in a non-interactive context (piped input, CI), silently apply defaults without prompting and log an informational message noting the auto-migration
+- [x] T031 Add new parameter voice consistency checks to prose/skills/pre-validator/SKILL.md: validate confidence, directness, emotional_range, specificity against generated content
+- [x] T032 Add measurement deviation check to prose/skills/pre-validator/SKILL.md: when measurements present, report deviations using same thresholds as self-audit
+- [x] T033 Verify all 8 templates pass schema validation: each template has all required new fields with valid enum/range values
+- [x] T034 Add measurements-only profile handling to prose/skills/content-generator/SKILL.md and prose/skills/humanizer/SKILL.md: when a profile has a `measurements` section but no human-readable knobs (confidence, directness, etc.), derive reasonable defaults from measurements (e.g., high hedge_density_per_1000 implies low confidence) and warn that explicit parameters produce better results
+- [x] T035 Add parameter validation at load time in prose/skills/content-generator/SKILL.md and prose/skills/humanizer/SKILL.md: validate that confidence is in [0.0, 1.0], directness is one of hedged/balanced/blunt, emotional_range is one of flat/moderate/dynamic, etc. Report the invalid field and value, fall back to defaults for invalid fields, continue processing
+- [x] T036 Add error handling for corrupted/unreadable corpus files in prose/skills/voice-extractor/SKILL.md: skip unreadable files with a warning identifying each skipped file, continue processing remaining files. If all files are unreadable, report an error and produce no output
+- [x] T037 Add measurement computation edge case handling in prose/skills/voice-extractor/SKILL.md: when corpus is too small or uniform to compute a metric (e.g., zero sentences for stdev, division by zero), omit that field from the measurements section rather than writing NaN or infinity
+- [x] T038 Add non-interactive migration handling in prose/skills/content-generator/SKILL.md and prose/skills/humanizer/SKILL.md: when old-format detection triggers in a non-interactive context (piped input, CI), silently apply defaults without prompting and log an informational message noting the auto-migration
 
 ---
 

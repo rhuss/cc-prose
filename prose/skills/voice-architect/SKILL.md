@@ -62,6 +62,9 @@ characteristics:
   # Personality level: 0.0 = neutral/objective, 1.0 = opinionated/engaged
   personality: 0.7
 
+  # Confidence level: 0.0 = heavily hedged, 1.0 = fully assertive
+  confidence: 0.5
+
   # Use first-person pronouns (I, we)
   first_person: true
 
@@ -84,6 +87,19 @@ sentence_patterns:
   # Include rhetorical questions
   rhetorical_questions: true
 
+  # Sentence starter style
+  sentence_starters: "varied"  # pronoun-heavy, varied, formal-lead
+
+paragraph_patterns:
+  # Average paragraph length
+  avg_length: "medium"  # short, medium, long
+
+  # How paragraphs typically open
+  opening_style: "varied"  # direct, contextual, anecdotal, varied
+
+  # How paragraphs connect to each other
+  transition_style: "organic"  # explicit, organic, minimal
+
 elaboration:
   # How much to expand on concepts
   depth: "moderate"  # minimal, moderate, thorough
@@ -93,6 +109,9 @@ elaboration:
 
   # Primary domain for analogies (optional)
   # analogy_domain: "everyday objects"
+
+  # How specific the writing should be
+  specificity: "balanced"  # abstract, balanced, concrete
 
 personality_traits:
   # Express opinions and reactions
@@ -106,6 +125,15 @@ personality_traits:
 
   # Reference personal experience
   personal_experience: true
+
+  # Emotional variation across content
+  emotional_range: "moderate"  # flat, moderate, dynamic
+
+  # Include self-correction markers ("actually", "I mean", "well")
+  self_correction: false
+
+  # How directly points are delivered
+  directness: "balanced"  # hedged, balanced, blunt
 
 # Specific phrase patterns to use
 signature_phrases:
@@ -215,7 +243,126 @@ Create a new voice profile interactively.
    }
    ```
 
+   **Confidence:**
+   ```json
+   {
+     "question": "How confident should the writing sound?",
+     "header": "Confidence",
+     "options": [
+       {"label": "Hedged (0.2)", "description": "Qualifies claims: 'perhaps', 'might', 'it seems'"},
+       {"label": "Moderate (0.5)", "description": "Balanced certainty, qualifies only uncertain points (Recommended)"},
+       {"label": "Assertive (0.8)", "description": "Direct claims, no hedging: 'this is', 'do this'"}
+     ]
+   }
+   ```
+
+   **Directness:**
+   ```json
+   {
+     "question": "How directly should points be delivered?",
+     "header": "Directness",
+     "options": [
+       {"label": "Hedged", "description": "Softens delivery: 'you might want to consider'"},
+       {"label": "Balanced (Recommended)", "description": "Natural mix of direct and softened statements"},
+       {"label": "Blunt", "description": "Says it straight: 'do this', 'this is wrong'"}
+     ]
+   }
+   ```
+
+   **Paragraph Length:**
+   ```json
+   {
+     "question": "What paragraph length works best?",
+     "header": "Paragraph Length",
+     "options": [
+       {"label": "Short", "description": "2-3 sentences, quick and scannable"},
+       {"label": "Medium (Recommended)", "description": "4-5 sentences, standard prose rhythm"},
+       {"label": "Long", "description": "6+ sentences, detailed and thorough"}
+     ]
+   }
+   ```
+
+   **Opening Style:**
+   ```json
+   {
+     "question": "How should paragraphs typically open?",
+     "header": "Opening Style",
+     "options": [
+       {"label": "Direct", "description": "Lead with the main point"},
+       {"label": "Contextual", "description": "Set up context before the main point"},
+       {"label": "Anecdotal", "description": "Open with examples or stories"},
+       {"label": "Varied (Recommended)", "description": "Mix approaches across paragraphs"}
+     ]
+   }
+   ```
+
+   **Transition Style:**
+   ```json
+   {
+     "question": "How should paragraphs connect to each other?",
+     "header": "Transition Style",
+     "options": [
+       {"label": "Explicit", "description": "Clear transition words: 'However', 'Building on this'"},
+       {"label": "Organic (Recommended)", "description": "Natural flow without heavy connectors"},
+       {"label": "Minimal", "description": "Each paragraph stands independently"}
+     ]
+   }
+   ```
+
+   **Sentence Starters:**
+   ```json
+   {
+     "question": "How should sentences typically begin?",
+     "header": "Sentence Starters",
+     "options": [
+       {"label": "Pronoun-heavy", "description": "Most sentences start with I/You/We"},
+       {"label": "Varied (Recommended)", "description": "Mix of pronouns, topics, and clauses"},
+       {"label": "Formal-lead", "description": "Topic-first: 'The service accepts...'"}
+     ]
+   }
+   ```
+
+   **Emotional Range:**
+   ```json
+   {
+     "question": "How much emotional variation should the writing show?",
+     "header": "Emotional Range",
+     "options": [
+       {"label": "Flat", "description": "Consistent register, no emotional shifts"},
+       {"label": "Moderate (Recommended)", "description": "Measured variation, enthusiasm at highlights"},
+       {"label": "Dynamic", "description": "Full range: excitement, concern, amusement"}
+     ]
+   }
+   ```
+
+   **Self-Correction:**
+   ```json
+   {
+     "question": "Include self-correction markers ('actually', 'I mean', 'well')?",
+     "header": "Self-Correction",
+     "options": [
+       {"label": "Yes", "description": "Signals real-time thinking, adds authenticity"},
+       {"label": "No (Recommended)", "description": "Clean, pre-considered prose"}
+     ]
+   }
+   ```
+
+   **Specificity:**
+   ```json
+   {
+     "question": "How specific should the writing be?",
+     "header": "Specificity",
+     "options": [
+       {"label": "Abstract", "description": "Conceptual, allows generalizations"},
+       {"label": "Balanced (Recommended)", "description": "Mix of principles and concrete details"},
+       {"label": "Concrete", "description": "Specific examples, real names, actual numbers"}
+     ]
+   }
+   ```
+
 3. **Generate profile YAML** based on responses
+
+   **IMPORTANT:** Never include a `measurements` section in profiles created through the architect. Measurements are populated exclusively by the voice-extractor from corpus analysis.
 
 4. **Ask where to save:**
    ```json
@@ -316,12 +463,24 @@ Display details of a specific voice profile.
 - Max consecutive similar: 3
 - Average length target: 18 words
 - Rhetorical questions: Yes
+- Sentence starters: Varied
+
+### Paragraph Patterns
+- Average length: Medium
+- Opening style: Varied
+- Transition style: Organic
+
+### Elaboration
+- Specificity: Balanced
 
 ### Personality Traits
 - Express opinions: Yes
 - Acknowledge complexity: Yes
 - Humor: Subtle
 - Personal experience: Yes
+- Emotional range: Moderate
+- Self-correction: No
+- Directness: Balanced
 
 ### Signature Phrases
 - "Let me explain"

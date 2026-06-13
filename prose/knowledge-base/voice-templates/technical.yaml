@@ -23,6 +23,10 @@ characteristics:
   # 0.6 = moderately engaged, expresses considered opinions
   personality: 0.6
 
+  # Confidence level: 0.0 = heavily hedged, 1.0 = fully assertive
+  # 0.6 = moderate confidence, occasionally qualifies claims
+  confidence: 0.6
+
   # Use first-person pronouns (I, we)
   first_person: true
 
@@ -59,9 +63,25 @@ sentence_patterns:
   # Include rhetorical questions
   rhetorical_questions: false
 
+  # Sentence starter style: pronoun-heavy | varied | formal-lead
+  # varied = mixes approaches for natural flow
+  sentence_starters: "varied"
+
   # One sentence per line (semantic line breaks)
   # Useful for AsciiDoc, Markdown with clean git diffs
   # semantic_line_breaks: false
+
+paragraph_patterns:
+  # Average paragraph length: short | medium | long
+  avg_length: "medium"
+
+  # Opening style: direct | contextual | anecdotal | varied
+  # direct = leads with the main point immediately
+  opening_style: "direct"
+
+  # Transition style: explicit | organic | minimal
+  # explicit = uses clear transition words between paragraphs
+  transition_style: "explicit"
 
 elaboration:
   # How much to expand on concepts: minimal, moderate, thorough
@@ -82,6 +102,10 @@ elaboration:
   # Primary domain for analogies (optional)
   # analogy_domain: "familiar domain for comparisons"
 
+  # Specificity level: abstract | balanced | concrete
+  # concrete = demands specific examples and details over generalizations
+  specificity: "concrete"
+
 personality_traits:
   # Express opinions and reactions
   opinions: true
@@ -94,6 +118,17 @@ personality_traits:
 
   # Reference personal experience
   personal_experience: false
+
+  # Emotional range: flat | moderate | dynamic
+  # flat = maintains consistent emotional register throughout
+  emotional_range: "flat"
+
+  # Self-correction markers: include "actually", "I mean", "well"
+  self_correction: false
+
+  # Directness: hedged | balanced | blunt
+  # balanced = neither overly cautious nor forceful
+  directness: "balanced"
 
 pronoun_balance:
   # Target ratio of "you" vs "we" usage

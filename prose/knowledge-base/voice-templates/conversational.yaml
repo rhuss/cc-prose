@@ -23,6 +23,10 @@ characteristics:
   # 0.8 = highly engaged, expresses reactions and opinions
   personality: 0.8
 
+  # Confidence level: 0.0 = heavily hedged, 1.0 = fully assertive
+  # 0.5 = moderate, balances certainty with openness
+  confidence: 0.5
+
   # Use first-person pronouns (I, we)
   first_person: true
 
@@ -58,6 +62,22 @@ sentence_patterns:
   # Include rhetorical questions
   rhetorical_questions: true
 
+  # Sentence starter style: pronoun-heavy | varied | formal-lead
+  # varied = mixes approaches for natural flow
+  sentence_starters: "varied"
+
+paragraph_patterns:
+  # Average paragraph length: short | medium | long
+  avg_length: "short"
+
+  # Opening style: direct | contextual | anecdotal | varied
+  # anecdotal = opens with stories, examples, or personal hooks
+  opening_style: "anecdotal"
+
+  # Transition style: explicit | organic | minimal
+  # organic = natural flow without heavy transition words
+  transition_style: "organic"
+
 elaboration:
   # How much to expand on concepts
   depth: "thorough"
@@ -68,6 +88,10 @@ elaboration:
 
   # Primary domain for analogies
   analogy_domain: "everyday experiences"
+
+  # Specificity level: abstract | balanced | concrete
+  # concrete = uses specific examples and details
+  specificity: "concrete"
 
 personality_traits:
   # Express opinions and reactions
@@ -81,6 +105,17 @@ personality_traits:
 
   # Reference personal experience
   personal_experience: true
+
+  # Emotional range: flat | moderate | dynamic
+  # dynamic = varies emotional tone across paragraphs
+  emotional_range: "dynamic"
+
+  # Self-correction markers: include "actually", "I mean", "well"
+  self_correction: true
+
+  # Directness: hedged | balanced | blunt
+  # balanced = neither overly cautious nor forceful
+  directness: "balanced"
 
 pronoun_balance:
   # Target ratio of "you" vs "we" usage

@@ -145,7 +145,7 @@ After establishing a baseline, process remaining files one by one with weighted 
 
 #### Numeric Fields
 
-Fields: `formality`, `personality`, `avg_length_target`, `you_percentage`, `we_percentage`
+Fields: `formality`, `personality`, `confidence`, `avg_length_target`, `you_percentage`, `we_percentage`
 
 ```
 updated_value = (current_value × total_words + new_value × new_words) / (total_words + new_words)
@@ -158,7 +158,7 @@ Example:
 
 #### Boolean Fields
 
-Fields: `first_person`, `contractions`, `mix_short`, `rhetorical_questions`, `provide_context`, `include_examples`, `explain_reasoning`, `opinions`, `acknowledge_complexity`, `personal_experience`
+Fields: `first_person`, `contractions`, `mix_short`, `rhetorical_questions`, `provide_context`, `include_examples`, `explain_reasoning`, `opinions`, `acknowledge_complexity`, `personal_experience`, `self_correction`
 
 ```
 # Track weighted votes
@@ -179,7 +179,7 @@ Display confidence when relevant:
 
 #### Categorical Fields
 
-Fields: `audience`, `variation`, `depth`, `humor`
+Fields: `audience`, `variation`, `depth`, `humor`, `emotional_range`, `directness`, `specificity`, `sentence_starters`, `paragraph_patterns.avg_length`, `paragraph_patterns.opening_style`, `paragraph_patterns.transition_style`
 
 ```
 # Maintain weighted frequency map
@@ -561,7 +561,89 @@ Detect how frequently analogies are used to explain concepts:
 | humor | Informal asides, parenthetical comments, wordplay |
 | personal_experience | "In my experience", "I've found", "when I worked on" |
 
-### 10. Signature Phrases
+### 10. Confidence (0.0-1.0)
+
+**Indicators analyzed:**
+
+| Indicator | Hedged (toward 0.0) | Assertive (toward 1.0) |
+|-----------|---------------------|----------------------|
+| Hedging language | High frequency: "perhaps", "might", "arguably", "somewhat" | Low frequency |
+| Qualifiers | "could", "possibly", "it seems" | Absent |
+| Direct assertions | Rare, claims softened | Frequent, claims stated as facts |
+| Modal verbs | "may", "could", "should" dominant | "is", "does", "will" dominant |
+
+**Calculation:**
+```
+# Count hedge words and assertive patterns
+hedge_count = count("perhaps", "might", "arguably", "somewhat", "possibly", "it seems", "could be")
+assert_count = count(direct assertions, definitive statements)
+confidence = assert_count / (assert_count + hedge_count)
+```
+
+### 11. Paragraph Patterns
+
+**avg_length:**
+```
+sentences_per_paragraph = total_sentences / total_paragraphs
+if avg < 3.5: "short"
+elif avg < 5.5: "medium"
+else: "long"
+```
+
+**opening_style:**
+Analyze how paragraphs begin:
+- **direct**: Paragraph opens with the main claim or statement (>60% of paragraphs)
+- **contextual**: Paragraph opens with background, setup, or framing before the main point (>40%)
+- **anecdotal**: Paragraph opens with examples, stories, or specific instances (>30%)
+- **varied**: No single pattern dominates (all below 50%)
+
+**transition_style:**
+Analyze transition usage between paragraphs:
+- **explicit**: Heavy use of transition words ("However", "Furthermore", "Additionally", "Moreover") between 60%+ of paragraph pairs
+- **organic**: Moderate transitions, content flows naturally (30-60% explicit transitions)
+- **minimal**: Few explicit transitions (<30%), paragraphs stand independently
+
+### 12. Sentence Starters
+
+Analyze how sentences begin:
+
+| Pattern | Detection |
+|---------|-----------|
+| pronoun-heavy | >50% of sentences start with I/You/We/They |
+| formal-lead | >50% start with topic nouns, "The", or dependent clauses |
+| varied | No single pattern exceeds 50% |
+
+### 13. Emotional Range
+
+| Level | Detection |
+|-------|-----------|
+| flat | Consistent emotional register. Few exclamation marks, value judgments, or intensity shifts. Emotional vocabulary < 2% of words. |
+| moderate | Some variation. Occasional enthusiasm or concern markers. Emotional vocabulary 2-5%. |
+| dynamic | Clear emotional shifts across paragraphs. Mixed feelings expressed. Emotional vocabulary > 5%. Exclamation marks, emphatic phrasing present. |
+
+### 14. Self-Correction
+
+Detect self-correction markers: "actually", "well,", "I mean", "or rather", "that is,", "to be precise"
+
+**Result:** `true` if > 1 self-correction marker per 1000 words
+
+### 15. Directness
+
+| Level | Detection |
+|-------|-----------|
+| hedged | High frequency of softening phrases: "you might want to", "consider", "it could help to". Suggestions framed as possibilities. |
+| balanced | Mix of direct and softened. Some commands, some suggestions. |
+| blunt | High frequency of imperatives and direct statements: "do this", "stop doing that", "this is wrong". Few softening phrases. |
+
+### 16. Specificity
+
+| Level | Detection |
+|-------|-----------|
+| abstract | Generalizations, conceptual statements, few specific examples. High ratio of abstract nouns. |
+| balanced | Mix of abstract principles and concrete details. Examples provided for key points. |
+| concrete | Frequent specific examples, real names, actual numbers, concrete scenarios. High ratio of concrete nouns and proper nouns. |
+
+### 17. Signature Phrases
 
 Extract top 5 repeated sentence openers (first 3-4 words):
 1. Count frequency of sentence beginnings
@@ -602,6 +684,99 @@ Synthesize a prose description that captures the voice's emotional quality and u
 
 *Reference documentation voice:*
 > Precise and economical, this voice prioritizes clarity over personality. Information is organized for quick retrieval rather than narrative flow. The tone is professional and neutral, creating confidence through consistency and completeness rather than personal engagement.
+
+## Measurement Computation
+
+After extracting all human-readable parameters, compute the `measurements` section from the corpus. This section provides numeric targets that the self-audit subagent uses to validate generated content.
+
+### Step: Compute Measurements
+
+For each measurement field, analyze the full corpus text:
+
+#### sentence_length_mean (words)
+Count words in each sentence. Compute the arithmetic mean.
+```
+sentence_length_mean = sum(words_per_sentence) / total_sentences
+```
+
+#### sentence_length_stdev (words)
+Compute the standard deviation of words per sentence.
+```
+sentence_length_stdev = sqrt(sum((length - mean)^2) / (n - 1))
+```
+If fewer than 2 sentences, omit this field.
+
+#### paragraph_length_mean (sentences)
+Count sentences per paragraph. Compute the arithmetic mean.
+```
+paragraph_length_mean = sum(sentences_per_paragraph) / total_paragraphs
+```
+
+#### passive_voice_pct (percentage 0-100)
+Count sentences using passive constructions (forms of "to be" + past participle). Express as percentage of total sentences.
+```
+passive_voice_pct = (passive_sentences / total_sentences) * 100
+```
+
+#### hedge_density_per_1000 (occurrences per 1000 words)
+Count hedge words: "perhaps", "might", "somewhat", "arguably", "possibly", "could", "may" (in hedging context), "it seems", "appears to".
+```
+hedge_density_per_1000 = (hedge_count / total_words) * 1000
+```
+
+#### connector_variety (0.0-1.0)
+Identify transition words and phrases ("however", "therefore", "in addition", "moreover", "furthermore", "consequently", "nevertheless", "meanwhile", "alternatively", "specifically", "for example", "in contrast", "on the other hand").
+```
+connector_variety = unique_connectors_used / total_connector_occurrences
+```
+If no connectors found, omit this field.
+
+#### concrete_abstract_ratio (0.0+)
+Count concrete nouns (physical objects, specific entities, proper nouns, measurable quantities) and abstract nouns (concepts, qualities, states, generalizations).
+```
+concrete_abstract_ratio = concrete_count / abstract_count
+```
+If no abstract nouns found, omit this field.
+
+#### punctuation_entropy (Shannon entropy)
+Count occurrences of each punctuation type: periods, commas, semicolons, colons, dashes, exclamation marks, question marks.
+```
+total = sum(all punctuation counts)
+for each punctuation type:
+    p = count / total
+    entropy -= p * log2(p)    # skip if p = 0
+```
+Higher entropy means more varied punctuation. Lower entropy means dominated by periods and commas.
+
+#### one_sentence_paragraph_rate (percentage 0-100)
+Count paragraphs containing exactly one sentence. Express as percentage of total paragraphs.
+```
+one_sentence_paragraph_rate = (one_sentence_paragraphs / total_paragraphs) * 100
+```
+
+#### contraction_rate_per_1000 (contractions per 1000 words)
+Count contractions (don't, can't, won't, it's, we're, they're, I'm, you're, etc.).
+```
+contraction_rate_per_1000 = (contraction_count / total_words) * 1000
+```
+
+### Sample Confidence
+
+Compute `sample_confidence` based on total corpus word count:
+
+| Corpus Size | sample_confidence |
+|-------------|-------------------|
+| < 1000 words | low |
+| 1000-5000 words | medium |
+| > 5000 words | high |
+
+When `sample_confidence` is `low`, the self-audit subagent treats measurement targets as advisory (relaxed thresholds).
+
+### Edge Cases in Measurement Computation
+
+- **Division by zero**: If a denominator is zero (e.g., zero sentences for stdev, zero abstract nouns for ratio), **omit that field** from the measurements section. Do not write NaN, infinity, or zero as a placeholder.
+- **Very small corpus**: If the corpus has fewer than 5 sentences, omit `sentence_length_stdev`. If fewer than 3 paragraphs, omit `paragraph_length_mean` and `one_sentence_paragraph_rate`.
+- **No connectors found**: Omit `connector_variety` rather than writing 0.0.
 
 ## Confidence Scoring
 
@@ -727,6 +902,7 @@ Based on analysis of [X] words from [Y] files.
 |-----------|-------|------------|----------|
 | Formality | 0.65 | HIGH | 23% contractions, moderate formal vocabulary |
 | Personality | 0.72 | HIGH | 18 opinion markers, 12 value judgments |
+| Confidence | 0.55 | MEDIUM | Moderate hedging, some direct assertions |
 | First Person | Yes | HIGH | Found in 34% of sentences |
 | Contractions | Yes | HIGH | 78% use contractions |
 | Audience | intermediate | MEDIUM | Technical terms with explanations |
@@ -739,6 +915,7 @@ Based on analysis of [X] words from [Y] files.
 | Variation | moderate | HIGH | Std dev = 5.2 |
 | Mix Short | Yes | MEDIUM | 19% sentences < 8 words |
 | Rhetorical Qs | No | HIGH | 0 rhetorical questions found |
+| Starters | varied | MEDIUM | Mixed pronoun and topic-first |
 
 ### Pronoun Balance
 
@@ -764,6 +941,23 @@ Based on analysis of [X] words from [Y] files.
 | Complexity | Yes | MEDIUM |
 | Humor | none | HIGH |
 | Experience | No | HIGH |
+| Emotional Range | moderate | MEDIUM |
+| Self-Correction | No | HIGH |
+| Directness | balanced | MEDIUM |
+
+### Paragraph Patterns
+
+| Parameter | Value | Confidence |
+|-----------|-------|------------|
+| Avg Length | medium | HIGH |
+| Opening Style | direct | MEDIUM |
+| Transition Style | organic | MEDIUM |
+
+### Specificity
+
+| Parameter | Value | Confidence |
+|-----------|-------|------------|
+| Specificity | concrete | MEDIUM |
 
 ### Signature Phrases (Top 5)
 
@@ -780,6 +974,22 @@ Based on analysis of [X] words from [Y] files.
 > explanations without condescension. There's intellectual curiosity in the approach,
 > treating complex topics as interesting puzzles rather than obstacles. The occasional
 > personal aside and willingness to acknowledge trade-offs create authenticity.
+
+### Measurements (Corpus Statistics)
+
+| Metric | Value | Unit |
+|--------|-------|------|
+| Sentence Length Mean | 16.2 | words |
+| Sentence Length Stdev | 5.2 | words |
+| Paragraph Length Mean | 4.1 | sentences |
+| Passive Voice | 8.3 | % |
+| Hedge Density | 3.2 | per 1000 words |
+| Connector Variety | 0.72 | ratio |
+| Concrete/Abstract Ratio | 2.1 | ratio |
+| Punctuation Entropy | 1.84 | bits |
+| One-Sentence Paragraphs | 12.5 | % |
+| Contraction Rate | 8.7 | per 1000 words |
+| Sample Confidence | HIGH | (based on corpus size) |
 
 ### Phrases to Avoid (detected anti-patterns)
 
@@ -852,6 +1062,7 @@ tone_description: |
 characteristics:
   formality: [value]
   personality: [value]
+  confidence: [value]              # 0.0 (hedged) to 1.0 (assertive)
   first_person: [true/false]
   contractions: [true/false]
   audience: "[beginner/intermediate/expert]"
@@ -862,6 +1073,12 @@ sentence_patterns:
   avg_length_target: [value]
   variation: "[low/moderate/high]"
   rhetorical_questions: [true/false]
+  sentence_starters: "[pronoun-heavy/varied/formal-lead]"
+
+paragraph_patterns:
+  avg_length: "[short/medium/long]"
+  opening_style: "[direct/contextual/anecdotal/varied]"
+  transition_style: "[explicit/organic/minimal]"
 
 elaboration:
   depth: "[minimal/moderate/thorough]"
@@ -870,12 +1087,16 @@ elaboration:
   explain_reasoning: [true/false]
   analogies: "[none/rare/moderate/frequent]"
   analogy_domain: "[optional: primary domain for analogies, e.g., 'everyday objects', 'cooking', 'construction']"
+  specificity: "[abstract/balanced/concrete]"
 
 personality_traits:
   opinions: [true/false]
   acknowledge_complexity: [true/false]
   humor: "[none/subtle/moderate]"
   personal_experience: [true/false]
+  emotional_range: "[flat/moderate/dynamic]"
+  self_correction: [true/false]
+  directness: "[hedged/balanced/blunt]"
 
 pronoun_balance:
   you_percentage: [value]
@@ -892,6 +1113,22 @@ avoid_phrases:
   - "It goes without saying"
   - "As everyone knows"
   - "Obviously"
+
+# Measurements (computed from corpus analysis, not manually set)
+# These numeric targets are used by the self-audit subagent to validate
+# generated content against the author's actual writing patterns.
+measurements:
+  sentence_length_mean: [value]         # Mean words per sentence
+  sentence_length_stdev: [value]        # Std dev of words per sentence
+  paragraph_length_mean: [value]        # Mean sentences per paragraph
+  passive_voice_pct: [value]            # Passive constructions as % of sentences (0-100)
+  hedge_density_per_1000: [value]       # Hedge words per 1000 words
+  connector_variety: [value]            # Unique connectors / total connectors (0.0-1.0)
+  concrete_abstract_ratio: [value]      # Concrete nouns / abstract nouns (0.0+)
+  punctuation_entropy: [value]          # Shannon entropy of punctuation distribution
+  one_sentence_paragraph_rate: [value]  # Single-sentence paragraphs as % (0-100)
+  contraction_rate_per_1000: [value]    # Contractions per 1000 words
+  sample_confidence: "[low/medium/high]"  # Corpus reliability indicator
 ```
 
 ### Step 7: Confirm Creation
@@ -1006,6 +1243,27 @@ Analysis suggests mixed authorship or intentionally varied style:
 **Recommendation:** Consider extracting from a subset of files by the same author
 or content type for more consistent results.
 ```
+
+### Corrupted or Unreadable Files
+
+When encountering files that cannot be read or processed:
+
+1. **Skip the unreadable file** and log a warning identifying it:
+   ```
+   Warning: Skipping unreadable file: docs/corrupted.md (permission denied)
+   Warning: Skipping unreadable file: docs/binary.dat (binary file, not text)
+   ```
+
+2. **Continue processing** the remaining files. One unreadable file does not abort the extraction.
+
+3. **If ALL files are unreadable**, report an error and produce no output:
+   ```
+   Error: No readable files found in the provided corpus.
+   All [N] files were skipped due to read errors.
+   Cannot produce a voice profile without readable content.
+   ```
+
+4. Track skipped files separately from outliers. Skipped files do not affect outlier statistics or corpus word counts.
 
 ### Empty or Unparseable Files
 

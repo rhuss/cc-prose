@@ -184,6 +184,81 @@ elif [ -d "$HOME/.claude/prose/voices" ]; then
 fi
 ```
 
+### Phase 2a: Voice Profile Parameter Validation
+
+After loading a voice profile, validate all parameter values at load time. For each invalid value, report the field and value, fall back to the default for that field, and continue processing with the valid fields.
+
+**Validation rules:**
+
+| Parameter | Valid Values | Default |
+|-----------|-------------|---------|
+| `characteristics.confidence` | Float in [0.0, 1.0] | 0.5 |
+| `paragraph_patterns.avg_length` | `short`, `medium`, `long` | `medium` |
+| `paragraph_patterns.opening_style` | `direct`, `contextual`, `anecdotal`, `varied` | `varied` |
+| `paragraph_patterns.transition_style` | `explicit`, `organic`, `minimal` | `organic` |
+| `sentence_patterns.sentence_starters` | `pronoun-heavy`, `varied`, `formal-lead` | `varied` |
+| `personality_traits.emotional_range` | `flat`, `moderate`, `dynamic` | `moderate` |
+| `personality_traits.self_correction` | `true`, `false` (boolean) | `false` |
+| `personality_traits.directness` | `hedged`, `balanced`, `blunt` | `balanced` |
+| `elaboration.specificity` | `abstract`, `balanced`, `concrete` | `balanced` |
+
+**Example warning:**
+```
+Warning: Invalid value for directness: "aggressive" (expected hedged/balanced/blunt).
+Using default: "balanced".
+```
+
+Processing continues with all valid fields. Invalid fields do not prevent the skill from running.
+
+### Phase 2b: Voice Profile Format Detection
+
+After loading a voice profile, check whether it uses the old format (missing new parameters). Detection: if the loaded profile has a `characteristics` section but no `confidence` field within it, the profile is old-format.
+
+**When old-format is detected:**
+
+1. **Interactive context** (normal usage): Warn the user and offer migration:
+   ```
+   This voice profile uses an older format without the expanded voice parameters
+   (confidence, directness, emotional_range, etc.). Would you like to migrate it
+   with sensible defaults? The profile will work either way, but migration enables
+   finer voice control.
+   ```
+   If the user accepts, add these defaults to the profile:
+   - `characteristics.confidence: 0.5`
+   - `paragraph_patterns.avg_length: medium`
+   - `paragraph_patterns.opening_style: varied`
+   - `paragraph_patterns.transition_style: organic`
+   - `sentence_patterns.sentence_starters: varied`
+   - `personality_traits.emotional_range: moderate`
+   - `personality_traits.self_correction: false`
+   - `personality_traits.directness: balanced`
+   - `elaboration.specificity: balanced`
+   No `measurements` section is added during migration.
+
+2. **Non-interactive context** (piped input, CI, automated pipelines): Silently apply the same defaults without prompting. Log an informational message: "Auto-migrated voice profile to current format with default values."
+
+3. **User declines migration**: Use the defaults silently for this session without modifying the file. Processing continues normally.
+
+### Phase 2c: Measurements-Only Profile Handling
+
+If a loaded voice profile contains a `measurements` section but is missing human-readable knobs (`confidence`, `directness`, `emotional_range`, etc.), derive reasonable defaults from the measurements:
+
+| Measurement | Derived Parameter | Logic |
+|-------------|------------------|-------|
+| `hedge_density_per_1000` > 10 | `confidence: 0.3` | High hedging implies low confidence |
+| `hedge_density_per_1000` 4-10 | `confidence: 0.5` | Moderate hedging |
+| `hedge_density_per_1000` < 4 | `confidence: 0.7` | Low hedging implies high confidence |
+| `passive_voice_pct` > 20 | `directness: hedged` | Heavy passive voice implies indirectness |
+| `passive_voice_pct` < 5 | `directness: blunt` | Very low passive voice implies directness |
+| `one_sentence_paragraph_rate` > 25 | `paragraph_patterns.avg_length: short` | Many single-sentence paragraphs |
+| `sentence_length_stdev` > 8 | Sentence `variation: high` | High variation in sentence length |
+| `contraction_rate_per_1000` > 10 | `contractions: true` | Frequent contractions |
+| `contraction_rate_per_1000` < 2 | `contractions: false` | Rare contractions |
+
+For any parameter not derivable from measurements, use the same defaults as FR-014 migration.
+
+**Warn the user:** "This profile contains measurements but no explicit voice parameters. I've derived reasonable defaults from the measurements, but explicit parameters produce more consistent results. Consider running the voice-architect to add human-readable parameters."
+
 ### Phase 3: Merge Configuration
 
 **Merge order** (later overrides earlier):
@@ -273,6 +348,84 @@ sentence_patterns:
 - Inject personality (opinions, reactions, acknowledgments)
 - Use appropriate pronouns ("you", "we", "I")
 - Apply sentence rhythm from profile
+- Apply confidence level (see Confidence and Directness below)
+- Apply paragraph patterns (see Paragraph Patterns below)
+- Apply sentence starters (see Sentence Starters below)
+- Apply emotional range, self-correction, directness (see Personality Extensions below)
+- Apply specificity level (see Specificity below)
+
+#### Confidence and Directness
+
+Apply the `confidence` field (0.0-1.0) from the voice profile to control the hedged-to-assertive spectrum:
+
+| Confidence Range | Behavior |
+|-----------------|----------|
+| 0.0-0.3 (hedged) | Use hedging qualifiers freely: "perhaps", "might", "it seems", "arguably". Qualify claims. Frame opinions as possibilities. |
+| 0.4-0.6 (moderate) | Occasional hedging on uncertain points. State most things directly but acknowledge complexity. Default voice behavior. |
+| 0.7-1.0 (assertive) | Make direct assertions. Avoid hedging qualifiers. State opinions as positions. Use "is" not "might be". |
+
+Apply the `directness` field independently from confidence:
+
+| Directness | Behavior |
+|-----------|----------|
+| hedged | Soften delivery: "you might want to consider", "it could help to". Even confident claims get diplomatic phrasing. |
+| balanced | Natural mix of direct and softened statements. Default behavior. |
+| blunt | Say it straight: "do this", "this is wrong", "stop doing that". No diplomatic padding. |
+
+**Confidence and directness are independent dimensions.** High confidence + hedged directness means: "I'm certain about this, but I'll phrase it gently." Low confidence + blunt directness means: "I'm not sure, but I'll say so plainly."
+
+#### Paragraph Patterns
+
+Apply the `paragraph_patterns` group from the voice profile:
+
+**Opening style** (`opening_style`):
+- **direct**: Lead paragraphs with the main point. Topic sentence first, supporting details follow.
+- **contextual**: Set up context before the main point. Establish the situation, then deliver the insight.
+- **anecdotal**: Open with a specific example, story, or observation before generalizing.
+- **varied**: Mix approaches across paragraphs. No single pattern dominates.
+
+**Transition style** (`transition_style`):
+- **explicit**: Use clear transition words and phrases between paragraphs ("However", "Building on this", "The next consideration is").
+- **organic**: Let the content flow naturally. Use paragraph breaks and topic shifts without heavy connectors.
+- **minimal**: Jump between points with little connective tissue. Each paragraph stands more independently.
+
+**Average length** (`avg_length`):
+- **short**: 2-3 sentences per paragraph. Quick, scannable, punchy.
+- **medium**: 4-5 sentences per paragraph. Standard prose rhythm.
+- **long**: 6+ sentences per paragraph. Detailed, thorough, academic.
+
+#### Sentence Starters
+
+Apply the `sentence_starters` field from the voice profile's `sentence_patterns` group:
+
+| Value | Behavior |
+|-------|----------|
+| pronoun-heavy | Start most sentences with I/You/We. Creates direct, personal engagement. "You configure the service by..." "I recommend starting with..." |
+| varied | Mix pronoun starts, topic-first starts, and occasional dependent clauses. Natural variety. Default behavior. |
+| formal-lead | Start sentences with the topic or concept, not pronouns. "The service accepts..." "Configuration requires..." "Each deployment creates..." |
+
+#### Personality Extensions
+
+Apply these fields from the voice profile's `personality_traits` group:
+
+**Emotional range** (`emotional_range`):
+- **flat**: Maintain a consistent emotional register. No excitement spikes, no dramatic shifts. Steady and even.
+- **moderate**: Allow measured emotional variation. Show enthusiasm at highlights, concern at problems, but stay grounded.
+- **dynamic**: Let emotional tone shift with the content. Be excited about breakthroughs, frustrated about problems, amused by ironies. Full range.
+
+**Self-correction** (`self_correction`):
+- **true**: Include natural self-correction markers: "actually", "well", "I mean", "or rather". Use sparingly (1-2 per 500 words). These signal a person thinking in real time.
+- **false**: Clean, pre-considered prose. No mid-thought corrections.
+
+#### Specificity
+
+Apply the `specificity` field from the voice profile's `elaboration` group:
+
+| Value | Behavior |
+|-------|----------|
+| abstract | Allow generalizations and conceptual statements. "Systems benefit from modularity." Fewer examples required. |
+| balanced | Mix abstract principles with concrete details. Provide examples for key points but not exhaustively. |
+| concrete | Demand specific examples, real names, actual numbers, and concrete scenarios. Replace every generalization with a particular instance. "The nginx Pod restarts every 30 seconds" not "Pods can restart frequently." |
 
 ### Step 3: Generate Content (Following ALL Rules)
 
@@ -547,6 +700,38 @@ Dispatch the **Agent tool** with:
 > Return a short list of remaining AI tells found, or "No additional AI tells found." if the text reads as human-written. Be concise.
 
 Use the subagent's response as the self-audit findings for the conditional rewrite below.
+
+#### Measurement Validation (when measurements section is present)
+
+If the loaded voice profile contains a `measurements` section, add a **second validation pass** after the self-audit subagent returns. This validation compares the generated content against the numeric targets in the measurements section.
+
+**For each measurement field present in the profile:**
+
+1. Compute the actual value from the generated text using the same formulas as the voice-extractor (sentence_length_mean, sentence_length_stdev, paragraph_length_mean, passive_voice_pct, hedge_density_per_1000, connector_variety, concrete_abstract_ratio, punctuation_entropy, one_sentence_paragraph_rate, contraction_rate_per_1000).
+
+2. Compare the actual value to the target value from the profile. Calculate the deviation as a percentage: `deviation_pct = abs(actual - target) / target * 100`.
+
+3. Classify the deviation using these thresholds:
+
+   | Deviation | Classification | Action |
+   |-----------|---------------|--------|
+   | < 10% | PASS | Not reported |
+   | 10-25% | INFORMATIONAL | Report as a note, no rewrite needed |
+   | > 25% | FLAGGED | Report as an actionable finding, address in rewrite |
+
+4. **Low-confidence measurements** (`sample_confidence: low`): Use relaxed thresholds:
+
+   | Deviation | Classification | Action |
+   |-----------|---------------|--------|
+   | < 25% | PASS | Not reported |
+   | 25-50% | INFORMATIONAL (advisory) | Report prefixed with "advisory:", no rewrite needed |
+   | > 50% | FLAGGED (advisory) | Report prefixed with "advisory:", address if feasible |
+
+5. Report concrete numeric deviations. Example: "sentence_length_stdev is 3.2, target is 8.0 (60% deviation, FLAGGED)".
+
+**When measurements are absent:** Skip measurement validation entirely. The self-audit runs normally using only the higher-order signal checks.
+
+**When measurements conflict with human-readable params:** The human-readable parameters guide generation. Measurements are for post-generation validation. If a measurement finding contradicts the generation intent (e.g., profile says `confidence: 0.9` but `measurements.hedge_density_per_1000: 15`), report the discrepancy but do not override the generation intent. Note: "Measurement target conflicts with voice parameter; voice parameter took precedence."
 
 **Conditional rewrite:**
 - If the self-audit found tells: perform a distinct rewrite pass addressing them before delivery. After the rewrite, re-run Step 6 self-validation checks (pattern rules, stoplist, style). If the rewrite introduced new violations, perform exactly **one correction pass**, then proceed to Step 7. Do not iterate further.

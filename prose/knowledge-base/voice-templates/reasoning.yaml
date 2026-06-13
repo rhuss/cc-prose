@@ -15,6 +15,10 @@ characteristics:
   # 0.7 = engaged but measured
   personality: 0.7
 
+  # Confidence level: 0.0 = heavily hedged, 1.0 = fully assertive
+  # 0.6 = moderate, lets evidence build the case
+  confidence: 0.6
+
   # Use first-person pronouns (I, we)
   first_person: true
 
@@ -50,6 +54,22 @@ sentence_patterns:
   # Include rhetorical questions
   rhetorical_questions: true
 
+  # Sentence starter style: pronoun-heavy | varied | formal-lead
+  # formal-lead = topic-first constructions that build logical progression
+  sentence_starters: "formal-lead"
+
+paragraph_patterns:
+  # Average paragraph length: short | medium | long
+  avg_length: "long"
+
+  # Opening style: direct | contextual | anecdotal | varied
+  # contextual = establishes context before presenting the argument
+  opening_style: "contextual"
+
+  # Transition style: explicit | organic | minimal
+  # explicit = uses logical connectors to build the argument chain
+  transition_style: "explicit"
+
 elaboration:
   # How much to expand on concepts: minimal, moderate, thorough
   depth: "thorough"
@@ -63,6 +83,10 @@ elaboration:
   # Explain the "why" not just the "what"
   explain_reasoning: true
 
+  # Specificity level: abstract | balanced | concrete
+  # balanced = mixes principles with supporting evidence
+  specificity: "balanced"
+
 personality_traits:
   # Express opinions and reactions
   opinions: true
@@ -75,6 +99,17 @@ personality_traits:
 
   # Reference personal experience
   personal_experience: false
+
+  # Emotional range: flat | moderate | dynamic
+  # moderate = measured variation, rising when evidence is strong
+  emotional_range: "moderate"
+
+  # Self-correction markers: include "actually", "I mean", "well"
+  self_correction: false
+
+  # Directness: hedged | balanced | blunt
+  # balanced = confident in conclusions but fair to alternatives
+  directness: "balanced"
 
 pronoun_balance:
   # Target ratio of "you" vs "we" usage

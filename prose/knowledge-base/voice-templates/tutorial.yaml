@@ -15,6 +15,10 @@ characteristics:
   # 0.7 = warm, supportive
   personality: 0.7
 
+  # Confidence level: 0.0 = heavily hedged, 1.0 = fully assertive
+  # 0.4 = gentle, avoids intimidating the reader
+  confidence: 0.4
+
   # Use first-person pronouns (I, we)
   first_person: true
 
@@ -50,6 +54,22 @@ sentence_patterns:
   # Include rhetorical questions
   rhetorical_questions: true
 
+  # Sentence starter style: pronoun-heavy | varied | formal-lead
+  # pronoun-heavy = starts most sentences with I/You/We for direct engagement
+  sentence_starters: "pronoun-heavy"
+
+paragraph_patterns:
+  # Average paragraph length: short | medium | long
+  avg_length: "short"
+
+  # Opening style: direct | contextual | anecdotal | varied
+  # contextual = sets up what the reader will learn before diving in
+  opening_style: "contextual"
+
+  # Transition style: explicit | organic | minimal
+  # organic = natural progression through tutorial steps
+  transition_style: "organic"
+
 elaboration:
   # How much to expand on concepts: minimal, moderate, thorough
   depth: "moderate"
@@ -63,6 +83,10 @@ elaboration:
   # Explain the "why" not just the "what"
   explain_reasoning: true
 
+  # Specificity level: abstract | balanced | concrete
+  # concrete = uses specific, actionable examples the reader can follow
+  specificity: "concrete"
+
 personality_traits:
   # Express opinions and reactions
   opinions: true
@@ -75,6 +99,17 @@ personality_traits:
 
   # Reference personal experience
   personal_experience: true
+
+  # Emotional range: flat | moderate | dynamic
+  # moderate = encouraging with occasional excitement at milestones
+  emotional_range: "moderate"
+
+  # Self-correction markers: include "actually", "I mean", "well"
+  self_correction: true
+
+  # Directness: hedged | balanced | blunt
+  # hedged = softens instructions to avoid intimidating beginners
+  directness: "hedged"
 
 pronoun_balance:
   # Target ratio of "you" vs "we" usage

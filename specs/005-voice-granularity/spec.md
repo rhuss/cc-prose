@@ -5,6 +5,10 @@
 **Status**: Draft
 **Input**: Brainstorm document `brainstorm/06-voice-granularity.md`
 
+## Purpose
+
+Current voice profiles capture broad strokes (formality, personality, contractions) but miss the finer dimensions that distinguish one human writer from another: how confident they sound, how they open paragraphs, whether they hedge or assert, how much emotional variation they allow. This feature adds those missing knobs to voice profiles, introduces a numeric `measurements` section derived from corpus analysis, and wires the expanded schema into every skill that consumes voice profiles. The result is generated prose that sounds like a specific person rather than a generic "natural" voice.
+
 ## User Scenarios & Testing
 
 ### User Story 1 - Content Creator Uses Expanded Voice Parameters (Priority: P1)
@@ -107,7 +111,7 @@ A user creates a new voice profile through the voice-architect's interactive que
 
 - What happens when a voice profile has `confidence: 0.9` (assertive) but `directness: hedged`? The skills should treat these as independent dimensions: the writer is confident in their claims but softens delivery.
 - What happens when measurements targets conflict with human-readable params (e.g., `confidence: 0.9` but `measurements.hedge_density_per_1000: 15`)? The human-readable params guide generation; measurements are for post-generation validation. The self-audit should report the discrepancy but not override the generation intent.
-- What happens when the voice-extractor corpus is too small (< 500 words) for reliable measurements? The extractor should still populate measurements but add a `confidence: low` marker to the measurements section, and the self-audit should treat low-confidence measurements as advisory rather than strict targets.
+- What happens when the voice-extractor corpus is too small (< 500 words) for reliable measurements? The extractor should still populate measurements but add a `sample_confidence: low` marker to the measurements section (named `sample_confidence` to distinguish from the voice parameter `confidence`), and the self-audit should treat low-confidence measurements as advisory rather than strict targets.
 - What happens when a voice profile has only the `measurements` section (from extraction) but no human-readable knobs? The skills should derive reasonable human-readable behavior from the measurements (e.g., high `hedge_density_per_1000` implies low `confidence`) but warn that explicit parameters produce better results.
 
 ## Clarifications
@@ -118,6 +122,13 @@ A user creates a new voice profile through the voice-architect's interactive que
 - Q: Where does the `confidence` field live in the YAML schema hierarchy? → A: Under the `characteristics` group, alongside `formality` and `personality`, as a float 0.0-1.0.
 - Q: How does the self-audit handle low-confidence measurements (from small corpora)? → A: Low-confidence measurements use a relaxed threshold (deviations > 50% flagged instead of 25%). The self-audit prefixes findings with "advisory" to indicate reduced reliability.
 
+## Error Handling
+
+- **Invalid parameter values** (e.g., `confidence: 2.0`, `directness: "aggressive"`): Skills MUST validate parameter values at load time, report the invalid field and value, and fall back to the default for that field. Processing continues with the valid fields.
+- **Corrupted or unreadable files in extractor corpus**: The voice-extractor MUST skip unreadable files, log a warning identifying each skipped file, and continue processing the remaining files. If all files are unreadable, it MUST report an error and produce no output.
+- **Measurement computation edge cases** (division by zero, NaN): When a corpus is too small or uniform to compute a specific metric (e.g., zero sentences for stdev), the extractor MUST omit that field from the measurements section rather than writing NaN or infinity.
+- **Non-interactive contexts**: When FR-014 migration is triggered in a non-interactive context (piped input, CI), the skill MUST silently apply defaults without prompting and log an informational message noting the auto-migration.
+
 ## Requirements
 
 ### Functional Requirements
@@ -127,7 +138,7 @@ A user creates a new voice profile through the voice-architect's interactive que
 - **FR-003**: Voice profile schema MUST support a `sentence_starters` field (pronoun-heavy/varied/formal-lead) in the `sentence_patterns` group
 - **FR-004**: Voice profile schema MUST support `emotional_range` (flat/moderate/dynamic), `self_correction` (boolean), and `directness` (hedged/balanced/blunt) in the `personality_traits` group
 - **FR-005**: Voice profile schema MUST support a `specificity` field (abstract/balanced/concrete) in the `elaboration` group
-- **FR-006**: Voice profile schema MUST support an optional `measurements` section containing numeric fields: `sentence_length_mean`, `sentence_length_stdev`, `paragraph_length_mean`, `passive_voice_pct`, `hedge_density_per_1000`, `connector_variety`, `concrete_abstract_ratio`, `punctuation_entropy`, `one_sentence_paragraph_rate`, `contraction_rate_per_1000`
+- **FR-006**: Voice profile schema MUST support an optional `measurements` section containing numeric fields with defined units: `sentence_length_mean` (words), `sentence_length_stdev` (words), `paragraph_length_mean` (sentences), `passive_voice_pct` (percentage 0-100), `hedge_density_per_1000` (occurrences per 1000 words), `connector_variety` (unique connectors / total connectors, 0.0-1.0, where connectors are transition words and phrases like "however", "therefore", "in addition"), `concrete_abstract_ratio` (concrete nouns and specifics / abstract nouns and generalizations, 0.0+), `punctuation_entropy` (Shannon entropy over the distribution of punctuation marks used: periods, commas, semicolons, colons, dashes, exclamation marks, question marks), `one_sentence_paragraph_rate` (percentage 0-100), `contraction_rate_per_1000` (contractions per 1000 words)
 - **FR-007**: The `measurements` section MUST only be populated by the voice-extractor, never by manual profile creation workflows
 - **FR-008**: All 8 built-in voice templates MUST be updated with appropriate values for all new parameters
 - **FR-009**: The content-generator MUST consume all new human-readable parameters during content generation
@@ -135,7 +146,7 @@ A user creates a new voice profile through the voice-architect's interactive que
 - **FR-011**: The self-audit subagent MUST receive the `measurements` section (when present) and validate the draft against numeric targets, reporting specific deviations
 - **FR-012**: The voice-extractor MUST compute and populate all measurement fields from writing samples
 - **FR-013**: The voice-architect MUST include new parameters in its create and edit workflows
-- **FR-014**: Skills loading voice profiles MUST detect old-format profiles (missing new parameters) and offer migration with sensible defaults
+- **FR-014**: Skills loading voice profiles MUST detect old-format profiles (missing new parameters) and offer migration with the following defaults: `confidence: 0.5`, `directness: balanced`, `emotional_range: moderate`, `self_correction: false`, `specificity: balanced`, `paragraph_patterns.avg_length: medium`, `paragraph_patterns.opening_style: varied`, `paragraph_patterns.transition_style: organic`, `sentence_starters: varied`. No `measurements` section is added during migration
 - **FR-015**: The pre-validator MUST check voice consistency against the expanded parameter set including new parameters
 
 ### Key Entities
@@ -148,10 +159,10 @@ A user creates a new voice profile through the voice-architect's interactive que
 
 ### Measurable Outcomes
 
-- **SC-001**: Generated content with `confidence: 0.9` contains zero hedging qualifiers ("perhaps", "might", "somewhat", "arguably") per 500 words
+- **SC-001**: Generated content with `confidence: 0.9` contains fewer than 1 hedging qualifier ("perhaps", "might", "somewhat", "arguably") per 500 words
 - **SC-002**: Generated content with `confidence: 0.2` contains at least 3 hedging qualifiers per 500 words
 - **SC-003**: The self-audit subagent reports concrete numeric deviations (e.g., "stdev is X, target is Y") when measurements are present, rather than vague assessments
-- **SC-004**: Voice profiles extracted from a 3000+ word corpus produce measurements that are within 15% of manual analysis for sentence length stats and within 25% for density metrics
+- **SC-004**: Voice profiles extracted from a 3000+ word corpus produce measurements that are within 15% of independently computed reference values (using standard NLP tokenization) for sentence length stats and within 25% for density metrics
 - **SC-005**: Old-format voice profiles load without errors and produce a migration prompt within 1 interaction
 - **SC-006**: All 8 built-in templates pass validation against the updated schema with no missing required fields
 

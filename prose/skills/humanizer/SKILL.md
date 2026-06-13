@@ -16,6 +16,7 @@ allowed-tools:
   - Edit
   - Grep
   - Glob
+  - Agent
   - AskUserQuestion
 ---
 
@@ -32,7 +33,7 @@ When given text to humanize:
 3. **Preserve meaning** - Keep the core message intact.
 4. **Match the voice** - Fit the intended tone (formal, casual, technical). Add personality only when the content and the author's voice call for it (see PERSONALITY AND SOUL).
 
-The draft, self-audit, conditional rewrite loop and the deliverable format are defined under Process and Output, below.
+The draft, self-audit (via isolated subagent), conditional rewrite loop and the deliverable format are defined under Process and Output, below.
 
 
 ## Voice Calibration (Optional)
@@ -597,32 +598,40 @@ When you see these, lean toward leaving the prose alone — they are evidence of
 
 2. **Draft rewrite** (internal, not shown to user). Write a rewrite that reads naturally aloud, varies sentence length, prefers specific details and simple constructions (is/are/has), and keeps the appropriate register.
 
-3. **Adversarial self-audit.** Ask one open-ended question about the draft rewrite:
+3. **Adversarial self-audit (subagent).** Spawn a fresh subagent using the **Agent tool** to review the draft. The subagent must never see the original input or the generation prompt, only the draft rewrite. This isolation prevents the reviewer from sharing the biases that produced the text.
 
-   > "What makes this still obviously AI-generated?"
+   Dispatch the Agent tool with:
+   - `description`: "Self-audit prose for AI tells"
+   - `prompt`: Include the full draft text and the instructions below (copy them verbatim into the prompt). Do NOT include the original input, the generation instructions, or any context about how the draft was produced.
 
-   Answer briefly with any remaining tells. Focus on **higher-order signals** that individual pattern rules do not catch:
-   - Rhythm and cadence (too uniform, too tidy)
-   - Structure (overly balanced paragraphs, predictable flow)
-   - Tone (evenly neutral, lacks genuine voice variation)
-   - Specificity (generic where concrete detail would be natural)
-   - Emotional range (flatlined, no mixed feelings)
+   **Instructions to include in the subagent prompt:**
 
-   Do NOT re-check individual pattern rules here (those are already enforced in step 2).
+   > Review the following text and answer one question: "What makes this still obviously AI-generated?"
+   >
+   > Focus on **higher-order signals**, not mechanical pattern rules (assume those are already handled):
+   > - Rhythm and cadence (too uniform, too tidy)
+   > - Structure (overly balanced paragraphs, predictable flow)
+   > - Tone (evenly neutral, lacks genuine voice variation)
+   > - Specificity (generic where concrete detail would be natural)
+   > - Emotional range (flatlined, no mixed feelings)
+   >
+   > **Do NOT flag any of the following as AI tells:**
+   > - Intentional repetition for emphasis
+   > - Rhetorical list structures the author chose
+   > - Voice-consistent traits matching a voice profile
+   > - Genuine asides, self-corrections, or parenthetical interruptions
+   > - Mixed feelings or unresolved tension (these are human signals)
+   > - Short emphatic sentences used for effect
+   > - Specific, unusual, or hard-to-fabricate details
+   > - Dated, era-bound references (slang, memes, or in-jokes tied to a specific year)
+   > - First-person editorial choices the writer can defend
+   > - Mixed casual and formal registers
+   > - Common transition words in isolation
+   > - Formal vocabulary that matches the content's register
+   >
+   > Return a short list of remaining AI tells found, or "No additional AI tells found." if the text reads as human-written. Be concise.
 
-   **False-positive guidance.** Do not flag any of the following as AI tells. Voice profile traits must not be flagged as AI tells.
-   - Intentional repetition for emphasis
-   - Rhetorical list structures the author chose
-   - Voice-consistent traits matching the voice profile
-   - Genuine asides, self-corrections, or parenthetical interruptions
-   - Mixed feelings or unresolved tension (these are human signals)
-   - Short emphatic sentences used for effect
-   - Specific, unusual, or hard-to-fabricate details
-   - Dated, era-bound references (slang, memes, or in-jokes tied to a specific year)
-   - First-person editorial choices the writer can defend
-   - Mixed casual and formal registers
-   - Common transition words in isolation
-   - Formal vocabulary that matches the content's register
+   Use the subagent's response as the self-audit findings for step 4.
 
 4. **Conditional final rewrite.**
    - If the self-audit found tells: write a final rewrite that addresses them.
@@ -657,7 +666,7 @@ When you see these, lean toward leaving the prose alone — they are evidence of
 
 *(Step 1 reads the input; Step 2 produces a draft rewrite. Neither is shown to the user. Steps 5-6, re-validation and delivery formatting, are mechanical and omitted from this example.)*
 
-**Step 3: Self-audit** ("What makes this still obviously AI-generated?")
+**Step 3: Self-audit** (subagent reviews the draft in isolation)
 - The rhythm is still too tidy: clean contrasts, evenly paced paragraphs, each one the same length.
 - The named people and study citations read like plausible-but-made-up placeholders.
 - The closer leans slogan-y ("If you do not have tests...") rather than sounding like a person talking.

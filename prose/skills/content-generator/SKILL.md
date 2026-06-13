@@ -19,6 +19,7 @@ allowed-tools:
   - Edit
   - Glob
   - Grep
+  - Agent
   - AskUserQuestion
 ---
 
@@ -510,36 +511,42 @@ If voice profile active:
 If inconsistent: Adjust before presenting
 ```
 
-### Step 6b: Adversarial Self-Audit
+### Step 6b: Adversarial Self-Audit (Subagent)
 
-**After rule-based self-validation passes, perform an adversarial self-audit.**
+**After rule-based self-validation passes, spawn a fresh subagent to audit the generated content.** The subagent must never see the original prompt, voice profile, or generation instructions, only the generated text. This isolation prevents the reviewer from sharing the biases that produced the content.
 
-Ask one open-ended question about the generated content:
+Dispatch the **Agent tool** with:
+- `description`: "Self-audit prose for AI tells"
+- `prompt`: Include the full generated text and the instructions below (copy them verbatim into the prompt). Do NOT include the original user request, voice profile, generation steps, or any context about how the content was produced.
 
-> "What makes this still obviously AI-generated?"
+**Instructions to include in the subagent prompt:**
 
-Focus on **higher-order signals** that individual pattern rules do not catch:
-- Rhythm and cadence (too uniform, too tidy)
-- Structure (overly balanced paragraphs, predictable flow)
-- Tone (evenly neutral, lacks genuine voice variation)
-- Specificity (generic where concrete detail would be natural)
-- Emotional range (flatlined, no mixed feelings)
+> Review the following text and answer one question: "What makes this still obviously AI-generated?"
+>
+> Focus on **higher-order signals**, not mechanical pattern rules (assume those are already handled):
+> - Rhythm and cadence (too uniform, too tidy)
+> - Structure (overly balanced paragraphs, predictable flow)
+> - Tone (evenly neutral, lacks genuine voice variation)
+> - Specificity (generic where concrete detail would be natural)
+> - Emotional range (flatlined, no mixed feelings)
+>
+> **Do NOT flag any of the following as AI tells:**
+> - Intentional repetition for emphasis
+> - Rhetorical list structures the author chose
+> - Voice-consistent traits matching a voice profile
+> - Genuine asides, self-corrections, or parenthetical interruptions
+> - Mixed feelings or unresolved tension (these are human signals)
+> - Short emphatic sentences used for effect
+> - Specific, unusual, or hard-to-fabricate details
+> - Dated, era-bound references (slang, memes, or in-jokes tied to a specific year)
+> - First-person editorial choices the writer can defend
+> - Mixed casual and formal registers
+> - Common transition words in isolation
+> - Formal vocabulary that matches the content's register
+>
+> Return a short list of remaining AI tells found, or "No additional AI tells found." if the text reads as human-written. Be concise.
 
-Do NOT re-check individual pattern rules here (those are already enforced in Step 6).
-
-**False-positive guidance.** Do NOT flag any content that falls into the protected categories defined in Step 5b. Voice profile traits must not be flagged as AI tells. Specifically, do not flag as AI tells:
-- Intentional repetition for emphasis
-- Rhetorical list structures the author chose
-- Voice-consistent traits matching the voice profile's formality/personality settings
-- Genuine asides, self-corrections, or parenthetical interruptions (Step 5b category 1)
-- Mixed feelings or unresolved tension (Step 5b category 2)
-- Short emphatic sentences used for effect (Step 5b category 3)
-- First-person editorial choices matching the voice profile (Step 5b category 4)
-- Specific, unusual, or hard-to-fabricate details (Step 5b category 5)
-- Era-bound and context-specific references (Step 5b category 6)
-- Mixed casual and formal registers
-- Common transition words in isolation
-- Formal vocabulary that matches the content's register
+Use the subagent's response as the self-audit findings for the conditional rewrite below.
 
 **Conditional rewrite:**
 - If the self-audit found tells: perform a distinct rewrite pass addressing them before delivery. After the rewrite, re-run Step 6 self-validation checks (pattern rules, stoplist, style). If the rewrite introduced new violations, perform exactly **one correction pass**, then proceed to Step 7. Do not iterate further.
@@ -618,7 +625,7 @@ This content is publication-ready and needs no further copyediting.
    - Passive voice: 5%
    - Sentence lengths: 12-35 words
 
-6b. **Self-audit** ("What makes this still obviously AI-generated?"):
+6b. **Self-audit** (subagent reviews in isolation):
    - Rhythm slightly too uniform in opening paragraphs
    - Addressed: varied sentence lengths in opening
 

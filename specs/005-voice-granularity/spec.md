@@ -110,6 +110,14 @@ A user creates a new voice profile through the voice-architect's interactive que
 - What happens when the voice-extractor corpus is too small (< 500 words) for reliable measurements? The extractor should still populate measurements but add a `confidence: low` marker to the measurements section, and the self-audit should treat low-confidence measurements as advisory rather than strict targets.
 - What happens when a voice profile has only the `measurements` section (from extraction) but no human-readable knobs? The skills should derive reasonable human-readable behavior from the measurements (e.g., high `hedge_density_per_1000` implies low `confidence`) but warn that explicit parameters produce better results.
 
+## Clarifications
+
+### Session 2026-06-13
+
+- Q: What deviation from measurement targets triggers a self-audit flag vs. informational note? → A: Deviations > 25% from the numeric target are flagged as actionable findings. Deviations between 10-25% are reported as informational notes. Deviations < 10% are not reported.
+- Q: Where does the `confidence` field live in the YAML schema hierarchy? → A: Under the `characteristics` group, alongside `formality` and `personality`, as a float 0.0-1.0.
+- Q: How does the self-audit handle low-confidence measurements (from small corpora)? → A: Low-confidence measurements use a relaxed threshold (deviations > 50% flagged instead of 25%). The self-audit prefixes findings with "advisory" to indicate reduced reliability.
+
 ## Requirements
 
 ### Functional Requirements

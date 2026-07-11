@@ -9,7 +9,7 @@ description: |
   attributions, em dash overuse, rule of three, AI vocabulary words, passive
   voice, negative parallelisms, and filler phrases.
 license: MIT
-compatibility: claude-code opencode
+compatibility: any-agent
 allowed-tools:
   - Read
   - Write
@@ -678,6 +678,21 @@ Before returning the final rewrite, scan it for `—` and `–`. Any hit means t
 > Whether it's worth the price depends on how often you'll use it.
 
 
+### 34. Fake Temporal Anchors
+
+**Phrases to watch:** Last week, Over the weekend, Recently I was, The other day, Just yesterday, A few months ago, Earlier this year, I recently (when vague and untethered to a real event)
+
+**Problem:** LLMs insert vague time references to manufacture immediacy and lived experience. The time reference floats free, connecting to no specific event, place, or outcome. A real person writing "last Tuesday's deploy broke staging for two hours" has a memory. An LLM writing "recently I was thinking about how important testing is" dresses a generic claim up as a personal anecdote.
+
+**Before:**
+> Last week, I was reflecting on how much the developer experience has improved. Over the weekend, I spent some time exploring the new API, and it really changed my perspective.
+
+**After:**
+> The developer experience improved noticeably after the v3 release added hot reload and inline errors. The new API simplifies authentication to a single function call.
+
+**Key distinction:** Real temporal references anchor to specific events, places, or outcomes. Fake ones float free. "Last Tuesday's deploy broke staging" is real. "Recently I've been thinking about deployments" is manufactured immediacy. Do not strip temporal anchors that connect to concrete, specific details.
+
+
 ## DETECTION GUIDANCE
 
 ### What NOT to flag (false positives)
@@ -696,6 +711,7 @@ A clean human writer can hit several of the patterns above without any AI involv
 - **"Honestly" or "look" mid-sentence.** These are ordinary in casual writing. The tell is the standalone theatrical opener, not the word itself.
 - **Unsourced claims.** Most of the web is unsourced. Lack of citations doesn't prove anything.
 - **Correct, complex formatting.** Visual editors and templates produce clean output without any AI.
+- **Secondhand text.** Do not rewrite watched phrases inside quotations, titles, proper names, or examples where the phrase is being discussed rather than used.
 
 When in doubt, look for **clusters** of tells, not isolated ones. A single em dash means nothing; em dashes plus rule-of-three plus *vibrant tapestry* plus a "Conclusion" section is a confession.
 
@@ -729,16 +745,31 @@ When you see these, lean toward leaving the prose alone — they are evidence of
 
    **Instructions to include in the subagent prompt:**
 
-   > Review the following text and answer one question: "What makes this still obviously AI-generated?"
+   > Review the following text for quality and authenticity.
    >
-   > Focus on **higher-order signals**, not mechanical pattern rules (assume those are already handled):
-   > - Rhythm and cadence (too uniform, too tidy)
-   > - Structure (overly balanced paragraphs, predictable flow)
-   > - Tone (evenly neutral, lacks genuine voice variation)
-   > - Specificity (generic where concrete detail would be natural)
-   > - Emotional range (flatlined, no mixed feelings)
+   > **Quality comes first.** Never recommend changes that would reduce content quality
+   > just to appear more human. Good structure, balanced coverage, thorough evidence,
+   > and clean closers are *writing craft*, not AI artifacts. If the content is well-structured
+   > because the argument demands it, that is good writing, not a tell.
    >
-   > **Do NOT flag any of the following as AI tells:**
+   > Only flag patterns that are genuinely low-quality AI artifacts: things that make the
+   > writing worse, not things that happen to be shared between good human writing and
+   > AI output. The question is not "could a detector flag this?" but "does this make the
+   > content less effective for the reader?"
+   >
+   > **Higher-order signals to check** (not mechanical pattern rules, those are already handled):
+   > - Rhythm and cadence that is *uniformly* tidy (no natural variation at all)
+   > - Specificity that is *generic* where concrete detail would strengthen the argument
+   > - Emotional range that is *flatlined* when the content calls for variation
+   > - Structure that is predictable because it follows a template, not because the argument
+   >   naturally flows that way
+   > - Tone that is evenly neutral when the author should have a perspective
+   >
+   > **Do NOT flag any of the following:**
+   > - Clean, logical structure that serves the argument
+   > - Balanced coverage of sources (thoroughness is not a tell)
+   > - Proportional section lengths that reflect the weight of each point
+   > - Punchy closers or callbacks that land a deliberate rhetorical choice
    > - Intentional repetition for emphasis
    > - Rhetorical list structures the author chose
    > - Voice-consistent traits matching a voice profile
@@ -752,7 +783,7 @@ When you see these, lean toward leaving the prose alone — they are evidence of
    > - Common transition words in isolation
    > - Formal vocabulary that matches the content's register
    >
-   > Return a short list of remaining AI tells found, or "No additional AI tells found." if the text reads as human-written. Be concise.
+   > Return findings only for patterns that genuinely reduce content quality, or "No issues found." if the text is strong. Be concise.
 
    Use the subagent's response as the self-audit findings for step 4.
 

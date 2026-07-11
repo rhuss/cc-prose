@@ -7,7 +7,7 @@ description: >-
 capabilities:
   - New content creation with enforced style standards
   - Voice profile application for consistent personality
-  - Humanizer pattern prevention (33 categories)
+  - Humanizer pattern prevention (34 categories)
   - Adversarial self-audit for higher-order AI tells
   - Global + project configuration hierarchy
   - Automatic style guide compliance
@@ -524,6 +524,10 @@ Apply the `specificity` field from the voice profile's `elaboration` group:
 
 #### MEDIUM Severity (should avoid)
 
+**Fake Temporal Anchors:**
+- Never: "Last week, I was..." / "Over the weekend..." / "Recently I was..." (vague time references that manufacture immediacy without connecting to a specific event, place, or outcome)
+- Real temporal anchors are fine: "Last Tuesday's deploy broke staging" connects to a concrete event
+
 **Filler Phrases:**
 - Avoid: "in order to" (use "to")
 - Avoid: "due to the fact that" (use "because")
@@ -674,16 +678,31 @@ Dispatch the **Agent tool** with:
 
 **Instructions to include in the subagent prompt:**
 
-> Review the following text and answer one question: "What makes this still obviously AI-generated?"
+> Review the following text for quality and authenticity.
 >
-> Focus on **higher-order signals**, not mechanical pattern rules (assume those are already handled):
-> - Rhythm and cadence (too uniform, too tidy)
-> - Structure (overly balanced paragraphs, predictable flow)
-> - Tone (evenly neutral, lacks genuine voice variation)
-> - Specificity (generic where concrete detail would be natural)
-> - Emotional range (flatlined, no mixed feelings)
+> **Quality comes first.** Never recommend changes that would reduce content quality
+> just to appear more human. Good structure, balanced coverage, thorough evidence,
+> and clean closers are *writing craft*, not AI artifacts. If the content is well-structured
+> because the argument demands it, that is good writing, not a tell.
 >
-> **Do NOT flag any of the following as AI tells:**
+> Only flag patterns that are genuinely low-quality AI artifacts: things that make the
+> writing worse, not things that happen to be shared between good human writing and
+> AI output. The question is not "could a detector flag this?" but "does this make the
+> content less effective for the reader?"
+>
+> **Higher-order signals to check** (not mechanical pattern rules, those are already handled):
+> - Rhythm and cadence that is *uniformly* tidy (no natural variation at all)
+> - Specificity that is *generic* where concrete detail would strengthen the argument
+> - Emotional range that is *flatlined* when the content calls for variation
+> - Structure that is predictable because it follows a template, not because the argument
+>   naturally flows that way
+> - Tone that is evenly neutral when the author should have a perspective
+>
+> **Do NOT flag any of the following:**
+> - Clean, logical structure that serves the argument
+> - Balanced coverage of sources (thoroughness is not a tell)
+> - Proportional section lengths that reflect the weight of each point
+> - Punchy closers or callbacks that land a deliberate rhetorical choice
 > - Intentional repetition for emphasis
 > - Rhetorical list structures the author chose
 > - Voice-consistent traits matching a voice profile
@@ -697,7 +716,7 @@ Dispatch the **Agent tool** with:
 > - Common transition words in isolation
 > - Formal vocabulary that matches the content's register
 >
-> Return a short list of remaining AI tells found, or "No additional AI tells found." if the text reads as human-written. Be concise.
+> Return findings only for patterns that genuinely reduce content quality, or "No issues found." if the text is strong. Be concise.
 
 Use the subagent's response as the self-audit findings for the conditional rewrite below.
 
@@ -851,7 +870,7 @@ This should NEVER happen due to self-validation. But if user reports a forbidden
 ## Key Principles
 
 1. **Prevention over correction**: Generate compliant content from the start
-2. **Humanizer patterns authority**: All 33 categories are forbidden by default
+2. **Humanizer patterns authority**: All 34 categories are forbidden by default
 3. **Stoplist supremacy**: Constitutional rule, overrides everything else
 4. **Style guide authority**: Project-specific rules are mandatory
 5. **Voice consistency**: Maintain personality throughout

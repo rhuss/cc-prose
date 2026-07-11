@@ -1,6 +1,6 @@
 {
   "name": "prose",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Proactive content generation with human voice and AI slop prevention for Claude Code",
   "author": {
     "name": "Roland Huss",

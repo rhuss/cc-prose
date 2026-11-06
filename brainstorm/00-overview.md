@@ -1,6 +1,6 @@
 # Brainstorm Overview
 
-Last updated: 2026-06-13
+Last updated: 2026-11-06
 
 ## Sessions
 
@@ -12,6 +12,7 @@ Last updated: 2026-06-13
 | 04 | 2026-06-12 | self-audit-rewrite-loop | implemented | 004 | - |
 | 05 | 2026-06-12 | humanizer-upstream-sync | spec-created | 001 | - |
 | 06 | 2026-06-13 | voice-granularity | active | - | - |
+| 07 | 2026-11-06 | multi-harness-support | active | - | - |
 
 ## Open Threads
 - Contribute rule-of-three density detection back to upstream? (from #01)
@@ -29,6 +30,11 @@ Last updated: 2026-06-13
 - Should the self-audit subagent receive measurements, or should a separate validation step check them? (from #06)
 - How should measurements interact with inline voice matching (#02)? Inline samples are too short for reliable extraction. (from #06)
 - Should we add a `prose:measure` command for standalone text analysis? (from #06)
+- Command vs skill parity on OpenCode: minimal shim to keep slash commands working without duplicating skill logic? (from #07)
+- Does any skill, command, or hook rely on Claude-only mechanisms (hooks, `.claude/settings*.json`, MCP)? Audit sets the work size. (from #07)
+- Where do voice profiles get stored per harness, given different config homes? (from #07)
+- Standardize the consumer detection contract on "is `prose:humanizer` exposed" and document it. (from #07)
+- Which harnesses beyond Codex and OpenCode are in scope, versus later? (from #07)
 
 ## Parked Ideas
 (none)

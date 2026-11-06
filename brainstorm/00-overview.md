@@ -30,11 +30,10 @@ Last updated: 2026-11-06
 - Should the self-audit subagent receive measurements, or should a separate validation step check them? (from #06)
 - How should measurements interact with inline voice matching (#02)? Inline samples are too short for reliable extraction. (from #06)
 - Should we add a `prose:measure` command for standalone text analysis? (from #06)
-- Command vs skill parity on OpenCode: minimal shim to keep slash commands working without duplicating skill logic? (from #07)
-- Does any skill, command, or hook rely on Claude-only mechanisms (hooks, `.claude/settings*.json`, MCP)? Audit sets the work size. (from #07)
-- Where do voice profiles get stored per harness, given different config homes? (from #07)
-- Standardize the consumer detection contract on "is `prose:humanizer` exposed" and document it. (from #07)
-- Which harnesses beyond Codex and OpenCode are in scope, versus later? (from #07)
+- What is the minimal OpenCode command shim that reuses shared skill logic? (from #07)
+- Which skills, commands, or hooks rely on Claude-only mechanisms? (from #07)
+- Where should voice profiles live so they resolve predictably across supported harnesses? (from #07)
+- How should consumers detect cc-prose consistently across harnesses? (from #07)
 
 ## Parked Ideas
 (none)

@@ -1,9 +1,13 @@
 {
   "name": "cc-prose",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Shared prose skills and native OpenCode registration",
   "type": "module",
   "main": ".opencode/plugins/prose.js",
-  "files": ["index.js", ".opencode/plugins/prose.js", "prose"],
+  "files": [
+    "index.js",
+    ".opencode/plugins/prose.js",
+    "prose"
+  ],
   "license": "MIT"
 }

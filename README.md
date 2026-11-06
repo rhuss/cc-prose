@@ -28,15 +28,15 @@ Python 3 is required for style initialization and configuration discovery. All h
 
 ### Codex
 
-Use a Codex build with plugin marketplace support. From a source checkout:
+Use a Codex build with plugin marketplace support. Install the released package directly from GitHub:
 
 ```bash
-git clone https://github.com/rhuss/cc-prose.git
-cd cc-prose
-codex plugin marketplace add .
+codex plugin marketplace add rhuss/cc-prose --ref v1.2.0
 codex plugin add prose@prose-plugin-development
 codex plugin list
 ```
+
+For source development, clone the repository and use `codex plugin marketplace add .` instead.
 
 Restart the session and check that the prose skills are visible. The `.codex-plugin` manifest references the same `prose/skills/` used by Claude Code. To test without changing your normal Codex setup, set `CODEX_HOME` to a temporary directory for the installation commands.
 

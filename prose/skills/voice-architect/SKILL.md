@@ -10,7 +10,10 @@ allowed-tools:
   - Edit
   - Glob
   - AskUserQuestion
+  - Bash
 ---
+
+**Before running:** Read [the harness guide](../../docs/harnesses.md) for resource paths, native tools, interaction, shared configuration, and skill invocation. Use its source map for configuration/profile discovery. Slash-command and question-schema examples below describe workflow intent; use the current harness's supported equivalents.
 
 # Voice Architect Skill
 
@@ -173,8 +176,7 @@ avoid_phrases:
 **Path resolution order:**
 1. `.style/voice.yaml` (new project path)
 2. `.prose/voice.yaml` (legacy project path)
-3. `~/.claude/style/voices/` (new global path)
-4. `~/.claude/prose/voices/` (legacy global path)
+3. Named global profile: unified `~/.claude/style/voices/<name>.yaml` first, then legacy `~/.claude/prose/voices/<name>.yaml`. Listing includes both directories; unified names win duplicates. Use the harness guide's source map.
 
 ## Commands
 
@@ -190,7 +192,7 @@ Create a new voice profile interactively.
    Example: "technical-friendly", "casual-tutorial", "formal-documentation"
    ```
 
-2. **Gather characteristics via AskUserQuestion:**
+2. **Gather characteristics using the supported question tool or conversation:**
 
    **Formality:**
    ```json

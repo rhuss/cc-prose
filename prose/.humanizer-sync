@@ -6,7 +6,6 @@
     {
       "upstream_file": "SKILL.md",
       "local_file": "prose/skills/humanizer/SKILL.md",
-      "canonical_file": "~/.claude/skills/humanizer/SKILL.md",
       "local_additions": [
         {
           "section": "10. Rule of Three Overuse",
@@ -27,6 +26,10 @@
         {
           "section": "34. Fake Temporal Anchors",
           "description": "New local-only category: vague time references that manufacture immediacy without connecting to specific events"
+        },
+        {
+          "section": "Harness portability",
+          "description": "Shared guide for native tools, resource resolution, configuration source map, and inline audit fallback; preserve the Bash allowlist addition in frontmatter."
         }
       ]
     }

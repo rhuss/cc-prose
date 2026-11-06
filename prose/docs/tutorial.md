@@ -1,5 +1,7 @@
 # cc-prose Tutorial
 
+This page's `/prose:*` examples use Claude Code syntax. Codex invokes the matching `$prose:<action>` skill; OpenCode loads the bare action skill (write, rewrite, voice, check, init, or update-humanizer) with its native skill tool and passes the same arguments. Read [the harness guide](harnesses.md) for resource resolution, capability detection, and shared configuration precedence. Global styles and voices stay at `~/.claude/style/` across all harnesses. Upstream maintenance requires a writable cc-prose checkout.
+
 A quick start guide to using the writing skill plugin for content generation with human voice.
 
 ## Prerequisites

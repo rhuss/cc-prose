@@ -148,3 +148,47 @@ asked to follow the superpowers way and it keeps one shared skill source.
 - cc-review (a second worked example by the same author): `review/.codex-plugin/`,
   `review/opencode/install.sh`, repo-root `AGENTS.md`.
   Repo: https://github.com/rhuss/cc-review
+
+---
+
+## Revisit: 2026-11-06
+
+### Updated Problem Framing
+
+The original problem and success criteria still hold: cc-prose should provide
+its voice profiles and AI-pattern check to cc-guide and direct writing users
+on Codex and OpenCode, while preserving Claude Code support and one shared
+skills source. The repository still has only a Claude Code plugin manifest.
+
+### New Approaches Considered
+
+#### A: Codex first, then OpenCode (chosen)
+- Pros: follows the original rollout order and gets the primary consumer
+  working first while retaining a clear path to OpenCode.
+- Cons: users of OpenCode wait for the second step.
+
+#### B: Codex and OpenCode together
+- Pros: both target harnesses reach parity in the same release.
+- Cons: OpenCode's command and profile conventions can delay Codex support.
+
+#### C: Codex only for now
+- Pros: smallest first release and addresses the primary consumer.
+- Cons: leaves the stated OpenCode need unresolved.
+
+### Updated Decision
+
+Proceed with **A**: support Codex first and OpenCode second. Keep one shared
+skills source, preserve Claude Code support, and do not fork skill behavior by
+harness. Other harnesses are follow-on work, not part of this pass. Carry the
+previously identified command parity, Claude-only mechanism audit, voice
+profile storage, consumer detection, and parity requirements into
+specification. The precise harness conventions and any required adapters
+remain for specification and planning to resolve.
+
+### Open Threads
+
+- What is the minimal OpenCode command shim that reuses shared skill logic?
+- Which skills, commands, or hooks rely on Claude-only mechanisms?
+- Where should voice profiles live so they resolve predictably across the
+  supported harnesses?
+- How should consumers detect cc-prose consistently across harnesses?

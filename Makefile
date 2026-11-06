@@ -37,3 +37,8 @@ help:
 	@echo "  check-upstream  - Check for upstream humanizer changes (non-destructive)"
 	@echo ""
 	@echo "To merge upstream changes, use the /update-humanizer Claude Code command."
+
+.PHONY: test-multi-harness
+test-multi-harness:
+	python3 -m unittest discover -s tests -p 'test_multi_harness.py'
+	node --test tests/opencode.test.mjs

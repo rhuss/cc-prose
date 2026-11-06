@@ -1,6 +1,6 @@
 # cc-prose Plugin
 
-Claude Code plugin for proactive content generation with human voice and AI slop prevention.
+Shared writing plugin for Claude Code, Codex, and OpenCode, providing proactive content generation with human voice and AI slop prevention.
 
 ## When to Use Prose Skills
 
@@ -118,7 +118,7 @@ make check-upstream  # Check for upstream humanizer changes
 ## Humanizer Source
 
 The humanizer skill tracks the upstream [blader/humanizer](https://github.com/blader/humanizer) repository,
-based on Wikipedia's "Signs of AI writing" guide. The canonical local copy lives at `~/.claude/skills/humanizer/SKILL.md`.
+based on Wikipedia's "Signs of AI writing" guide. The authoritative local copy lives at `prose/skills/humanizer/SKILL.md` in a writable cc-prose checkout.
 
 Sync state is tracked in `prose/.humanizer-sync`, which records the last synced upstream commit
 and lists local cc-prose additions that must be preserved during merges.
@@ -152,3 +152,5 @@ For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
 at `specs/005-voice-granularity/plan.md`.
 <!-- SPECKIT END -->
+
+For harness tool mappings, native invocation, shared configuration precedence, and maintenance prerequisites, read `prose/docs/harnesses.md`.

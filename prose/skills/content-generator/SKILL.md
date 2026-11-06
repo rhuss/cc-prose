@@ -21,7 +21,10 @@ allowed-tools:
   - Grep
   - Agent
   - AskUserQuestion
+  - Bash
 ---
+
+**Before running:** Read [the harness guide](../../docs/harnesses.md) for resource paths, native tools, interaction, shared configuration, and skill invocation. Use its source map for configuration/profile discovery. Slash-command and question-schema examples below describe workflow intent; use the current harness's supported equivalents.
 
 # Content Generator Skill
 
@@ -173,15 +176,8 @@ elif [ -f ".prose/voice.yaml" ]; then
     cat ".prose/voice.yaml"
 fi
 
-# Global voices directory (new path first, then legacy)
-if [ -d "$HOME/.claude/style/voices" ]; then
-    echo "Available global voice profiles:"
-    ls "$HOME/.claude/style/voices"
-elif [ -d "$HOME/.claude/prose/voices" ]; then
-    # Legacy global path
-    echo "Available legacy voice profiles:"
-    ls "$HOME/.claude/prose/voices"
-fi
+# Use the harness guide's resolve_style_config.py source map for named profiles.
+# Its voices map includes legacy-only names; unified profiles win duplicates.
 ```
 
 ### Phase 2a: Voice Profile Parameter Validation
@@ -670,9 +666,9 @@ If inconsistent: Adjust before presenting
 
 ### Step 6b: Adversarial Self-Audit (Subagent)
 
-**After rule-based self-validation passes, spawn a fresh subagent to audit the generated content.** The subagent must never see the original prompt, voice profile, or generation instructions, only the generated text. This isolation prevents the reviewer from sharing the biases that produced the content.
+**After rule-based self-validation passes, run the adversarial audit using a permitted fresh worker, or the harness guide's inline fallback.** The subagent must never see the original prompt, voice profile, or generation instructions, only the generated text. This isolation prevents the reviewer from sharing the biases that produced the content.
 
-Dispatch the **Agent tool** with:
+Dispatch the available, permitted fresh-worker tool (or use the guide's inline fallback) with:
 - `description`: "Self-audit prose for AI tells"
 - `prompt`: Include the full generated text and the instructions below (copy them verbatim into the prompt). Do NOT include the original user request, voice profile, generation steps, or any context about how the content was produced.
 

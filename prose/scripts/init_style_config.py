@@ -13,13 +13,12 @@ import sys
 import shutil
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
 
 
 def get_plugin_root() -> Path:
     """Get the plugin root directory from script location."""
     # scripts/init_style_config.py -> scripts -> prose plugin root
-    return Path(__file__).parent.parent
+    return Path(__file__).resolve().parent.parent
 
 
 def create_config_yaml(is_global: bool = False) -> str:
@@ -178,19 +177,12 @@ actually -> (remove in most cases)
 """
 
 
-def init_project_config(project_dir: Path, plugin_root: Path) -> bool:
+def init_project_config(project_dir: Path) -> bool:
     """Initialize project configuration in .style/ directory."""
     style_dir = project_dir / ".style"
 
-    # Check for existing directory
-    if style_dir.exists():
-        print(f"Directory already exists: {style_dir}")
-        response = input("Overwrite existing files? [y/N]: ").strip().lower()
-        if response not in ['y', 'yes']:
-            print("Aborted. No files were modified.")
-            return False
-    else:
-        style_dir.mkdir(parents=True, exist_ok=True)
+    # Fill missing files while preserving all existing content.
+    style_dir.mkdir(parents=True, exist_ok=True)
 
     # Create configuration files
     files_created = []
@@ -260,18 +252,15 @@ def init_project_config(project_dir: Path, plugin_root: Path) -> bool:
 
 def init_global_config(plugin_root: Path) -> bool:
     """Initialize global configuration in ~/.claude/style/ directory."""
+    templates_dir = plugin_root / "knowledge-base" / "voice-templates"
+    if not templates_dir.is_dir() or not any(templates_dir.glob("*.yaml")):
+        print(f"Missing bundled voice templates: {templates_dir}. Reinstall cc-prose.", file=sys.stderr)
+        return False
     global_dir = Path.home() / ".claude" / "style"
     voices_dir = global_dir / "voices"
 
-    # Check for existing directory
-    if global_dir.exists():
-        print(f"Directory already exists: {global_dir}")
-        response = input("Overwrite existing files? [y/N]: ").strip().lower()
-        if response not in ['y', 'yes']:
-            print("Aborted. No files were modified.")
-            return False
-    else:
-        global_dir.mkdir(parents=True, exist_ok=True)
+    # Fill missing files while preserving all existing content.
+    global_dir.mkdir(parents=True, exist_ok=True)
 
     # Create voices subdirectory
     voices_dir.mkdir(parents=True, exist_ok=True)
@@ -310,16 +299,14 @@ def init_global_config(plugin_root: Path) -> bool:
     else:
         print(f"  Skipped: stoplist.txt (already exists)")
 
-    # Copy voice templates
-    templates_dir = plugin_root / "knowledge-base" / "voice-templates"
-    if templates_dir.exists():
-        for template_file in templates_dir.glob("*.yaml"):
-            dest_file = voices_dir / template_file.name
-            if not dest_file.exists():
-                shutil.copy(template_file, dest_file)
-                files_created.append(f"voices/{template_file.name}")
-            else:
-                print(f"  Skipped: voices/{template_file.name} (already exists)")
+    # Copy validated voice templates, preserving existing profiles.
+    for template_file in templates_dir.glob("*.yaml"):
+        dest_file = voices_dir / template_file.name
+        if not dest_file.exists():
+            shutil.copy(template_file, dest_file)
+            files_created.append(f"voices/{template_file.name}")
+        else:
+            print(f"  Skipped: voices/{template_file.name} (already exists)")
 
     # Report results
     if files_created:
@@ -353,7 +340,7 @@ def main():
 
     if mode == "--init":
         project_dir = Path.cwd()
-        success = init_project_config(project_dir, plugin_root)
+        success = init_project_config(project_dir)
         sys.exit(0 if success else 1)
 
     elif mode == "--init-global":

@@ -75,6 +75,8 @@ This command invokes the **voice-architect** or **voice-extractor** skill to:
 3. Apply consistent personality characteristics across documents
 4. Store profiles in `~/.claude/style/voices/` (global) or `.style/voice.yaml` (project)
 
+Read `docs/harnesses.md` for the shared global directory and deterministic profile precedence, including legacy-only names.
+
 ## Invoke Skill
 
 - For `create`, `apply`, `list`, `show`: Use the **voice-architect** skill

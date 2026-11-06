@@ -9,7 +9,10 @@ allowed-tools:
   - Write
   - Glob
   - AskUserQuestion
+  - Bash
 ---
+
+**Before running:** Read [the harness guide](../../docs/harnesses.md) for resource paths, native tools, interaction, shared configuration, and skill invocation. Use its source map for configuration/profile discovery. Slash-command and question-schema examples below describe workflow intent; use the current harness's supported equivalents.
 
 # Voice Extractor Skill
 
@@ -1003,7 +1006,7 @@ Based on sufficient corpus size and consistent patterns.
 
 ### Step 4: Prompt for Name
 
-Use AskUserQuestion:
+Ask the user using the supported question tool or conversation:
 
 ```json
 {
@@ -1024,7 +1027,7 @@ Suggest a name based on detected characteristics:
 
 ### Step 5: Choose Storage Location
 
-Use AskUserQuestion:
+Ask the user using the supported question tool or conversation:
 
 ```json
 {
@@ -1205,7 +1208,7 @@ This suggests the baseline may not represent the majority of your content.
 4. **Split extraction** - Create separate profiles for different document types
 ```
 
-Use AskUserQuestion to let user choose:
+Ask the user to choose using the supported question tool or conversation:
 
 ```json
 {

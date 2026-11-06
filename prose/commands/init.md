@@ -117,14 +117,14 @@ These settings apply to ALL projects by default.
 When this command is invoked:
 
 1. Parse the argument to detect `--global` flag
-2. Run the initialization script:
+2. Resolve the prose plugin root from the real path of the discovered init skill or this command file, following `docs/harnesses.md`. Set `PROSE_ROOT` to that absolute path for the shell invocation. Report missing resources instead of guessing a Claude cache path. Run the initialization script:
 
 ```bash
 # For project initialization
-python3 "$PLUGIN_ROOT/scripts/init_style_config.py" --init
+python3 "$PROSE_ROOT/scripts/init_style_config.py" --init
 
 # For global initialization
-python3 "$PLUGIN_ROOT/scripts/init_style_config.py" --init-global
+python3 "$PROSE_ROOT/scripts/init_style_config.py" --init-global
 ```
 
 3. Report created files to the user

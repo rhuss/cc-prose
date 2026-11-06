@@ -28,6 +28,8 @@ This command invokes the **pre-validator** skill to perform comprehensive valida
 - Check all 24 humanizer categories (content, language, style, communication, filler/hedging)
 - Flag CRITICAL, HIGH, MEDIUM, and LOW severity patterns
 
+Read `docs/harnesses.md` and use the configuration source map before loading global/project rules.
+
 ### Stoplist Word Check
 - Verify no forbidden words from `~/.claude/copyedit/config/stoplist.txt`
 - Verify no forbidden words from `.copyedit/stoplist.txt`

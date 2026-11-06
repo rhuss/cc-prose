@@ -9,7 +9,10 @@ allowed-tools:
   - Glob
   - Grep
   - AskUserQuestion
+  - Bash
 ---
+
+**Before running:** Read [the harness guide](../../docs/harnesses.md) for resource paths, native tools, interaction, shared configuration, and skill invocation. Use its source map for configuration/profile discovery. Slash-command and question-schema examples below describe workflow intent; use the current harness's supported equivalents.
 
 # Pre-Validator Skill
 

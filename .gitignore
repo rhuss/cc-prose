@@ -5,3 +5,8 @@
 **/.specify/**
 !**/.specify/memory/
 !**/.specify/memory/constitution.md
+
+# Python checks and optional JS tooling
+__pycache__/
+*.pyc
+node_modules/

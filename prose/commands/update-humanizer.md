@@ -24,6 +24,12 @@ like rule-of-three density detection and custom filler phrase entries.
 
 Follow these steps in order. Do not skip steps or reorder them.
 
+### Step 0: Resolve the Maintenance Checkout
+
+Read `docs/harnesses.md`. This is a source-maintenance workflow. Use a writable cc-prose checkout containing `prose/skills/humanizer/SKILL.md` (the tracking marker `prose/.humanizer-sync` may be absent on first use); do not edit an installed plugin cache. If the current directory is a consumer project, ask for the maintenance checkout path and resolve all following repository-relative paths there. If no writable checkout is available, explain how to clone cc-prose and stop before any fetch or write.
+
+Parse `--dry-run` before any state changes. It suppresses all writes, including initial-baseline creation, canonical source changes, tracking updates, and reports.
+
 ### Step 1: Read Tracking State
 
 Read `prose/.humanizer-sync` to get the current sync state.
@@ -47,7 +53,7 @@ This is the first-time setup path.
    rm -rf "$TEMP_DIR"
    ```
 
-2. Create `prose/.humanizer-sync` with this content (replace SHA and date):
+2. For `--dry-run`, show the proposed baseline SHA and metadata, then exit without creating a tracking file or report. Otherwise create `prose/.humanizer-sync` with this content (replace SHA and date):
    ```json
    {
      "upstream_repo": "https://github.com/blader/humanizer",
@@ -57,7 +63,6 @@ This is the first-time setup path.
        {
          "upstream_file": "SKILL.md",
          "local_file": "prose/skills/humanizer/SKILL.md",
-         "canonical_file": "~/.claude/skills/humanizer/SKILL.md",
          "local_additions": [
            {
              "section": "10. Rule of Three Overuse",
@@ -144,13 +149,9 @@ modifying any files, then exit.
 
 Write the merged content to `prose/skills/humanizer/SKILL.md`.
 
-### Step 6: Update Canonical Copy
+### Step 6: Keep the Checkout Authoritative
 
-Copy the merged file to the canonical location:
-
-```bash
-cp prose/skills/humanizer/SKILL.md ~/.claude/skills/humanizer/SKILL.md
-```
+The merged `prose/skills/humanizer/SKILL.md` is the authoritative copy. Do not copy it to a separate Claude user skill or edit another harness's installed cache. After reviewing the source changes, refresh/reinstall each harness's plugin from this checkout.
 
 ### Step 7: Update Tracking File
 

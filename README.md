@@ -1,6 +1,6 @@
 # cc-prose
 
-A Claude Code plugin for **proactive content generation** with human voice and AI slop prevention.
+Shared writing skills for **Claude Code, Codex, and OpenCode**, with voice profiles and AI-pattern prevention.
 
 ## Overview
 
@@ -24,6 +24,43 @@ It complements the [copyedit plugin](https://github.com/rhuss/cc-copyedit), shar
 
 ## Installation
 
+Python 3 is required for style initialization and configuration discovery. All harnesses share `.style/` project configuration and `~/.claude/style/` global configuration, even if Claude Code is not installed. Existing `.copyedit/`, `.prose/`, and legacy global paths remain fallbacks. See [harness conventions](prose/docs/harnesses.md) for exact precedence and tools.
+
+### Codex
+
+Use a Codex build with plugin marketplace support. From a source checkout:
+
+```bash
+git clone https://github.com/rhuss/cc-prose.git
+cd cc-prose
+codex plugin marketplace add .
+codex plugin add prose@prose-plugin-development
+codex plugin list
+```
+
+Restart the session and check that the prose skills are visible. The `.codex-plugin` manifest references the same `prose/skills/` used by Claude Code. To test without changing your normal Codex setup, set `CODEX_HOME` to a temporary directory for the installation commands.
+
+### OpenCode
+
+The repository is a native OpenCode package: no copied skills or install script. Node-compatible JavaScript support is supplied by OpenCode. Configure the package in your OpenCode configuration and restart.
+
+For OpenCode V2 (2.0.4 or later):
+
+```json
+{"plugins": ["cc-prose@git+https://github.com/rhuss/cc-prose.git"]}
+```
+
+For OpenCode V1:
+
+```json
+{"plugin": ["cc-prose@git+https://github.com/rhuss/cc-prose.git"]}
+```
+
+For local development, replace the git package string with the absolute path to this repository directory containing `index.js`. OpenCode does not expand `~` in that field. V1 uses a config hook to discover skills; V2 registers the same SKILL.md files through its native skill transform. V1 hook behavior is covered by adapter tests; see the validation record for host versions actually exercised. Reinstall/update each harness's package after changing the sources.
+
+### Claude Code
+
+
 **Via Marketplace (recommended):**
 
 ```bash
@@ -45,7 +82,24 @@ make install
 claude plugin list
 ```
 
-## Commands
+## Native invocation and consumer detection
+
+The five writing skills retain their source names: content-generator, humanizer, pre-validator, voice-architect, and voice-extractor. Six thin invocation skills delegate to the existing command files so each harness can run the same command workflows.
+
+| Workflow | Claude Code | Codex | OpenCode native skill id |
+|---|---|---|---|
+| Write | `/prose:write` | `$prose:write` | `write` |
+| Rewrite | `/prose:rewrite` | `$prose:rewrite` | `rewrite` |
+| Voice | `/prose:voice` | `$prose:voice` | `voice` |
+| Check | `/prose:check` | `$prose:check` | `check` |
+| Initialize | `/prose:init` | `$prose:init` | `init` |
+| Update upstream | `/prose:update-humanizer` | `$prose:update-humanizer` | `update-humanizer` |
+
+Provide the topic, file, subcommand, or flags after the invocation. In OpenCode ask the agent to load the action with its native skill tool, then execute it with your arguments (for example, load `check` and validate `docs/intro.md`). These are skill workflows, not an assumption that OpenCode defines matching slash commands. In hosts that display a different qualified Codex name, use the displayed skill name.
+
+Consumers such as cc-guide inspect the current session's available skills: `prose:content-generator`, `prose:humanizer`, and `prose:pre-validator` on Claude/Codex, or their bare names on OpenCode. The check action delegates to pre-validator. If a required capability is absent, report it and use the consumer's documented fallback; a registry entry is not proof that a skill is available. See [the capability mapping](prose/docs/harnesses.md#consumer-detection).
+
+## Claude Code commands
 
 | Command | Description |
 |---------|-------------|
@@ -278,7 +332,7 @@ make check-upstream
 The merge command:
 1. Detects changes since the last sync
 2. Merges upstream additions while preserving local cc-prose sections
-3. Updates both the plugin copy and the canonical copy at `~/.claude/skills/humanizer/SKILL.md`
+3. Updates the authoritative repository skill and tracking state in a writable cc-prose checkout
 4. Generates an audit report at `docs/sync-reports/sync-YYYY-MM-DD.md`
 
 ### Sync history
@@ -356,3 +410,9 @@ cc-prose/
 ## License
 
 MIT
+
+## Multi-harness validation
+
+Run `make test-multi-harness` for isolated configuration and packaging tests plus OpenCode adapter contracts. Run `make validate` for Claude manifests. Native installation and discovery results, and the limits of those checks, are recorded in [the feature quickstart](specs/006-multi-harness-support/quickstart.md). Generated-text parity remains a manual check of shared rules and profile selection; identical prose is not expected.
+
+Packaging references: [OpenAI plugin packaging](https://developers.openai.com/plugins/build/plugins), [OpenCode V2 skills](https://opencode.ai/v2/docs/skills/), and the [superpowers native OpenCode adapter](https://github.com/obra/superpowers/blob/main/.opencode/plugins/superpowers.js).

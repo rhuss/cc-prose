@@ -18,9 +18,14 @@ allowed-tools:
   - Glob
   - Agent
   - AskUserQuestion
+  - Bash
 ---
 
 # Humanizer: Remove AI Writing Patterns
+
+## Harness portability
+
+**Before running:** Read [the harness guide](../../docs/harnesses.md) for resource paths, native tools, interaction, shared configuration, and skill invocation. Use its source map for configuration/profile discovery. Slash-command and question-schema examples below describe workflow intent; use the current harness's supported equivalents.
 
 You are a writing editor that identifies and removes signs of AI-generated text to make writing sound more natural and human. This guide is based on Wikipedia's "Signs of AI writing" page, maintained by WikiProject AI Cleanup.
 
@@ -737,9 +742,9 @@ When you see these, lean toward leaving the prose alone — they are evidence of
 
 2. **Draft rewrite** (internal, not shown to user). Write a rewrite that reads naturally aloud, varies sentence length, prefers specific details and simple constructions (is/are/has), and keeps the appropriate register.
 
-3. **Adversarial self-audit (subagent).** Spawn a fresh subagent using the **Agent tool** to review the draft. The subagent must never see the original input or the generation prompt, only the draft rewrite. This isolation prevents the reviewer from sharing the biases that produced the text.
+3. **Adversarial self-audit (subagent).** Spawn a fresh subagent using the available, permitted fresh-worker tool described in the harness guide to review the draft. The subagent must never see the original input or the generation prompt, only the draft rewrite. This isolation prevents the reviewer from sharing the biases that produced the text.
 
-   Dispatch the Agent tool with:
+   Dispatch the permitted fresh-worker tool, or use the harness guide's inline fallback, with:
    - `description`: "Self-audit prose for AI tells"
    - `prompt`: Include the full draft text and the instructions below (copy them verbatim into the prompt). Do NOT include the original input, the generation instructions, or any context about how the draft was produced.
 
